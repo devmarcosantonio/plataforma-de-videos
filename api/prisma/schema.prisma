@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum VideoStatus {
+  pending_upload
+  processing
+  ready
+  failed
+
+  @@map("video_status")
+}
+
+model User {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  // Sempre em minúsculas (normalizado na API), por isso o índice único já é case-insensitive.
+  username      String   @unique @db.VarChar(30)
+  name          String
+  last_name     String
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @updatedAt @db.Timestamptz(3)
+
+  videos    Video[]
+  reactions Reaction[]
+  comments  Comment[]
+
+  @@map("users")
+}
+
+model Video {
+  id             String      @id @default(uuid(7)) @db.Uuid
+  user_id        String      @db.Uuid
+  bunny_video_id String      @unique
+  title          String      @db.VarChar(200)
+  description    String?
+  status         VideoStatus @default(pending_upload)
+  duration       Int?
+  thumbnail_url  String?
+  created_at     DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime    @updatedAt @db.Timestamptz(3)
+
+  // Restrict: um usuário com vídeos não pode ser apagado sem antes tratar os vídeos no Bunny.
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  reactions Reaction[]
+  comments  Comment[]
+
+  @@index([user_id])
+  @@index([created_at])
+  @@map("videos")
+}
+
+enum ReactionType {
+  like
+  dislike
+
+  @@map("reaction_type")
+}
+
+model Reaction {
+  user_id    String       @db.Uuid
+  video_id   String       @db.Uuid
+  type       ReactionType
+  created_at DateTime     @default(now()) @db.Timestamptz(3)
+  updated_at DateTime     @updatedAt @db.Timestamptz(3)
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [video_id], references: [id], onDelete: Cascade)
+
+  // Uma reação por usuário/vídeo; trocar de like para dislike atualiza a linha.
+  @@id([user_id, video_id])
+  @@index([video_id, type])
+  @@map("reactions")
+}
+
+model Comment {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  video_id   String    @db.Uuid
+  // Fica nulo quando o autor apaga a conta e o comentário é mantido como "removido".
+  user_id    String?   @db.Uuid
+  parent_id  String?   @db.Uuid
+  content    String?   @db.VarChar(2000)
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  edited_at  DateTime? @db.Timestamptz(3)
+  deleted_at DateTime? @db.Timestamptz(3)
+
+  video   Video     @relation(fields: [video_id], references: [id], onDelete: Cascade)
+  user    User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  parent  Comment?  @relation("CommentReplies", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([video_id, parent_id, created_at])
+  @@index([parent_id, created_at])
+  @@map("comments")
+}

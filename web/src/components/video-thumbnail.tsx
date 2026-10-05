@@ -1,0 +1,58 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { Film, Play } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { formatDuration, STATUS_LABEL } from "@/lib/format";
+import type { Video } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+export function VideoThumbnail({ video, sizes, className }: { video: Video; sizes: string; className?: string }) {
+  const [failed, setFailed] = useState(false);
+  const duration = formatDuration(video.duration);
+
+  return (
+    <div className={cn("relative aspect-video overflow-hidden rounded-xl bg-muted", className)}>
+      {video.thumbnail_url && !failed ? (
+        <Image
+          src={video.thumbnail_url}
+          alt=""
+          fill
+          sizes={sizes}
+          // O Bunny bloqueia acesso sem Referer (proteção contra hotlink). O otimizador do Next
+          // busca a imagem no servidor, sem Referer, e recebe 403; então o navegador carrega direto.
+          unoptimized
+          onError={() => setFailed(true)}
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div className="grid h-full place-items-center bg-linear-to-br from-primary/25 via-muted to-card">
+          <Film className="size-8 text-muted-foreground" />
+        </div>
+      )}
+
+      {/* Escurece e mostra o "play" ao passar o mouse. */}
+      <div className="absolute inset-0 grid place-items-center bg-black/0 transition-colors duration-300 group-hover:bg-black/25">
+        <span className="grid size-12 scale-75 place-items-center rounded-full bg-background/90 text-foreground opacity-0 shadow-lg transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <Play className="ml-0.5 size-5 fill-current" />
+        </span>
+      </div>
+
+      {video.status !== "ready" && (
+        <Badge
+          variant={video.status === "failed" ? "destructive" : "secondary"}
+          className="absolute left-2 top-2 backdrop-blur"
+        >
+          {STATUS_LABEL[video.status]}
+        </Badge>
+      )}
+
+      {duration && (
+        <span className="absolute bottom-2 right-2 rounded-md bg-black/75 px-1.5 py-0.5 font-mono text-xs text-white backdrop-blur">
+          {duration}
+        </span>
+      )}
+    </div>
+  );
+}
