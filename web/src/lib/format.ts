@@ -42,6 +42,16 @@ export function fullName(user: Person): string {
   return user ? `${user.name} ${user.last_name}` : "Usuário desconhecido";
 }
 
+export function channelHref(user: Pick<User, "username">): string {
+  return `/@${user.username}`;
+}
+
+const followersFormat = new Intl.NumberFormat("pt-BR", { notation: "compact" });
+
+export function formatFollowers(count: number): string {
+  return `${followersFormat.format(count)} seguidor${count === 1 ? "" : "es"}`;
+}
+
 export function handle(user: Pick<User, "username"> | null | undefined): string {
   return user ? `@${user.username}` : "Usuário desconhecido";
 }

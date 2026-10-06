@@ -30,6 +30,8 @@ model User {
   videos    Video[]
   reactions Reaction[]
   comments  Comment[]
+  following Follow[]   @relation("Follower")
+  followers Follow[]   @relation("Followed")
 
   @@map("users")
 }
@@ -51,7 +53,8 @@ model Video {
   reactions Reaction[]
   comments  Comment[]
 
-  @@index([user_id])
+  // (user_id, created_at): vídeos de um canal e feed "Seguindo", já ordenados.
+  @@index([user_id, created_at])
   @@index([created_at])
   @@map("videos")
 }
@@ -98,4 +101,20 @@ model Comment {
   @@index([video_id, parent_id, created_at])
   @@index([parent_id, created_at])
   @@map("comments")
+}
+
+model Follow {
+  // Quem segue.
+  follower_id String   @db.Uuid
+  // Quem é seguido.
+  followed_id String   @db.Uuid
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
+
+  follower User @relation("Follower", fields: [follower_id], references: [id], onDelete: Cascade)
+  followed User @relation("Followed", fields: [followed_id], references: [id], onDelete: Cascade)
+
+  // Um vínculo por par; seguir a si mesmo é bloqueado por um CHECK na migração.
+  @@id([follower_id, followed_id])
+  @@index([followed_id, created_at])
+  @@map("follows")
 }

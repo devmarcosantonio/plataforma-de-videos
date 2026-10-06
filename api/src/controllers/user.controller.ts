@@ -13,7 +13,7 @@ export async function show(req: Request<IdParams>, res: Response) {
 }
 
 export async function showByUsername(req: Request<{ username: string }>, res: Response) {
-  res.json(await userService.getUserByUsername(req.params.username));
+  res.json(await userService.getUserByUsername(req.user, req.params.username));
 }
 
 export async function usernameAvailable(req: Request, res: Response) {

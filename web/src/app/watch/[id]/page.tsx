@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AlertTriangle, Loader2, UploadCloud } from "lucide-react";
 import { CommentSection } from "@/components/comments/comment-section";
 import { FadeIn } from "@/components/fade-in";
+import { FollowButton, FollowersCount, FollowProvider } from "@/components/follow/follow";
 import { ReactionButtons } from "@/components/reaction-buttons";
 import { SyncButton } from "@/components/sync-button";
 import { UserAvatar } from "@/components/user-avatar";
 import { VideoListItem } from "@/components/video-card";
 import { VideoDescription } from "@/components/video-description";
-import { getComments, getPlayback, getReactionStatus, getVideo, getVideos } from "@/lib/api";
+import { getComments, getPlayback, getProfile, getReactionStatus, getVideo, getVideos } from "@/lib/api";
 import { getSession } from "@/lib/auth";
-import { fullName, handle, STATUS_LABEL, timeAgo } from "@/lib/format";
+import { channelHref, handle, STATUS_LABEL, timeAgo } from "@/lib/format";
 import type { Video } from "@/lib/types";
 
 export async function generateMetadata({ params }: PageProps<"/watch/[id]">): Promise<Metadata> {
@@ -31,7 +33,10 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
   ]);
   if (!video) notFound();
 
-  const playback = video.status === "ready" ? await getPlayback(video.id) : null;
+  const [playback, authorProfile] = await Promise.all([
+    video.status === "ready" ? getPlayback(video.id) : null,
+    getProfile(video.author.username),
+  ]);
   const author = video.author;
   const isOwner = session?.id === video.user_id;
   const others = videos.filter((other) => other.id !== video.id);
@@ -57,11 +62,26 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
           <h1 className="mt-5 text-xl font-semibold leading-snug tracking-tight sm:text-2xl">{video.title}</h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <UserAvatar user={author} size="lg" />
-            <div className="min-w-0 flex-1">
-              <p className="font-medium">{handle(author)}</p>
-              <p className="truncate text-sm text-muted-foreground">{author ? fullName(author) : null}</p>
-            </div>
+            <FollowProvider
+              // Remonta ao entrar/sair para refletir se o usuário segue o autor.
+              key={session?.id ?? "visitante"}
+              userId={author.id}
+              initial={{
+                following: authorProfile?.is_following ?? false,
+                followers_count: authorProfile?.followers_count ?? 0,
+              }}
+              loggedIn={!!session}
+              isSelf={isOwner}
+            >
+              <Link href={channelHref(author)} className="group flex min-w-0 flex-1 items-center gap-3">
+                <UserAvatar user={author} size="lg" className="transition-transform group-hover:scale-105" />
+                <div className="min-w-0">
+                  <p className="font-medium transition-colors group-hover:text-primary">{handle(author)}</p>
+                  <FollowersCount className="text-sm text-muted-foreground" />
+                </div>
+              </Link>
+              <FollowButton />
+            </FollowProvider>
             <ReactionButtons
               // Remonta ao entrar/sair para refletir a reação do usuário.
               key={session?.id ?? "visitante"}

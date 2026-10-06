@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, Loader2, MoreVertical, Pencil, Reply, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -23,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { errorMessage, getJson, sendJson } from "@/lib/client-api";
-import { fullName, handle, timeAgo } from "@/lib/format";
+import { channelHref, fullName, handle, timeAgo } from "@/lib/format";
 import type { Comment, CommentPage, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "../user-avatar";
@@ -259,10 +260,22 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
 
   return (
     <div className="group/comment flex gap-3">
-      <UserAvatar user={comment.author} size={compact ? "sm" : "default"} className="mt-0.5" />
+      {comment.author ? (
+        <Link href={channelHref(comment.author)} className="mt-0.5 h-fit shrink-0">
+          <UserAvatar user={comment.author} size={compact ? "sm" : "default"} />
+        </Link>
+      ) : (
+        <UserAvatar user={null} size={compact ? "sm" : "default"} className="mt-0.5" />
+      )}
       <div className="min-w-0 flex-1">
         <p className="flex flex-wrap items-center gap-x-2 text-sm">
-          <span className="font-medium">{fullName(comment.author)}</span>
+          {comment.author ? (
+            <Link href={channelHref(comment.author)} className="font-medium hover:text-primary">
+              {fullName(comment.author)}
+            </Link>
+          ) : (
+            <span className="font-medium">{fullName(comment.author)}</span>
+          )}
           {comment.author && <span className="text-xs text-muted-foreground">{handle(comment.author)}</span>}
           {comment.author?.id === ctx.videoOwnerId && (
             <Badge variant="secondary" className="bg-primary/15 text-primary">

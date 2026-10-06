@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { Compass, History, Home, ListVideo, MonitorPlay, Upload, type LucideIcon } from "lucide-react";
+import { Compass, History, Home, ListVideo, MonitorPlay, Upload, Users, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -15,6 +15,7 @@ type NavItem = { href: string; label: string; icon: LucideIcon; requiresLogin?: 
 
 const MAIN: NavItem[] = [
   { href: "/", label: "Início", icon: Home },
+  { href: "/following", label: "Seguindo", icon: Users, requiresLogin: true },
   { href: "/studio", label: "Meu canal", icon: MonitorPlay, requiresLogin: true },
   { href: "/upload", label: "Enviar vídeo", icon: Upload, requiresLogin: true },
 ];

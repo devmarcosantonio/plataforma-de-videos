@@ -14,6 +14,25 @@ export interface AuthUser extends User {
   created_at: string;
 }
 
+// Página do canal: perfil público + números.
+export interface Profile extends User {
+  created_at: string;
+  followers_count: number;
+  following_count: number;
+  videos_count: number;
+  is_following: boolean;
+}
+
+export interface FollowStatus {
+  following: boolean;
+  followers_count: number;
+}
+
+export interface Page<T> {
+  items: T[];
+  next_cursor: string | null;
+}
+
 export interface Video {
   id: string;
   user_id: string;

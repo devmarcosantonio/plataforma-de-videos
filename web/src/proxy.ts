@@ -14,5 +14,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Páginas que exigem login.
-  matcher: ["/upload/:path*", "/studio/:path*"],
+  matcher: ["/upload/:path*", "/studio/:path*", "/following/:path*"],
 };

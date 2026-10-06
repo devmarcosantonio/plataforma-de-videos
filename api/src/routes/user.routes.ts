@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validateIdParam } from '../utils/validate-id.js';
+import * as followController from '../controllers/follow.controller.js';
 import * as userController from '../controllers/user.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
 
@@ -12,6 +13,11 @@ router.get('/', userController.index);
 router.get('/username-available', userController.usernameAvailable);
 router.get('/by-username/:username', userController.showByUsername);
 router.get('/:id', userController.show);
+
+// Seguir: exige login; a lista de quem a pessoa segue é só dela.
+router.put('/:id/follow', requireAuth, followController.follow);
+router.delete('/:id/follow', requireAuth, followController.unfollow);
+router.get('/:id/following', requireAuth, followController.following);
 
 // Só a própria pessoa altera ou apaga a conta.
 router.patch('/:id', requireAuth, userController.update);

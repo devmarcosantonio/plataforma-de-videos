@@ -8,6 +8,7 @@ import {
 } from '../models/user.model.js';
 import { hashPassword } from '../utils/password.js';
 import { deleteCommentsByUser } from './comment.service.js';
+import { profileStats } from './follow.service.js';
 
 // O que qualquer pessoa pode ver de um usuário (sem e-mail).
 export type PublicProfile = Pick<User, 'id' | 'username' | 'name' | 'last_name' | 'created_at'>;
@@ -44,10 +45,11 @@ export async function getUser(id: string): Promise<PublicProfile> {
   return toPublicProfile(user);
 }
 
-export async function getUserByUsername(username: string): Promise<PublicProfile> {
-  const user = await UserModel.findByUsername(username.trim().toLowerCase());
+// Página do canal: perfil público + números (seguidores, seguindo, vídeos) + "is_following".
+export async function getUserByUsername(actor: User | undefined, username: string) {
+  const user = await UserModel.findByUsername(username.trim().toLowerCase().replace(/^@/, ''));
   if (!user) throw new AppError('Usuário não encontrado', 404);
-  return toPublicProfile(user);
+  return { ...toPublicProfile(user), ...(await profileStats(actor, user.id)) };
 }
 
 // Para o formulário avisar enquanto a pessoa digita: formato inválido não é erro, é "indisponível".

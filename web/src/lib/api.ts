@@ -1,6 +1,6 @@
 // Chamadas à API feitas no servidor (Server Components). Repassam o token da sessão, se houver.
 import { getToken } from "./auth";
-import type { CommentPage, Playback, ReactionStatus, Video } from "./types";
+import type { CommentPage, Page, Playback, Profile, ReactionStatus, Video } from "./types";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3000";
 
@@ -41,4 +41,12 @@ export async function getComments(videoId: string): Promise<CommentPage> {
     items: [],
     next_cursor: null,
   };
+}
+
+export async function getProfile(username: string): Promise<Profile | null> {
+  return get<Profile>(`/users/by-username/${encodeURIComponent(username)}`);
+}
+
+export async function getFeed(): Promise<Page<Video>> {
+  return (await get<Page<Video>>("/feed")) ?? { items: [], next_cursor: null };
 }

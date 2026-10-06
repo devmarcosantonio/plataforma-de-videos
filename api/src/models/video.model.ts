@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { prisma } from '../config/database.js';
 import type { Prisma, Video, VideoStatus } from '../generated/prisma/client.js';
+import type { CursorPosition } from '../utils/cursor.js';
 
 export type { Video, VideoStatus };
 export type VideoAuthor = { id: string; username: string; name: string; last_name: string };
@@ -56,6 +57,33 @@ export const VideoModel = {
       orderBy: { created_at: 'desc' },
     });
     return videos.map(withStats);
+  },
+
+  // Feed "Seguindo": vídeos prontos de quem o usuário segue, do mais novo ao mais antigo.
+  async findFeedWithStats(followerId: string, cursor: CursorPosition | undefined, limit: number) {
+    const after: Prisma.VideoWhereInput = cursor
+      ? {
+          OR: [
+            { created_at: { lt: new Date(cursor.created_at) } },
+            { created_at: new Date(cursor.created_at), id: { lt: cursor.id } },
+          ],
+        }
+      : {};
+    const rows = await prisma.video.findMany({
+      where: {
+        status: 'ready',
+        user: { followers: { some: { follower_id: followerId } } },
+        ...after,
+      },
+      orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      include: statsInclude,
+    });
+    return { items: rows.slice(0, limit).map(withStats), hasMore: rows.length > limit };
+  },
+
+  async countReadyByUser(userId: string): Promise<number> {
+    return prisma.video.count({ where: { user_id: userId, status: 'ready' } });
   },
 
   async findByIdWithStats(id: string): Promise<VideoWithStats | null> {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, MonitorPlay, Upload } from "lucide-react";
+import { LogOut, MonitorPlay, Upload, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { postJson } from "@/lib/client-api";
-import { fullName, handle } from "@/lib/format";
+import { channelHref, fullName, handle } from "@/lib/format";
 import type { AuthUser } from "@/lib/types";
 import { UserAvatar } from "./user-avatar";
 
@@ -48,9 +48,15 @@ export function UserMenu({ user }: { user: AuthUser }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
+          <Link href={channelHref(user)}>
+            <UserRound />
+            Ver meu canal
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link href="/studio">
             <MonitorPlay />
-            Meu canal
+            Gerenciar canal
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
