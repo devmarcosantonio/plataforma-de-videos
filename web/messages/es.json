@@ -253,5 +253,37 @@
     "notFound": "Página no encontrada",
     "notFoundHint": "Es posible que el contenido se haya eliminado.",
     "backHome": "Volver al inicio"
+  },
+  "history": {
+    "title": "Historial",
+    "empty": "No hay videos en tu historial",
+    "emptyHint": "Los videos que veas aparecerán aquí.",
+    "groups": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "thisWeek": "Esta semana",
+      "older": "Más antiguos"
+    },
+    "watched": "Visto <time></time>",
+    "remove": "Quitar del historial",
+    "removed": "Quitado del historial.",
+    "clear": "Borrar historial",
+    "clearTitle": "¿Borrar todo el historial?",
+    "clearDescription": "Se quitarán todos los videos de tu historial. Esta acción no se puede deshacer.",
+    "cleared": "Historial borrado.",
+    "pause": "Pausar historial",
+    "pauseHint": "Mientras esté pausado, lo que veas no se guardará.",
+    "paused": "Historial pausado.",
+    "resumed": "Historial reanudado.",
+    "pausedBanner": "El historial está pausado: los videos nuevos no se guardan.",
+    "continueWatching": "Seguir viendo",
+    "resumeFrom": "Continuando desde {time}",
+    "startOver": "Empezar desde el principio",
+    "errors": {
+      "remove": "No se pudo quitar del historial.",
+      "clear": "No se pudo borrar el historial.",
+      "settings": "No se pudo guardar la preferencia.",
+      "loadMore": "No se pudieron cargar más elementos."
+    }
   }
 }

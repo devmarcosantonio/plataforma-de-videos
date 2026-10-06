@@ -1,6 +1,6 @@
 // Chamadas à API feitas no servidor (Server Components). Repassam o token da sessão, se houver.
 import { getToken } from "./auth";
-import type { CommentPage, Page, Playback, Profile, ReactionStatus, Video } from "./types";
+import type { CommentPage, HistoryItem, Page, Playback, Profile, ReactionStatus, Settings, Video } from "./types";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3000";
 
@@ -49,4 +49,18 @@ export async function getProfile(username: string): Promise<Profile | null> {
 
 export async function getFeed(): Promise<Page<Video>> {
   return (await get<Page<Video>>("/feed")) ?? { items: [], next_cursor: null };
+}
+
+// ---- Histórico (só com sessão) ----
+
+export async function getHistory(): Promise<Page<HistoryItem>> {
+  return (await get<Page<HistoryItem>>("/me/history")) ?? { items: [], next_cursor: null };
+}
+
+export async function getContinueWatching(): Promise<HistoryItem[]> {
+  return (await get<HistoryItem[]>("/me/continue-watching")) ?? [];
+}
+
+export async function getSettings(): Promise<Settings | null> {
+  return get<Settings>("/me/settings");
 }

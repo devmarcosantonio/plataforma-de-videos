@@ -3,7 +3,7 @@ import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 const AUTH_COOKIE = "token";
-const PROTECTED = ["/upload", "/studio", "/following"];
+const PROTECTED = ["/upload", "/studio", "/following", "/history"];
 const PREFIXED_LOCALES = ["en", "es"];
 
 const intl = createIntlMiddleware(routing);

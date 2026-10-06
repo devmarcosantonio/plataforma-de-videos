@@ -49,6 +49,25 @@ export interface Video {
   likes_count: number;
   comments_count: number;
   author: User;
+  // Progresso do usuário logado (nulo para visitante ou vídeo nunca assistido).
+  watch_progress?: WatchProgress | null;
+}
+
+export interface WatchProgress {
+  position_seconds: number;
+  completed: boolean;
+}
+
+export interface HistoryItem {
+  video: Video;
+  position_seconds: number;
+  completed: boolean;
+  watch_count: number;
+  last_watched_at: string;
+}
+
+export interface Settings {
+  history_paused: boolean;
 }
 
 export interface Comment {

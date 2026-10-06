@@ -9,6 +9,7 @@ import { ReactionButtons } from "@/components/reaction-buttons";
 import { SyncButton } from "@/components/sync-button";
 import { UserAvatar } from "@/components/user-avatar";
 import { VideoListItem } from "@/components/video-card";
+import { VideoPlayer } from "@/components/video-player";
 import { VideoDescription } from "@/components/video-description";
 import { Link } from "@/i18n/navigation";
 import { getComments, getPlayback, getProfile, getReactionStatus, getVideo, getVideos } from "@/lib/api";
@@ -42,6 +43,14 @@ export default async function WatchPage({ params }: PageProps<"/[locale]/watch/[
   ]);
   const author = video.author;
   const isOwner = session?.id === video.user_id;
+
+  // Retoma de onde parou: só se assistiu um pouco (≥ 10 s), não concluiu e não está no finalzinho.
+  const progress = video.watch_progress;
+  const resumeAt =
+    progress && !progress.completed && progress.position_seconds >= 10 &&
+    (!video.duration || progress.position_seconds < video.duration - 10)
+      ? progress.position_seconds
+      : 0;
   const others = videos.filter((other) => other.id !== video.id);
 
   return (
@@ -49,12 +58,14 @@ export default async function WatchPage({ params }: PageProps<"/[locale]/watch/[
       <div className="min-w-0">
         <FadeIn y={0} className="aspect-video overflow-hidden rounded-2xl bg-black shadow-2xl shadow-primary/10 ring-1 ring-border">
           {playback ? (
-            <iframe
-              src={playback.embed_url}
+            <VideoPlayer
+              // Remonta ao entrar/sair para ligar ou desligar o salvamento do progresso.
+              key={`player-${session?.id ?? "visitante"}`}
+              videoId={video.id}
+              embedUrl={playback.embed_url}
               title={video.title}
-              className="size-full"
-              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
+              resumeAt={resumeAt}
+              trackProgress={!!session}
             />
           ) : (
             <PlayerPlaceholder video={video} canSync={isOwner} />

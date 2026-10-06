@@ -4,7 +4,7 @@ import * as videoService from '../services/video.service.js';
 type IdParams = { id: string };
 
 export async function index(req: Request, res: Response) {
-  res.json(await videoService.listVideos(req.query));
+  res.json(await videoService.listVideos(req.user, req.query));
 }
 
 export async function update(req: Request<IdParams>, res: Response) {
@@ -12,7 +12,7 @@ export async function update(req: Request<IdParams>, res: Response) {
 }
 
 export async function show(req: Request<IdParams>, res: Response) {
-  res.json(await videoService.getVideo(req.params.id));
+  res.json(await videoService.getVideo(req.params.id, req.user));
 }
 
 export async function store(req: Request, res: Response) {

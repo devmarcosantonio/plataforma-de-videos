@@ -79,6 +79,9 @@ const ptBR = {
   // Seguir
   CANNOT_FOLLOW_SELF: 'Você não pode seguir a si mesmo',
   FOLLOWING_LIST_FORBIDDEN: 'Você só pode ver quem você segue',
+
+  // Histórico
+  POSITION_INVALID: 'Posição do vídeo inválida',
 } as const;
 
 export type MessageCode = keyof typeof ptBR;
@@ -151,6 +154,8 @@ const en: Dictionary = {
 
   CANNOT_FOLLOW_SELF: 'You cannot follow yourself',
   FOLLOWING_LIST_FORBIDDEN: 'You can only see who you follow',
+
+  POSITION_INVALID: 'Invalid video position',
 };
 
 const es: Dictionary = {
@@ -220,6 +225,8 @@ const es: Dictionary = {
 
   CANNOT_FOLLOW_SELF: 'No puedes seguirte a ti mismo',
   FOLLOWING_LIST_FORBIDDEN: 'Solo puedes ver a quién sigues',
+
+  POSITION_INVALID: 'Posición del video no válida',
 };
 
 const dictionaries: Record<Locale, Dictionary> = { 'pt-BR': ptBR, en, es };

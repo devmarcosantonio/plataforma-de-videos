@@ -32,8 +32,10 @@ model User {
   videos    Video[]
   reactions Reaction[]
   comments  Comment[]
-  following Follow[]   @relation("Follower")
-  followers Follow[]   @relation("Followed")
+  following Follow[]       @relation("Follower")
+  followers Follow[]       @relation("Followed")
+  history   WatchHistory[]
+  settings  UserSettings?
 
   @@map("users")
 }
@@ -51,9 +53,10 @@ model Video {
   updated_at     DateTime    @updatedAt @db.Timestamptz(3)
 
   // Restrict: um usuário com vídeos não pode ser apagado sem antes tratar os vídeos no Bunny.
-  user      User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  user      User           @relation(fields: [user_id], references: [id], onDelete: Restrict)
   reactions Reaction[]
   comments  Comment[]
+  history   WatchHistory[]
 
   // (user_id, created_at): vídeos de um canal e feed "Seguindo", já ordenados.
   @@index([user_id, created_at])
@@ -119,4 +122,37 @@ model Follow {
   @@id([follower_id, followed_id])
   @@index([followed_id, created_at])
   @@map("follows")
+}
+
+// Histórico: uma linha por usuário/vídeo, atualizada enquanto a pessoa assiste.
+model WatchHistory {
+  user_id          String   @db.Uuid
+  video_id         String   @db.Uuid
+  // Onde parou, em segundos (para "continuar de onde parei").
+  position_seconds Int      @default(0)
+  // Passou de ~90% do vídeo.
+  completed        Boolean  @default(false)
+  // Quantas vezes abriu o vídeo (nova sessão após 30 min sem assistir).
+  watch_count      Int      @default(1)
+  first_watched_at DateTime @default(now()) @db.Timestamptz(3)
+  last_watched_at  DateTime @default(now()) @db.Timestamptz(3)
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [video_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, video_id])
+  @@index([user_id, last_watched_at(sort: Desc)])
+  @@map("watch_history")
+}
+
+// Preferências do usuário (criada só quando ele muda algo; sem linha = padrões).
+model UserSettings {
+  user_id        String   @id @db.Uuid
+  // "Não salvar o que eu assisto".
+  history_paused Boolean  @default(false)
+  updated_at     DateTime @updatedAt @db.Timestamptz(3)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
 }

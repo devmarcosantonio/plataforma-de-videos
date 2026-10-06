@@ -3,6 +3,7 @@ import { UserModel, type User } from '../models/user.model.js';
 import { VideoModel, type VideoWithStats } from '../models/video.model.js';
 import { decodeCursor, encodeCursor } from '../utils/cursor.js';
 import { AppError } from '../utils/errors/app-error.js';
+import { withProgress } from './history.service.js';
 
 export interface Page<T> {
   items: T[];
@@ -48,12 +49,12 @@ export async function listFollowing(actor: User, userId: string, query: unknown)
   };
 }
 
-export async function feed(actor: User, query: unknown): Promise<Page<VideoWithStats>> {
+export async function feed(actor: User, query: unknown) {
   const { cursor, limit } = pageQuerySchema.parse(query);
   const page = await VideoModel.findFeedWithStats(actor.id, cursor ? decodeCursor(cursor) : undefined, limit);
   const last = page.items.at(-1);
   return {
-    items: page.items,
+    items: await withProgress(actor, page.items),
     next_cursor:
       page.hasMore && last ? encodeCursor({ created_at: last.created_at.toISOString(), id: last.id }) : null,
   };

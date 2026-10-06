@@ -253,5 +253,37 @@
     "notFound": "Página não encontrada",
     "notFoundHint": "O conteúdo pode ter sido removido.",
     "backHome": "Voltar ao início"
+  },
+  "history": {
+    "title": "Histórico",
+    "empty": "Nenhum vídeo no histórico",
+    "emptyHint": "Os vídeos que você assistir aparecem aqui.",
+    "groups": {
+      "today": "Hoje",
+      "yesterday": "Ontem",
+      "thisWeek": "Esta semana",
+      "older": "Mais antigos"
+    },
+    "watched": "Assistido <time></time>",
+    "remove": "Remover do histórico",
+    "removed": "Removido do histórico.",
+    "clear": "Limpar histórico",
+    "clearTitle": "Limpar todo o histórico?",
+    "clearDescription": "Todos os vídeos serão removidos do seu histórico. Essa ação não pode ser desfeita.",
+    "cleared": "Histórico limpo.",
+    "pause": "Pausar histórico",
+    "pauseHint": "Enquanto pausado, o que você assistir não é salvo.",
+    "paused": "Histórico pausado.",
+    "resumed": "Histórico retomado.",
+    "pausedBanner": "O histórico está pausado: novos vídeos não são salvos.",
+    "continueWatching": "Continuar assistindo",
+    "resumeFrom": "Continuando de {time}",
+    "startOver": "Começar do início",
+    "errors": {
+      "remove": "Não foi possível remover do histórico.",
+      "clear": "Não foi possível limpar o histórico.",
+      "settings": "Não foi possível salvar a preferência.",
+      "loadMore": "Não foi possível carregar mais itens."
+    }
   }
 }

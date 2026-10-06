@@ -18,6 +18,7 @@ import {
   type VideoWithStats,
 } from '../models/video.model.js';
 import { AppError } from '../utils/errors/app-error.js';
+import { withProgress } from './history.service.js';
 
 function toVideoStatus(status: BunnyVideoStatus): VideoStatus {
   switch (status) {
@@ -95,9 +96,9 @@ export async function importVideo(actor: User, input: unknown): Promise<Video> {
   });
 }
 
-export async function listVideos(query: unknown): Promise<VideoWithStats[]> {
+export async function listVideos(actor: User | undefined, query: unknown) {
   const { user_id } = listVideosQuerySchema.parse(query);
-  return VideoModel.findAllWithStats(user_id ? { user_id } : {});
+  return withProgress(actor, await VideoModel.findAllWithStats(user_id ? { user_id } : {}));
 }
 
 async function findOwnedOrFail(id: string, actor: User): Promise<Video> {
@@ -125,10 +126,11 @@ export async function updateVideo(actor: User, id: string, input: unknown): Prom
   return getVideo(video.id);
 }
 
-export async function getVideo(id: string): Promise<VideoWithStats> {
+export async function getVideo(id: string, actor?: User) {
   const video = await VideoModel.findByIdWithStats(id);
   if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
-  return video;
+  const [withUserProgress] = await withProgress(actor, [video]);
+  return withUserProgress;
 }
 
 export async function getUploadCredentials(actor: User, id: string): Promise<BunnyUploadCredentials> {

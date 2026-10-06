@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { validateIdParam } from '../utils/validate-id.js';
 import * as commentController from '../controllers/comment.controller.js';
+import * as historyController from '../controllers/history.controller.js';
 import * as reactionController from '../controllers/reaction.controller.js';
 import * as videoController from '../controllers/video.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
@@ -27,5 +28,9 @@ router.put('/:id/reaction', requireAuth, reactionController.update);
 router.delete('/:id/reaction', requireAuth, reactionController.destroy);
 
 router.post('/:id/comments', requireAuth, commentController.store);
+
+// Progresso para o histórico. POST porque o navigator.sendBeacon (ao fechar a aba) só envia POST.
+router.get('/:id/progress', requireAuth, historyController.getProgress);
+router.post('/:id/progress', requireAuth, historyController.saveProgress);
 
 export default router;

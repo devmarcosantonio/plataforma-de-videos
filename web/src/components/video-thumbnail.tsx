@@ -13,6 +13,15 @@ export function VideoThumbnail({ video, sizes, className }: { video: Video; size
   const t = useTranslations("video.status");
   const [failed, setFailed] = useState(false);
   const duration = formatDuration(video.duration);
+  const progress = video.watch_progress;
+  // Fração assistida (0 a 1): concluído = barra cheia.
+  const watched = !progress
+    ? 0
+    : progress.completed
+      ? 1
+      : video.duration
+        ? Math.min(progress.position_seconds / video.duration, 1)
+        : 0;
 
   return (
     <div className={cn("relative aspect-video overflow-hidden rounded-xl bg-muted", className)}>
@@ -51,9 +60,21 @@ export function VideoThumbnail({ video, sizes, className }: { video: Video; size
       )}
 
       {duration && (
-        <span className="absolute bottom-2 right-2 rounded-md bg-black/75 px-1.5 py-0.5 font-mono text-xs text-white backdrop-blur">
+        <span
+          className={cn(
+            "absolute right-2 rounded-md bg-black/75 px-1.5 py-0.5 font-mono text-xs text-white backdrop-blur",
+            watched > 0 ? "bottom-3" : "bottom-2",
+          )}
+        >
           {duration}
         </span>
+      )}
+
+      {/* Quanto do vídeo o usuário logado já assistiu. */}
+      {watched > 0 && (
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-white/30" aria-hidden>
+          <div className="h-full bg-primary" style={{ width: `${watched * 100}%` }} />
+        </div>
       )}
     </div>
   );

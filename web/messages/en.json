@@ -253,5 +253,37 @@
     "notFound": "Page not found",
     "notFoundHint": "The content may have been removed.",
     "backHome": "Back to home"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No videos in your history",
+    "emptyHint": "Videos you watch will show up here.",
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This week",
+      "older": "Older"
+    },
+    "watched": "Watched <time></time>",
+    "remove": "Remove from history",
+    "removed": "Removed from history.",
+    "clear": "Clear history",
+    "clearTitle": "Clear your entire history?",
+    "clearDescription": "All videos will be removed from your history. This action cannot be undone.",
+    "cleared": "History cleared.",
+    "pause": "Pause history",
+    "pauseHint": "While paused, what you watch is not saved.",
+    "paused": "History paused.",
+    "resumed": "History resumed.",
+    "pausedBanner": "History is paused: new videos are not being saved.",
+    "continueWatching": "Continue watching",
+    "resumeFrom": "Resuming from {time}",
+    "startOver": "Start over",
+    "errors": {
+      "remove": "Could not remove from history.",
+      "clear": "Could not clear your history.",
+      "settings": "Could not save your preference.",
+      "loadMore": "Could not load more items."
+    }
   }
 }

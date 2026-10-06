@@ -17,13 +17,13 @@ type NavKey = "home" | "following" | "studio" | "upload" | "explore" | "history"
 const MAIN: NavItem[] = [
   { href: "/", label: "home", icon: Home },
   { href: "/following", label: "following", icon: Users, requiresLogin: true },
+  { href: "/history", label: "history", icon: History, requiresLogin: true },
   { href: "/studio", label: "studio", icon: MonitorPlay, requiresLogin: true },
   { href: "/upload", label: "upload", icon: Upload, requiresLogin: true },
 ];
 
 const SOON: NavItem[] = [
   { href: "#", label: "explore", icon: Compass },
-  { href: "#", label: "history", icon: History },
   { href: "#", label: "playlists", icon: ListVideo },
 ];
 
