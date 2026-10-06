@@ -13,7 +13,7 @@ export const pageQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 
-const publicUser = { select: { id: true, username: true, name: true, last_name: true } } as const;
+const publicUser = { select: { id: true, username: true, display_name: true } } as const;
 
 const byKey = (followerId: string, followedId: string) => ({
   follower_id_followed_id: { follower_id: followerId, followed_id: followedId },

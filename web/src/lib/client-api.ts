@@ -8,7 +8,11 @@ type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 async function request<T>(method: Method, path: string, body?: unknown): Promise<T> {
   const response = await fetch(`/api${path}`, {
     method,
-    headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+    headers: {
+      // Idioma da página (<html lang>): a API devolve os erros já traduzidos.
+      "Accept-Language": document.documentElement.lang || "pt-BR",
+      ...(body !== undefined && { "Content-Type": "application/json" }),
+    },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 

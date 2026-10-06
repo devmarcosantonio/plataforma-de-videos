@@ -13,7 +13,7 @@ export interface ReactionStatus {
 
 // Quem reage é sempre o usuário autenticado.
 export const setReactionSchema = z.object({
-  type: z.enum(['like', 'dislike'], { error: 'type deve ser "like" ou "dislike"' }),
+  type: z.enum(['like', 'dislike'], { error: 'REACTION_TYPE_INVALID' }),
 });
 
 const byKey = (userId: string, videoId: string) => ({

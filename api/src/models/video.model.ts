@@ -4,37 +4,37 @@ import type { Prisma, Video, VideoStatus } from '../generated/prisma/client.js';
 import type { CursorPosition } from '../utils/cursor.js';
 
 export type { Video, VideoStatus };
-export type VideoAuthor = { id: string; username: string; name: string; last_name: string };
+export type VideoAuthor = { id: string; username: string; display_name: string };
 export type VideoWithStats = Video & { likes_count: number; comments_count: number; author: VideoAuthor };
 
 // O dono do vídeo é sempre o usuário autenticado (não vem no corpo da requisição).
 export const createVideoSchema = z.object({
-  title: z.string({ error: 'O título é obrigatório' }).trim().min(1, 'O título é obrigatório').max(200),
-  description: z.string().trim().max(5000).optional(),
+  title: z.string({ error: 'TITLE_REQUIRED' }).trim().min(1, 'TITLE_REQUIRED').max(200, 'TITLE_TOO_LONG'),
+  description: z.string().trim().max(5000, 'DESCRIPTION_TOO_LONG').optional(),
 });
 
 export const importVideoSchema = z.object({
-  bunny_video_id: z.string({ error: 'bunny_video_id é obrigatório' }).trim().min(1, 'bunny_video_id é obrigatório'),
+  bunny_video_id: z.string({ error: 'BUNNY_VIDEO_ID_REQUIRED' }).trim().min(1, 'BUNNY_VIDEO_ID_REQUIRED'),
 });
 
 export const updateVideoSchema = z
   .object({
-    title: z.string().trim().min(1, 'O título não pode ficar vazio').max(200, 'O título pode ter no máximo 200 caracteres').optional(),
+    title: z.string().trim().min(1, 'TITLE_EMPTY').max(200, 'TITLE_TOO_LONG').optional(),
     // String vazia apaga a descrição.
-    description: z.string().trim().max(5000, 'A descrição pode ter no máximo 5000 caracteres').optional(),
+    description: z.string().trim().max(5000, 'DESCRIPTION_TOO_LONG').optional(),
   })
   .refine((data) => data.title !== undefined || data.description !== undefined, {
-    message: 'Informe o título ou a descrição',
+    message: 'VIDEO_UPDATE_EMPTY',
   });
 
-export const listVideosQuerySchema = z.object({ user_id: z.uuid('user_id inválido').optional() });
+export const listVideosQuerySchema = z.object({ user_id: z.uuid('INVALID_ID').optional() });
 
 export type CreateVideoInput = z.infer<typeof createVideoSchema>;
 
 // Autor (dados públicos) e contagens calculadas pelo banco junto com o vídeo.
 // Só likes são públicos; comentários removidos não contam.
 const statsInclude = {
-  user: { select: { id: true, username: true, name: true, last_name: true } },
+  user: { select: { id: true, username: true, display_name: true } },
   _count: {
     select: {
       reactions: { where: { type: 'like' } },

@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Upload as TusUpload } from "tus-js-client";
 import { FileVideo, Loader2, Play, UploadCloud, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import { Link } from "@/i18n/navigation";
 import { errorMessage, postJson } from "@/lib/client-api";
 import type { UploadCredentials, Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,8 @@ type Phase =
 
 // O vídeo é sempre publicado pela conta logada (a página exige login).
 export function UploadForm() {
+  const t = useTranslations("upload");
+  const tc = useTranslations("common");
   const [file, setFile] = useState<File | null>(null);
   const [phase, setPhase] = useState<Phase>({ name: "idle" });
   const uploadRef = useRef<TusUpload | null>(null);
@@ -51,7 +54,7 @@ export function UploadForm() {
     } catch (error) {
       setPhase({ name: "idle" });
       if (uploadRef.current === null) return; // cancelado pelo usuário
-      toast.error(errorMessage(error, "Falha no envio. Tente novamente."));
+      toast.error(errorMessage(error, t("error")));
     }
   }
 
@@ -75,7 +78,7 @@ export function UploadForm() {
     uploadRef.current?.abort(true);
     uploadRef.current = null;
     setPhase({ name: "idle" });
-    toast.info("Envio cancelado.");
+    toast.info(t("cancelled"));
   }
 
   return (
@@ -97,11 +100,11 @@ export function UploadForm() {
             <Card>
               <CardContent className="flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="title">Título</Label>
+                  <Label htmlFor="title">{t("videoTitle")}</Label>
                   <Input id="title" name="title" required maxLength={200} disabled={busy} className="h-11" />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="description">Descrição</Label>
+                  <Label htmlFor="description">{t("description")}</Label>
                   <Textarea id="description" name="description" rows={4} maxLength={5000} disabled={busy} />
                 </div>
               </CardContent>
@@ -118,7 +121,7 @@ export function UploadForm() {
                   <div className="flex justify-between text-sm">
                     <span className="flex items-center gap-2">
                       <Loader2 className="size-4 animate-spin text-primary" />
-                      Enviando…
+                      {t("uploading")}
                     </span>
                     <span className="font-mono tabular-nums">{phase.progress}%</span>
                   </div>
@@ -130,12 +133,12 @@ export function UploadForm() {
             <div className="flex justify-end gap-3">
               {phase.name === "uploading" && (
                 <Button type="button" variant="ghost" className="rounded-full" onClick={cancel}>
-                  Cancelar
+                  {tc("cancel")}
                 </Button>
               )}
               <Button type="submit" size="lg" className="rounded-full px-6" disabled={busy || !file}>
                 {busy ? <Loader2 className="animate-spin" /> : <UploadCloud />}
-                {phase.name === "creating" ? "Preparando…" : "Enviar"}
+                {phase.name === "creating" ? t("preparing") : t("submit")}
               </Button>
             </div>
           </form>
@@ -146,6 +149,7 @@ export function UploadForm() {
 }
 
 function SuccessCard({ videoId }: { videoId: string }) {
+  const t = useTranslations("upload");
   return (
     <Card className="mt-8 items-center py-12 text-center">
       <CardContent className="flex flex-col items-center gap-3">
@@ -171,14 +175,14 @@ function SuccessCard({ videoId }: { videoId: string }) {
             transition={{ duration: 0.35, delay: 0.45, ease: "easeOut" }}
           />
         </motion.svg>
-        <h2 className="text-xl font-semibold">Vídeo enviado!</h2>
+        <h2 className="text-xl font-semibold">{t("done")}</h2>
         <p className="max-w-sm text-sm text-muted-foreground">
-          Agora ele está sendo processado. Isso pode levar alguns minutos.
+          {t("doneHint")}
         </p>
         <Button asChild className="mt-2 rounded-full px-5">
           <Link href={`/watch/${videoId}`}>
             <Play />
-            Ver vídeo
+            {t("watch")}
           </Link>
         </Button>
       </CardContent>
@@ -195,6 +199,7 @@ function FilePicker({
   onChange: (file: File | null) => void;
   disabled: boolean;
 }) {
+  const t = useTranslations("upload");
   const [dragging, setDragging] = useState(false);
 
   return (
@@ -215,7 +220,7 @@ function FilePicker({
             <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
           </div>
           {!disabled && (
-            <Button type="button" variant="ghost" size="icon" className="rounded-full" onClick={() => onChange(null)} aria-label="Remover arquivo">
+            <Button type="button" variant="ghost" size="icon" className="rounded-full" onClick={() => onChange(null)} aria-label={t("removeFile")}>
               <X />
             </Button>
           )}
@@ -238,7 +243,7 @@ function FilePicker({
             setDragging(false);
             const dropped = event.dataTransfer.files[0];
             if (dropped?.type.startsWith("video/")) onChange(dropped);
-            else toast.error("Escolha um arquivo de vídeo.");
+            else toast.error(t("notVideo"));
           }}
           className={cn(
             "flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed p-12 text-center transition-colors",
@@ -252,8 +257,8 @@ function FilePicker({
           >
             <UploadCloud className="size-7" />
           </motion.span>
-          <span className="font-medium">Arraste um vídeo ou clique para escolher</span>
-          <span className="text-xs text-muted-foreground">MP4, MOV, MKV, WebM…</span>
+          <span className="font-medium">{t("dropzone")}</span>
+          <span className="text-xs text-muted-foreground">{t("formats")}</span>
           <input
             type="file"
             accept="video/*"

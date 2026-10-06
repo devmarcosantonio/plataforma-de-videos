@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { AlertTriangle, Loader2, UploadCloud } from "lucide-react";
 import { CommentSection } from "@/components/comments/comment-section";
 import { FadeIn } from "@/components/fade-in";
@@ -10,19 +10,22 @@ import { SyncButton } from "@/components/sync-button";
 import { UserAvatar } from "@/components/user-avatar";
 import { VideoListItem } from "@/components/video-card";
 import { VideoDescription } from "@/components/video-description";
+import { Link } from "@/i18n/navigation";
 import { getComments, getPlayback, getProfile, getReactionStatus, getVideo, getVideos } from "@/lib/api";
 import { getSession } from "@/lib/auth";
-import { channelHref, handle, STATUS_LABEL, timeAgo } from "@/lib/format";
+import { channelHref, handle } from "@/lib/format";
 import type { Video } from "@/lib/types";
 
-export async function generateMetadata({ params }: PageProps<"/watch/[id]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[locale]/watch/[id]">): Promise<Metadata> {
   const { id } = await params;
   const video = await getVideo(id);
-  return { title: video?.title ?? "Vídeo" };
+  // Título do vídeo é conteúdo do usuário: fica no idioma em que foi escrito.
+  return { title: video?.title ?? "404" };
 }
 
-export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
+export default async function WatchPage({ params }: PageProps<"/[locale]/watch/[id]">) {
   const { id } = await params;
+  const t = await getTranslations("video");
 
   const [video, videos, session, reactionStatus, comments] = await Promise.all([
     getVideo(id),
@@ -64,7 +67,7 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <FollowProvider
               // Remonta ao entrar/sair para refletir se o usuário segue o autor.
-              key={session?.id ?? "visitante"}
+              key={`follow-${session?.id ?? "visitante"}`}
               userId={author.id}
               initial={{
                 following: authorProfile?.is_following ?? false,
@@ -84,7 +87,7 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
             </FollowProvider>
             <ReactionButtons
               // Remonta ao entrar/sair para refletir a reação do usuário.
-              key={session?.id ?? "visitante"}
+              key={`reaction-${session?.id ?? "visitante"}`}
               videoId={video.id}
               initial={reactionStatus ?? { reaction: null, likes_count: video.likes_count }}
               loggedIn={!!session}
@@ -94,13 +97,13 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
         </FadeIn>
 
         <FadeIn delay={0.1} className="mt-4">
-          <VideoDescription description={video.description} publishedLabel={`Publicado ${timeAgo(video.created_at)}`} />
+          <VideoDescription description={video.description} publishedAt={video.created_at} />
         </FadeIn>
 
         <FadeIn delay={0.15}>
           <CommentSection
             // Remonta ao entrar/sair para atualizar as ações disponíveis.
-            key={session?.id ?? "visitante"}
+            key={`comments-${session?.id ?? "visitante"}`}
             videoId={video.id}
             videoOwnerId={video.user_id}
             currentUser={session}
@@ -112,9 +115,9 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
       </div>
 
       <aside>
-        <h2 className="mb-3 px-1.5 text-sm font-medium text-muted-foreground">Outros vídeos</h2>
+        <h2 className="mb-3 px-1.5 text-sm font-medium text-muted-foreground">{t("otherVideos")}</h2>
         {others.length === 0 ? (
-          <p className="px-1.5 text-sm text-muted-foreground">Nenhum outro vídeo ainda.</p>
+          <p className="px-1.5 text-sm text-muted-foreground">{t("noOtherVideos")}</p>
         ) : (
           <div className="flex flex-col gap-1">
             {others.map((other, index) => (
@@ -127,28 +130,20 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
   );
 }
 
-function PlayerPlaceholder({ video, canSync }: { video: Video; canSync: boolean }) {
-  const content = {
-    pending_upload: {
-      icon: <UploadCloud className="size-8" />,
-      text: "O arquivo deste vídeo ainda não foi enviado.",
-    },
-    processing: {
-      icon: <Loader2 className="size-8 animate-spin" />,
-      text: "O vídeo está sendo processado. Isso pode levar alguns minutos.",
-    },
-    failed: {
-      icon: <AlertTriangle className="size-8 text-destructive" />,
-      text: "O processamento deste vídeo falhou.",
-    },
-    ready: { icon: null, text: "" },
+async function PlayerPlaceholder({ video, canSync }: { video: Video; canSync: boolean }) {
+  const t = await getTranslations("video");
+  const icon = {
+    pending_upload: <UploadCloud className="size-8" />,
+    processing: <Loader2 className="size-8 animate-spin" />,
+    failed: <AlertTriangle className="size-8 text-destructive" />,
+    ready: null,
   }[video.status];
 
   return (
     <div className="flex size-full flex-col items-center justify-center gap-3 bg-linear-to-br from-black via-zinc-900 to-primary/30 p-6 text-center text-white/80">
-      {content.icon}
-      <p className="font-medium text-white">{STATUS_LABEL[video.status]}</p>
-      <p className="max-w-sm text-sm">{content.text}</p>
+      {icon}
+      <p className="font-medium text-white">{t(`status.${video.status}`)}</p>
+      {video.status !== "ready" && <p className="max-w-sm text-sm">{t(`player.${video.status}`)}</p>}
       {/* Só o dono pode forçar a verificação no Bunny. */}
       {canSync && video.status !== "failed" && <SyncButton videoId={video.id} />}
     </div>

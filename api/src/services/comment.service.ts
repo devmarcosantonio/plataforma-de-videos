@@ -19,7 +19,7 @@ export interface PublicComment {
   created_at: Date;
   edited_at: Date | null;
   deleted: boolean;
-  author: { id: string; username: string; name: string; last_name: string } | null;
+  author: { id: string; username: string; display_name: string } | null;
   replies_count: number;
 }
 
@@ -54,13 +54,13 @@ function toPage(result: { items: CommentWithRelations[]; hasMore: boolean }): Co
 
 async function findVideoOrFail(videoId: string) {
   const video = await VideoModel.findById(videoId);
-  if (!video) throw new AppError('Vídeo não encontrado', 404);
+  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
   return video;
 }
 
 async function findCommentOrFail(id: string): Promise<Comment> {
   const comment = await CommentModel.findById(id);
-  if (!comment) throw new AppError('Comentário não encontrado', 404);
+  if (!comment) throw new AppError('COMMENT_NOT_FOUND', 404);
   return comment;
 }
 
@@ -73,7 +73,7 @@ export async function listComments(videoId: string, query: unknown): Promise<Com
 export async function listReplies(commentId: string, query: unknown): Promise<CommentPage> {
   const { cursor, limit } = listCommentsQuerySchema.parse(query);
   const comment = await findCommentOrFail(commentId);
-  if (comment.parent_id !== null) throw new AppError('Respostas não têm respostas próprias');
+  if (comment.parent_id !== null) throw new AppError('REPLY_TO_REPLY_NOT_ALLOWED');
   return toPage(await CommentModel.listReplies(commentId, cursor ? decodeCursor(cursor) : undefined, limit));
 }
 
@@ -81,13 +81,13 @@ export async function createComment(actor: User, videoId: string, input: unknown
   const data = createCommentSchema.parse(input);
 
   const video = await findVideoOrFail(videoId);
-  if (video.status !== 'ready') throw new AppError('Só é possível comentar em vídeos prontos', 409);
+  if (video.status !== 'ready') throw new AppError('COMMENT_VIDEO_NOT_READY', 409);
 
   let parentId: string | null = null;
   if (data.parent_id) {
     const parent = await findCommentOrFail(data.parent_id);
-    if (parent.video_id !== videoId) throw new AppError('O comentário respondido é de outro vídeo');
-    if (parent.deleted_at) throw new AppError('Não é possível responder um comentário removido', 409);
+    if (parent.video_id !== videoId) throw new AppError('PARENT_COMMENT_OTHER_VIDEO');
+    if (parent.deleted_at) throw new AppError('PARENT_COMMENT_DELETED', 409);
     // Só um nível de respostas: responder uma resposta entra na mesma conversa.
     parentId = parent.parent_id ?? parent.id;
   }
@@ -105,8 +105,8 @@ export async function updateComment(actor: User, commentId: string, input: unkno
   const data = updateCommentSchema.parse(input);
   const comment = await findCommentOrFail(commentId);
 
-  if (comment.deleted_at) throw new AppError('Comentário não encontrado', 404);
-  if (comment.user_id !== actor.id) throw new AppError('Só o autor pode editar o comentário', 403);
+  if (comment.deleted_at) throw new AppError('COMMENT_NOT_FOUND', 404);
+  if (comment.user_id !== actor.id) throw new AppError('COMMENT_AUTHOR_ONLY', 403);
 
   const updated = await CommentModel.update(comment.id, { content: data.content, edited_at: new Date() });
   return toPublic(updated);
@@ -120,7 +120,7 @@ export async function deleteComment(actor: User, commentId: string): Promise<voi
   const isAuthor = comment.user_id === actor.id;
   const isVideoOwner = video?.user_id === actor.id;
   if (!isAuthor && !isVideoOwner) {
-    throw new AppError('Só o autor ou o dono do vídeo podem remover o comentário', 403);
+    throw new AppError('COMMENT_DELETE_FORBIDDEN', 403);
   }
 
   await CommentModel.remove(comment);

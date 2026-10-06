@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, Loader2, MoreVertical, Pencil, Reply, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -23,10 +23,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Link } from "@/i18n/navigation";
 import { errorMessage, getJson, sendJson } from "@/lib/client-api";
-import { channelHref, fullName, handle, timeAgo } from "@/lib/format";
+import { channelHref, displayName, handle } from "@/lib/format";
 import type { Comment, CommentPage, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TimeAgo } from "../time-ago";
 import { UserAvatar } from "../user-avatar";
 import { CommentForm } from "./comment-form";
 
@@ -54,6 +56,8 @@ type Props = {
 
 // Um comentário principal com suas respostas (só um nível).
 export function CommentThread({ initial, ctx, onRemoved }: Props) {
+  const t = useTranslations("comments");
+  const tc = useTranslations("common");
   const [comment, setComment] = useState(initial);
   const [replies, setReplies] = useState<Comment[]>([]);
   const [replyCount, setReplyCount] = useState(initial.replies_count);
@@ -71,7 +75,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
       setNextCursor(page.next_cursor);
       setExpanded(true);
     } catch (error) {
-      toast.error(errorMessage(error, "Não foi possível carregar as respostas."));
+      toast.error(errorMessage(error, t("errors.loadReplies")));
     } finally {
       setLoadingReplies(false);
     }
@@ -97,7 +101,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
       if (expanded) setReplies((current) => [...current, created]);
       else await loadReplies();
     } catch (error) {
-      toast.error(errorMessage(error, "Não foi possível enviar a resposta."));
+      toast.error(errorMessage(error, t("errors.reply")));
       throw error;
     }
   }
@@ -108,9 +112,9 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
       const updated = await sendJson<Comment>("PATCH", `/comments/${target.id}`, { content });
       if (target.id === comment.id) setComment(updated);
       else setReplies((current) => current.map((r) => (r.id === updated.id ? updated : r)));
-      toast.success("Comentário editado.");
+      toast.success(t("editedToast"));
     } catch (error) {
-      toast.error(errorMessage(error, "Não foi possível editar o comentário."));
+      toast.error(errorMessage(error, t("errors.edit")));
       throw error;
     }
   }
@@ -120,7 +124,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
     try {
       await sendJson<void>("DELETE", `/comments/${target.id}`, {});
       ctx.onCountChange(-1);
-      toast.success("Comentário removido.");
+      toast.success(t("removedToast"));
 
       if (target.id === comment.id) {
         // Mesmo comportamento da API: com respostas vira "removido", sem respostas some.
@@ -134,7 +138,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
       setReplyCount(remaining);
       if (comment.deleted && remaining === 0) onRemoved(comment.id);
     } catch (error) {
-      toast.error(errorMessage(error, "Não foi possível remover o comentário."));
+      toast.error(errorMessage(error, t("errors.remove")));
     }
   }
 
@@ -156,8 +160,8 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
                 user={ctx.currentUser}
                 compact
                 autoFocus
-                placeholder="Escreva uma resposta…"
-                submitLabel="Responder"
+                placeholder={t("replyPlaceholder")}
+                submitLabel={t("reply")}
                 initialValue={replyingTo.id !== comment.id && replyingTo.author ? `${handle(replyingTo.author)} ` : ""}
                 onSubmit={reply}
                 onCancel={() => setReplyingTo(null)}
@@ -178,7 +182,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
             ) : (
               <ChevronDown className={cn("transition-transform duration-200", expanded && "rotate-180")} />
             )}
-            {replyCount} resposta{replyCount > 1 && "s"}
+            {t("replies", { count: replyCount })}
           </Button>
         )}
 
@@ -206,7 +210,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
             disabled={loadingReplies}
             className="w-fit px-0"
           >
-            {loadingReplies ? "Carregando…" : "Mostrar mais respostas"}
+            {loadingReplies ? tc("loading") : t("moreReplies")}
           </Button>
         )}
       </div>
@@ -224,6 +228,8 @@ type ItemProps = {
 };
 
 function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemProps) {
+  const t = useTranslations("comments");
+  const tc = useTranslations("common");
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const me = ctx.currentUser;
@@ -232,7 +238,7 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
     return (
       <div className="flex items-center gap-3">
         <UserAvatar user={null} size={compact ? "sm" : "default"} />
-        <p className="text-sm italic text-muted-foreground">Comentário removido</p>
+        <p className="text-sm italic text-muted-foreground">{t("removed")}</p>
       </div>
     );
   }
@@ -244,8 +250,8 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
         compact={compact}
         autoFocus
         initialValue={comment.content ?? ""}
-        placeholder="Editar comentário"
-        submitLabel="Salvar"
+        placeholder={t("editPlaceholder")}
+        submitLabel={tc("save")}
         onSubmit={async (content) => {
           await onEdit(content);
           setEditing(false);
@@ -271,27 +277,27 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
         <p className="flex flex-wrap items-center gap-x-2 text-sm">
           {comment.author ? (
             <Link href={channelHref(comment.author)} className="font-medium hover:text-primary">
-              {fullName(comment.author)}
+              {displayName(comment.author, tc("unknownUser"))}
             </Link>
           ) : (
-            <span className="font-medium">{fullName(comment.author)}</span>
+            <span className="font-medium">{displayName(comment.author, tc("unknownUser"))}</span>
           )}
           {comment.author && <span className="text-xs text-muted-foreground">{handle(comment.author)}</span>}
           {comment.author?.id === ctx.videoOwnerId && (
             <Badge variant="secondary" className="bg-primary/15 text-primary">
-              Autor
+              {t("author")}
             </Badge>
           )}
           <span className="text-xs text-muted-foreground">
-            {timeAgo(comment.created_at)}
-            {comment.edited_at && " (editado)"}
+            <TimeAgo date={comment.created_at} />
+            {comment.edited_at && ` ${t("edited")}`}
           </span>
         </p>
         <p className="mt-1 whitespace-pre-line wrap-break-word text-sm">{comment.content}</p>
         {me && ctx.canComment && (
           <Button variant="ghost" size="xs" className="-ml-2 mt-1 rounded-full text-muted-foreground" onClick={onReply}>
             <Reply />
-            Responder
+            {t("reply")}
           </Button>
         )}
       </div>
@@ -302,7 +308,7 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
             <Button
               variant="ghost"
               size="icon-sm"
-              aria-label="Ações do comentário"
+              aria-label={t("actions")}
               className="rounded-full opacity-0 transition-opacity group-hover/comment:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
             >
               <MoreVertical />
@@ -312,13 +318,13 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
             {isAuthor && (
               <DropdownMenuItem onSelect={() => setEditing(true)}>
                 <Pencil />
-                Editar
+                {tc("edit")}
               </DropdownMenuItem>
             )}
             {canRemove && (
               <DropdownMenuItem variant="destructive" onSelect={() => setConfirming(true)}>
                 <Trash2 />
-                Remover
+                {tc("remove")}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -328,17 +334,17 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
       <AlertDialog open={confirming} onOpenChange={setConfirming}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remover comentário?</AlertDialogTitle>
+            <AlertDialogTitle>{t("removeTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
               {comment.replies_count > 0
-                ? "Ele tem respostas, então ficará como “Comentário removido” para não quebrar a conversa."
-                : "Essa ação não pode ser desfeita."}
+                ? t("removeWithReplies")
+                : t("removeIrreversible")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{tc("cancel")}</AlertDialogCancel>
             <AlertDialogAction variant="destructive" onClick={onRemove}>
-              Remover
+              {tc("remove")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

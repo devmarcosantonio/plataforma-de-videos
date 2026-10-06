@@ -1,15 +1,17 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from './generated/prisma/client.js';
+import { isMessageCode, translate, type MessageCode } from './i18n/messages.js';
 import { authenticate } from './middlewares/auth.middleware.js';
+import { detectLocale } from './middlewares/locale.middleware.js';
 import { AppError } from './utils/errors/app-error.js';
 import routes from './routes/index.js';
 import webhookRoutes from './routes/webhook.routes.js';
 
-const PRISMA_ERRORS: Record<string, { status: number; message: string }> = {
-  P2002: { status: 409, message: 'Registro duplicado' },
-  P2003: { status: 409, message: 'Operação viola um relacionamento existente' },
-  P2025: { status: 404, message: 'Registro não encontrado' },
+const PRISMA_ERRORS: Record<string, { status: number; code: MessageCode }> = {
+  P2002: { status: 409, code: 'DUPLICATE_RECORD' },
+  P2003: { status: 409, code: 'RELATION_CONFLICT' },
+  P2025: { status: 404, code: 'RECORD_NOT_FOUND' },
 };
 
 const app = express();
@@ -18,39 +20,46 @@ const app = express();
 app.use('/webhooks', webhookRoutes);
 
 app.use(express.json());
-// Identifica o usuário pelo token (cookie ou Authorization) em todas as rotas; quem bloqueia é o requireAuth.
+// Idioma das mensagens (Accept-Language) e usuário do token (cookie ou Authorization).
+// Quem bloqueia rotas é o requireAuth.
+app.use(detectLocale);
 app.use(authenticate);
 app.use(routes);
 
+// Formato padrão de erro: `code` estável para o cliente tratar + `error` traduzido para exibir.
+function sendError(req: Request, res: Response, status: number, code: MessageCode, extra: object = {}) {
+  res.status(status).json({ code, error: translate(req.locale, code), ...extra });
+}
+
 app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: 'Rota não encontrada' });
+  sendError(req, res, 404, 'ROUTE_NOT_FOUND');
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
-    res.status(400).json({
-      error: 'Dados inválidos',
-      details: err.issues.map((issue) => ({
-        field: issue.path.join('.'),
-        message: issue.message,
-      })),
+    sendError(req, res, 400, 'VALIDATION_ERROR', {
+      details: err.issues.map((issue) => {
+        // Os schemas usam códigos como mensagem; mensagens padrão do Zod viram INVALID_VALUE.
+        const code = isMessageCode(issue.message) ? issue.message : 'INVALID_VALUE';
+        return { field: issue.path.join('.'), code, message: translate(req.locale, code) };
+      }),
     });
     return;
   }
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({ error: err.message });
+    sendError(req, res, err.statusCode, err.code);
     return;
   }
   // Violações de restrição do banco que escaparam das validações (ex.: duas requisições simultâneas).
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     const known = PRISMA_ERRORS[err.code];
     if (known) {
-      res.status(known.status).json({ error: known.message });
+      sendError(req, res, known.status, known.code);
       return;
     }
   }
   console.error(err);
-  res.status(500).json({ error: 'Erro interno do servidor' });
+  sendError(req, res, 500, 'INTERNAL_ERROR');
 });
 
 export default app;

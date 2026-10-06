@@ -49,7 +49,7 @@ function fromBunny(bunnyVideo: BunnyVideo) {
 
 async function findOrFail(id: string): Promise<Video> {
   const video = await VideoModel.findById(id);
-  if (!video) throw new AppError('Vídeo não encontrado', 404);
+  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
   return video;
 }
 
@@ -81,11 +81,11 @@ export async function importVideo(actor: User, input: unknown): Promise<Video> {
   const data = importVideoSchema.parse(input);
 
   if (await VideoModel.findByBunnyId(data.bunny_video_id)) {
-    throw new AppError('Este vídeo já está cadastrado', 409);
+    throw new AppError('VIDEO_ALREADY_IMPORTED', 409);
   }
 
   const bunnyVideo = await bunnyClient.getVideo(data.bunny_video_id);
-  if (!bunnyVideo) throw new AppError('Vídeo não encontrado no Bunny', 404);
+  if (!bunnyVideo) throw new AppError('BUNNY_VIDEO_NOT_FOUND', 404);
 
   return VideoModel.create({
     user_id: actor.id,
@@ -102,7 +102,7 @@ export async function listVideos(query: unknown): Promise<VideoWithStats[]> {
 
 async function findOwnedOrFail(id: string, actor: User): Promise<Video> {
   const video = await findOrFail(id);
-  if (video.user_id !== actor.id) throw new AppError('Só o dono do vídeo pode fazer isso', 403);
+  if (video.user_id !== actor.id) throw new AppError('VIDEO_OWNER_ONLY', 403);
   return video;
 }
 
@@ -127,14 +127,14 @@ export async function updateVideo(actor: User, id: string, input: unknown): Prom
 
 export async function getVideo(id: string): Promise<VideoWithStats> {
   const video = await VideoModel.findByIdWithStats(id);
-  if (!video) throw new AppError('Vídeo não encontrado', 404);
+  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
   return video;
 }
 
 export async function getUploadCredentials(actor: User, id: string): Promise<BunnyUploadCredentials> {
   const video = await findOwnedOrFail(id, actor);
   if (video.status !== 'pending_upload') {
-    throw new AppError('Este vídeo já foi enviado', 409);
+    throw new AppError('VIDEO_ALREADY_UPLOADED', 409);
   }
   return createUploadCredentials(video.bunny_video_id);
 }
@@ -142,7 +142,7 @@ export async function getUploadCredentials(actor: User, id: string): Promise<Bun
 export async function getPlayback(id: string) {
   const video = await findOrFail(id);
   if (video.status !== 'ready') {
-    throw new AppError('O vídeo ainda não está pronto para reprodução', 409);
+    throw new AppError('VIDEO_NOT_READY', 409);
   }
 
   const embed = createEmbedUrl(video.bunny_video_id);

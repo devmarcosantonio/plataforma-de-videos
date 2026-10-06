@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ThumbsDown, ThumbsUp, type LucideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -30,16 +31,17 @@ function predict(state: ReactionStatus, next: ReactionType | null): ReactionStat
 }
 
 export function ReactionButtons({ videoId, initial, loggedIn, disabled }: Props) {
+  const t = useTranslations("reactions");
   const [state, setState] = useState(initial);
   const [pending, setPending] = useState(false);
   const goToLogin = useLoginRedirect();
 
-  const blockedReason = disabled ? "Só é possível reagir a vídeos prontos" : null;
+  const blockedReason = disabled ? t("notReady") : null;
 
   async function react(type: ReactionType) {
     // Visitante: o clique leva para o login e volta para este vídeo.
     if (!loggedIn) {
-      toast.info("Entre para reagir aos vídeos.");
+      toast.info(t("signInToReact"));
       goToLogin();
       return;
     }
@@ -60,7 +62,7 @@ export function ReactionButtons({ videoId, initial, loggedIn, disabled }: Props)
       setState(result);
     } catch (err) {
       setState(previous);
-      toast.error(errorMessage(err, "Não foi possível registrar a reação."));
+      toast.error(errorMessage(err, t("error")));
     } finally {
       setPending(false);
     }
@@ -71,7 +73,7 @@ export function ReactionButtons({ videoId, initial, loggedIn, disabled }: Props)
       <ReactionButton
         icon={ThumbsUp}
         active={state.reaction === "like"}
-        label={state.reaction === "like" ? "Remover gostei" : "Gostei"}
+        label={state.reaction === "like" ? t("removeLike") : t("like")}
         blockedReason={blockedReason}
         disabled={pending}
         onClick={() => react("like")}
@@ -82,7 +84,7 @@ export function ReactionButtons({ videoId, initial, loggedIn, disabled }: Props)
       <ReactionButton
         icon={ThumbsDown}
         active={state.reaction === "dislike"}
-        label={state.reaction === "dislike" ? "Remover não gostei" : "Não gostei"}
+        label={state.reaction === "dislike" ? t("removeDislike") : t("dislike")}
         blockedReason={blockedReason}
         disabled={pending}
         onClick={() => react("dislike")}

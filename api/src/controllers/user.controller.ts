@@ -17,7 +17,7 @@ export async function showByUsername(req: Request<{ username: string }>, res: Re
 }
 
 export async function usernameAvailable(req: Request, res: Response) {
-  res.json(await userService.checkUsernameAvailability(req.query));
+  res.json(await userService.checkUsernameAvailability(req.locale, req.query));
 }
 
 export async function update(req: Request<IdParams>, res: Response) {

@@ -1,3 +1,4 @@
+import { isMessageCode, translate, type Locale, type MessageCode } from '../i18n/messages.js';
 import { AppError } from '../utils/errors/app-error.js';
 import {
   UserModel,
@@ -11,7 +12,7 @@ import { deleteCommentsByUser } from './comment.service.js';
 import { profileStats } from './follow.service.js';
 
 // O que qualquer pessoa pode ver de um usuário (sem e-mail).
-export type PublicProfile = Pick<User, 'id' | 'username' | 'name' | 'last_name' | 'created_at'>;
+export type PublicProfile = Pick<User, 'id' | 'username' | 'display_name' | 'created_at'>;
 
 // O que o próprio usuário vê da conta dele (sem o hash da senha).
 export type PrivateUser = Omit<User, 'password_hash'>;
@@ -20,8 +21,7 @@ export function toPublicProfile(user: User): PublicProfile {
   return {
     id: user.id,
     username: user.username,
-    name: user.name,
-    last_name: user.last_name,
+    display_name: user.display_name,
     created_at: user.created_at,
   };
 }
@@ -31,7 +31,7 @@ export function toPrivate({ password_hash, ...user }: User): PrivateUser {
 }
 
 function ensureSelf(actor: User, id: string) {
-  if (actor.id !== id) throw new AppError('Você só pode alterar a sua própria conta', 403);
+  if (actor.id !== id) throw new AppError('ACCOUNT_FORBIDDEN', 403);
 }
 
 export async function listUsers(): Promise<PublicProfile[]> {
@@ -41,21 +41,22 @@ export async function listUsers(): Promise<PublicProfile[]> {
 
 export async function getUser(id: string): Promise<PublicProfile> {
   const user = await UserModel.findById(id);
-  if (!user) throw new AppError('Usuário não encontrado', 404);
+  if (!user) throw new AppError('USER_NOT_FOUND', 404);
   return toPublicProfile(user);
 }
 
 // Página do canal: perfil público + números (seguidores, seguindo, vídeos) + "is_following".
 export async function getUserByUsername(actor: User | undefined, username: string) {
   const user = await UserModel.findByUsername(username.trim().toLowerCase().replace(/^@/, ''));
-  if (!user) throw new AppError('Usuário não encontrado', 404);
+  if (!user) throw new AppError('USER_NOT_FOUND', 404);
   return { ...toPublicProfile(user), ...(await profileStats(actor, user.id)) };
 }
 
 // Para o formulário avisar enquanto a pessoa digita: formato inválido não é erro, é "indisponível".
 export async function checkUsernameAvailability(
+  locale: Locale,
   query: unknown,
-): Promise<{ username: string; available: boolean; message: string | null }> {
+): Promise<{ username: string; available: boolean; code: MessageCode | null; message: string | null }> {
   const raw = typeof (query as { username?: unknown })?.username === 'string'
     ? (query as { username: string }).username
     : '';
@@ -63,22 +64,24 @@ export async function checkUsernameAvailability(
   const username = raw.trim().toLowerCase();
 
   if (!parsed.success) {
-    return { username, available: false, message: parsed.error.issues[0].message };
+    const issue = parsed.error.issues[0].message;
+    const code = isMessageCode(issue) ? issue : 'INVALID_VALUE';
+    return { username, available: false, code, message: translate(locale, code) };
   }
   if (await UserModel.findByUsername(parsed.data)) {
-    return { username: parsed.data, available: false, message: 'Nome de usuário já está em uso' };
+    return { username: parsed.data, available: false, code: 'USERNAME_TAKEN', message: translate(locale, 'USERNAME_TAKEN') };
   }
-  return { username: parsed.data, available: true, message: null };
+  return { username: parsed.data, available: true, code: null, message: null };
 }
 
 async function ensureUniqueFields(data: { email?: string; username?: string }, currentId?: string) {
   if (data.email !== undefined) {
     const existing = await UserModel.findByEmail(data.email);
-    if (existing && existing.id !== currentId) throw new AppError('E-mail já cadastrado', 409);
+    if (existing && existing.id !== currentId) throw new AppError('EMAIL_TAKEN', 409);
   }
   if (data.username !== undefined) {
     const existing = await UserModel.findByUsername(data.username);
-    if (existing && existing.id !== currentId) throw new AppError('Nome de usuário já está em uso', 409);
+    if (existing && existing.id !== currentId) throw new AppError('USERNAME_TAKEN', 409);
   }
 }
 
@@ -89,6 +92,7 @@ export async function createUser(input: unknown): Promise<PrivateUser> {
 
   const user = await UserModel.create({
     ...data,
+    display_name: data.display_name ?? data.username,
     password_hash: await hashPassword(password),
   });
   return toPrivate(user);
@@ -110,7 +114,7 @@ export async function deleteUser(actor: User, id: string): Promise<void> {
   ensureSelf(actor, id);
 
   if ((await UserModel.countVideos(id)) > 0) {
-    throw new AppError('Você possui vídeos. Remova os vídeos antes de apagar a conta', 409);
+    throw new AppError('ACCOUNT_HAS_VIDEOS', 409);
   }
 
   // Comentários seguem a regra de remoção; reações saem em cascata no banco.

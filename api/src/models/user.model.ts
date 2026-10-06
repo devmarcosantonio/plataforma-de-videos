@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { LOCALES } from '../i18n/messages.js';
 import { prisma } from '../config/database.js';
 import type { Prisma, User } from '../generated/prisma/client.js';
 
@@ -14,39 +15,55 @@ const RESERVED_USERNAMES = new Set([
 ]);
 
 export const usernameSchema = z
-  .string({ error: 'O nome de usuário é obrigatório' })
+  .string({ error: 'USERNAME_REQUIRED' })
   .trim()
   .toLowerCase()
   .pipe(
     z
       .string()
-      .min(3, 'O nome de usuário deve ter pelo menos 3 caracteres')
-      .max(30, 'O nome de usuário pode ter no máximo 30 caracteres')
-      .regex(/^[a-z0-9._]+$/, 'Use apenas letras minúsculas, números, ponto e underline')
-      .regex(/^[a-z0-9]/, 'O nome de usuário deve começar com letra ou número')
-      .refine((value) => !value.includes('..'), 'O nome de usuário não pode ter dois pontos seguidos')
-      .refine((value) => !value.endsWith('.'), 'O nome de usuário não pode terminar com ponto')
-      .refine((value) => !RESERVED_USERNAMES.has(value), 'Este nome de usuário é reservado'),
+      .min(3, 'USERNAME_TOO_SHORT')
+      .max(30, 'USERNAME_TOO_LONG')
+      .regex(/^[a-z0-9._]+$/, 'USERNAME_INVALID_CHARS')
+      .regex(/^[a-z0-9]/, 'USERNAME_INVALID_START')
+      .refine((value) => !value.includes('..'), 'USERNAME_DOUBLE_DOT')
+      .refine((value) => !value.endsWith('.'), 'USERNAME_TRAILING_DOT')
+      .refine((value) => !RESERVED_USERNAMES.has(value), 'USERNAME_RESERVED'),
   );
+
+const displayName = z
+  .string()
+  .trim()
+  .min(1, 'DISPLAY_NAME_EMPTY')
+  .max(50, 'DISPLAY_NAME_TOO_LONG');
 
 export const createUserSchema = z.object({
   username: usernameSchema,
-  name: z.string({ error: 'O nome é obrigatório' }).trim().min(1, 'O nome é obrigatório'),
-  last_name: z
-    .string({ error: 'O sobrenome é obrigatório' })
+  // Opcional no cadastro: se vier vazio, usa o username.
+  display_name: z
+    .string()
     .trim()
-    .min(1, 'O sobrenome é obrigatório'),
+    .max(50, 'DISPLAY_NAME_TOO_LONG')
+    .optional()
+    .transform((value) => value || undefined),
   email: z
-    .string({ error: 'O e-mail é obrigatório' })
+    .string({ error: 'EMAIL_REQUIRED' })
     .trim()
     .toLowerCase()
-    .pipe(z.email('E-mail inválido')),
+    .pipe(z.email('EMAIL_INVALID')),
+  // Idioma em que a pessoa se cadastrou (opcional).
+  locale: z.enum(LOCALES, { error: 'LOCALE_INVALID' }).optional(),
   password: z
-    .string({ error: 'A senha é obrigatória' })
-    .min(8, 'A senha deve ter pelo menos 8 caracteres'),
+    .string({ error: 'PASSWORD_REQUIRED' })
+    .min(8, 'PASSWORD_TOO_SHORT'),
 });
 
-export const updateUserSchema = createUserSchema.partial();
+export const updateUserSchema = createUserSchema
+  .omit({ display_name: true })
+  .partial()
+  .extend({
+    display_name: displayName.optional(),
+    locale: z.enum(LOCALES, { error: 'LOCALE_INVALID' }).optional(),
+  });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;

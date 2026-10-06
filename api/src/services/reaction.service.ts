@@ -5,7 +5,7 @@ import { AppError } from '../utils/errors/app-error.js';
 
 async function findVideoOrFail(videoId: string): Promise<Video> {
   const video = await VideoModel.findById(videoId);
-  if (!video) throw new AppError('Vídeo não encontrado', 404);
+  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
   return video;
 }
 
@@ -33,7 +33,7 @@ export async function setReaction(actor: User, videoId: string, input: unknown):
 
   const video = await findVideoOrFail(videoId);
   if (video.status !== 'ready') {
-    throw new AppError('Só é possível reagir a vídeos prontos', 409);
+    throw new AppError('REACTION_VIDEO_NOT_READY', 409);
   }
 
   await ReactionModel.set(actor.id, videoId, type);

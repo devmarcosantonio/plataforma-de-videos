@@ -4,7 +4,7 @@ import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  user: Pick<User, "name" | "last_name"> | null | undefined;
+  user: Pick<User, "display_name"> | null | undefined;
   size?: "sm" | "default" | "lg";
   className?: string;
 };

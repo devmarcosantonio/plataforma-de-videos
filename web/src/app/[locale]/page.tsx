@@ -1,11 +1,13 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { SearchX, Upload, VideoOff } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { VideoGrid } from "@/components/video-card";
+import { Link } from "@/i18n/navigation";
 import { getVideos } from "@/lib/api";
 
-export default async function HomePage({ searchParams }: PageProps<"/">) {
+export default async function HomePage({ searchParams }: PageProps<"/[locale]">) {
+  const t = await getTranslations("home");
   const { q } = await searchParams;
   const query = typeof q === "string" ? q.trim() : "";
 
@@ -17,11 +19,11 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
 
   if (videos.length === 0) {
     return (
-      <EmptyState icon={<VideoOff />} title="Nenhum vídeo ainda" description="Envie o primeiro vídeo para ele aparecer aqui.">
+      <EmptyState icon={<VideoOff />} title={t("empty")} description={t("emptyHint")}>
         <Button asChild className="rounded-full px-5">
           <Link href="/upload">
             <Upload />
-            Enviar vídeo
+            {t("upload")}
           </Link>
         </Button>
       </EmptyState>
@@ -29,15 +31,14 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   }
 
   if (filtered.length === 0) {
-    return <EmptyState icon={<SearchX />} title={`Nada encontrado para “${query}”`} description="Tente outras palavras." />;
+    return <EmptyState icon={<SearchX />} title={t("noResults", { query })} description={t("noResultsHint")} />;
   }
 
   return (
     <section>
       {query && (
         <p className="mb-6 text-sm text-muted-foreground">
-          {filtered.length} resultado{filtered.length > 1 && "s"} para{" "}
-          <span className="font-medium text-foreground">“{query}”</span>
+          {t("results", { count: filtered.length })} <span className="font-medium text-foreground">“{query}”</span>
         </p>
       )}
       <VideoGrid items={filtered.map((video) => ({ video, author: video.author }))} />

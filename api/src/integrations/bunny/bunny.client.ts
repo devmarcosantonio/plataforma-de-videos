@@ -19,13 +19,13 @@ async function request(path: string, init: RequestInit = {}): Promise<Response> 
     });
   } catch (error) {
     console.error('Falha de rede ao chamar o Bunny:', error);
-    throw new AppError('Falha ao comunicar com o provedor de vídeo', 502);
+    throw new AppError('VIDEO_PROVIDER_ERROR', 502);
   }
 }
 
 async function fail(response: Response): Promise<never> {
   console.error(`Bunny respondeu ${response.status}:`, await response.text());
-  throw new AppError('Falha ao comunicar com o provedor de vídeo', 502);
+  throw new AppError('VIDEO_PROVIDER_ERROR', 502);
 }
 
 export const bunnyClient = {

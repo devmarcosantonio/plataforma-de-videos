@@ -1,29 +1,30 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { Compass, History, Home, ListVideo, MonitorPlay, Upload, Users, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Link, usePathname } from "@/i18n/navigation";
 import { SITE_NAME } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; label: string; icon: LucideIcon; requiresLogin?: boolean };
+type NavItem = { href: string; label: NavKey; icon: LucideIcon; requiresLogin?: boolean };
+type NavKey = "home" | "following" | "studio" | "upload" | "explore" | "history" | "playlists";
 
 const MAIN: NavItem[] = [
-  { href: "/", label: "Início", icon: Home },
-  { href: "/following", label: "Seguindo", icon: Users, requiresLogin: true },
-  { href: "/studio", label: "Meu canal", icon: MonitorPlay, requiresLogin: true },
-  { href: "/upload", label: "Enviar vídeo", icon: Upload, requiresLogin: true },
+  { href: "/", label: "home", icon: Home },
+  { href: "/following", label: "following", icon: Users, requiresLogin: true },
+  { href: "/studio", label: "studio", icon: MonitorPlay, requiresLogin: true },
+  { href: "/upload", label: "upload", icon: Upload, requiresLogin: true },
 ];
 
 const SOON: NavItem[] = [
-  { href: "#", label: "Explorar", icon: Compass },
-  { href: "#", label: "Histórico", icon: History },
-  { href: "#", label: "Playlists", icon: ListVideo },
+  { href: "#", label: "explore", icon: Compass },
+  { href: "#", label: "history", icon: History },
+  { href: "#", label: "playlists", icon: ListVideo },
 ];
 
 type Props = {
@@ -65,6 +66,7 @@ export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn }:
 type NavProps = { compact: boolean; layoutId: string; loggedIn: boolean; onNavigate?: () => void };
 
 function Nav({ compact, layoutId, loggedIn, onNavigate }: NavProps) {
+  const t = useTranslations();
   const pathname = usePathname();
   // Itens que exigem login só aparecem para quem está logado.
   const items = MAIN.filter((item) => loggedIn || !item.requiresLogin);
@@ -93,13 +95,13 @@ function Nav({ compact, layoutId, loggedIn, onNavigate }: NavProps) {
               />
             )}
             <item.icon className="relative size-5 shrink-0" />
-            <span className="relative whitespace-nowrap">{item.label}</span>
+            <span className="relative whitespace-nowrap">{t(`nav.${item.label}`)}</span>
           </Link>
         );
         return compact ? (
           <Tooltip key={item.label}>
             <TooltipTrigger asChild>{link}</TooltipTrigger>
-            <TooltipContent side="right">{item.label}</TooltipContent>
+            <TooltipContent side="right">{t(`nav.${item.label}`)}</TooltipContent>
           </Tooltip>
         ) : (
           link
@@ -109,16 +111,16 @@ function Nav({ compact, layoutId, loggedIn, onNavigate }: NavProps) {
       {!compact && (
         <>
           <Separator className="my-3" />
-          <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">Em breve</p>
+          <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("common.comingSoon")}</p>
           {SOON.map((item) => (
             <span
               key={item.label}
               className="flex cursor-not-allowed items-center gap-4 rounded-xl px-3 py-2.5 text-sm text-muted-foreground/60"
             >
               <item.icon className="size-5 shrink-0" />
-              <span className="flex-1 whitespace-nowrap">{item.label}</span>
+              <span className="flex-1 whitespace-nowrap">{t(`nav.${item.label}`)}</span>
               <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                breve
+                {t("common.soon")}
               </Badge>
             </span>
           ))}

@@ -10,7 +10,7 @@ export interface Page<T> {
 }
 
 async function ensureUserExists(id: string) {
-  if (!(await UserModel.findById(id))) throw new AppError('Usuário não encontrado', 404);
+  if (!(await UserModel.findById(id))) throw new AppError('USER_NOT_FOUND', 404);
 }
 
 async function status(actor: User | undefined, targetId: string): Promise<FollowStatus> {
@@ -22,7 +22,7 @@ async function status(actor: User | undefined, targetId: string): Promise<Follow
 }
 
 export async function follow(actor: User, targetId: string): Promise<FollowStatus> {
-  if (actor.id === targetId) throw new AppError('Você não pode seguir a si mesmo');
+  if (actor.id === targetId) throw new AppError('CANNOT_FOLLOW_SELF');
   await ensureUserExists(targetId);
   await FollowModel.follow(actor.id, targetId);
   return status(actor, targetId);
@@ -36,7 +36,7 @@ export async function unfollow(actor: User, targetId: string): Promise<FollowSta
 
 // Só o próprio usuário vê a lista de quem ele segue (publicamente, só os números).
 export async function listFollowing(actor: User, userId: string, query: unknown) {
-  if (actor.id !== userId) throw new AppError('Você só pode ver quem você segue', 403);
+  if (actor.id !== userId) throw new AppError('FOLLOWING_LIST_FORBIDDEN', 403);
   const { cursor, limit } = pageQuerySchema.parse(query);
 
   const page = await FollowModel.listFollowing(userId, cursor ? decodeCursor(cursor) : undefined, limit);

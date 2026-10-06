@@ -1,0 +1,257 @@
+{
+  "metadata": {
+    "description": "Video platform"
+  },
+  "common": {
+    "unknownUser": "Unknown user",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "sending": "Sending…",
+    "loading": "Loading…",
+    "loadMore": "Load more",
+    "edit": "Edit",
+    "remove": "Remove",
+    "signIn": "Sign in",
+    "comingSoon": "Coming soon",
+    "soon": "soon",
+    "optional": "(optional)",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "nav": {
+    "home": "Home",
+    "following": "Following",
+    "studio": "My channel",
+    "upload": "Upload video",
+    "explore": "Explore",
+    "history": "History",
+    "playlists": "Playlists",
+    "openMenu": "Open menu"
+  },
+  "header": {
+    "search": "Search videos",
+    "upload": "Upload"
+  },
+  "theme": {
+    "useLight": "Use light theme",
+    "useDark": "Use dark theme",
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "language": {
+    "label": "Language",
+    "change": "Change language"
+  },
+  "account": {
+    "menu": "Account menu",
+    "viewChannel": "View my channel",
+    "manageChannel": "Manage channel",
+    "upload": "Upload video",
+    "signOut": "Sign out",
+    "signedOut": "You have signed out."
+  },
+  "video": {
+    "status": {
+      "pending_upload": "Awaiting upload",
+      "processing": "Processing",
+      "ready": "Ready",
+      "failed": "Failed"
+    },
+    "player": {
+      "pending_upload": "This video's file has not been uploaded yet.",
+      "processing": "The video is being processed. This may take a few minutes.",
+      "failed": "Processing this video failed."
+    },
+    "likes": "{count, plural, =0 {No likes} one {{formatted} like} other {{formatted} likes}}",
+    "published": "Published <time></time>",
+    "noDescription": "No description.",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "otherVideos": "More videos",
+    "noOtherVideos": "No other videos yet.",
+    "sync": "Check status",
+    "syncError": "Could not update the status."
+  },
+  "reactions": {
+    "like": "Like",
+    "removeLike": "Remove like",
+    "dislike": "Dislike",
+    "removeDislike": "Remove dislike",
+    "notReady": "You can only react to ready videos",
+    "signInToReact": "Sign in to react to videos.",
+    "error": "Could not save your reaction."
+  },
+  "follow": {
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow",
+    "followersLabel": "{count, plural, one {follower} other {followers}}",
+    "followers": "{count, plural, one {{formatted} follower} other {{formatted} followers}}",
+    "signInToFollow": "Sign in to follow channels.",
+    "error": "Could not update."
+  },
+  "comments": {
+    "label": "{count, plural, one {comment} other {comments}}",
+    "notReady": "Comments open once the video is ready.",
+    "signInPrompt": "Sign in to your account to comment.",
+    "placeholder": "Add a comment…",
+    "submit": "Comment",
+    "shortcut": "Ctrl + Enter to send",
+    "reply": "Reply",
+    "replyPlaceholder": "Write a reply…",
+    "editPlaceholder": "Edit comment",
+    "replies": "{count, plural, one {# reply} other {# replies}}",
+    "moreReplies": "Show more replies",
+    "moreComments": "Show more comments",
+    "removed": "Comment removed",
+    "author": "Author",
+    "edited": "(edited)",
+    "actions": "Comment actions",
+    "removeTitle": "Remove comment?",
+    "removeWithReplies": "It has replies, so it will show as “Comment removed” to keep the conversation intact.",
+    "removeIrreversible": "This action cannot be undone.",
+    "editedToast": "Comment edited.",
+    "removedToast": "Comment removed.",
+    "errors": {
+      "send": "Could not post the comment.",
+      "reply": "Could not post the reply.",
+      "edit": "Could not edit the comment.",
+      "remove": "Could not remove the comment.",
+      "loadReplies": "Could not load the replies.",
+      "loadMore": "Could not load more comments."
+    }
+  },
+  "upload": {
+    "title": "Upload video",
+    "subtitle": "The file goes straight to the video server and is processed automatically.",
+    "videoTitle": "Title",
+    "description": "Description",
+    "dropzone": "Drag a video here or click to choose",
+    "formats": "MP4, MOV, MKV, WebM…",
+    "removeFile": "Remove file",
+    "notVideo": "Please choose a video file.",
+    "uploading": "Uploading…",
+    "preparing": "Preparing…",
+    "submit": "Upload",
+    "cancelled": "Upload cancelled.",
+    "error": "Upload failed. Please try again.",
+    "done": "Video uploaded!",
+    "doneHint": "It is now being processed. This may take a few minutes.",
+    "watch": "Watch video"
+  },
+  "studio": {
+    "title": "My channel",
+    "stats": {
+      "videos": "Videos",
+      "likes": "Likes",
+      "comments": "Comments"
+    },
+    "myVideos": "My videos",
+    "upload": "Upload video",
+    "empty": "No videos on your channel",
+    "emptyHint": "Videos you upload will show up here.",
+    "columns": {
+      "video": "Video",
+      "status": "Status",
+      "date": "Date",
+      "likes": "Likes",
+      "comments": "Comments"
+    },
+    "noDescription": "No description",
+    "likesCount": "{count, plural, one {# like} other {# likes}}",
+    "commentsCount": "{count, plural, one {# comment} other {# comments}}",
+    "actions": "Actions for “{title}”",
+    "view": "Watch video",
+    "edit": "Edit",
+    "delete": "Delete",
+    "updated": "Video updated.",
+    "saveError": "Could not save your changes.",
+    "deleted": "“{title}” was deleted.",
+    "deleteError": "Could not delete the video.",
+    "editDialog": {
+      "title": "Edit video",
+      "description": "Changes are visible to everyone right away.",
+      "videoTitle": "Title",
+      "videoDescription": "Description",
+      "placeholder": "Tell viewers what the video is about"
+    },
+    "deleteDialog": {
+      "title": "Delete “{title}”?",
+      "description": "The video will be removed from the platform and the video server, along with its likes and comments. This action cannot be undone.",
+      "confirm": "Delete video",
+      "deleting": "Deleting…"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in",
+      "description": "Sign in to like, comment and publish videos.",
+      "login": "Email or username",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create account",
+      "welcome": "Welcome back, {handle}!",
+      "error": "Could not sign in."
+    },
+    "register": {
+      "title": "Create account",
+      "description": "It takes less than a minute.",
+      "username": "Username",
+      "displayName": "Display name",
+      "displayNamePlaceholder": "Your name or your channel's name",
+      "displayNameHint": "This is how others see you. If you leave it blank, we'll use your @username.",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 8 characters.",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "welcome": "Account created! Welcome, {handle}.",
+      "error": "Could not create the account."
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "username": {
+      "placeholder": "user.name",
+      "hint": "3 to 30 characters: lowercase letters, numbers, dots and underscores.",
+      "available": "@{username} is available",
+      "checkError": "Could not check right now."
+    }
+  },
+  "home": {
+    "empty": "No videos yet",
+    "emptyHint": "Upload the first video and it will show up here.",
+    "upload": "Upload video",
+    "noResults": "Nothing found for “{query}”",
+    "noResultsHint": "Try different words.",
+    "results": "{count, plural, one {# result} other {# results}} for"
+  },
+  "feed": {
+    "title": "Following",
+    "empty": "Nothing here yet",
+    "emptyHint": "Follow channels to see their new videos here.",
+    "discover": "Discover videos",
+    "loadError": "Could not load more videos."
+  },
+  "channel": {
+    "title": "Channel",
+    "videosCount": "{count, plural, one {# video} other {# videos}}",
+    "manage": "Manage channel",
+    "videos": "Videos",
+    "empty": "No published videos",
+    "emptyHint": "This channel hasn't published any videos yet."
+  },
+  "errors": {
+    "loadTitle": "Could not load",
+    "loadHint": "Check that the API is running (npm run dev in the api folder) and try again.",
+    "retry": "Try again",
+    "notFound": "Page not found",
+    "notFoundHint": "The content may have been removed.",
+    "backHome": "Back to home"
+  }
+}

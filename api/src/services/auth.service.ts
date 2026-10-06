@@ -7,8 +7,8 @@ import { createUser, toPrivate, type PrivateUser } from './user.service.js';
 
 const loginSchema = z.object({
   // Aceita e-mail ou @username.
-  login: z.string({ error: 'Informe o e-mail ou nome de usuário' }).trim().min(1, 'Informe o e-mail ou nome de usuário'),
-  password: z.string({ error: 'Informe a senha' }).min(1, 'Informe a senha'),
+  login: z.string({ error: 'LOGIN_REQUIRED' }).trim().min(1, 'LOGIN_REQUIRED'),
+  password: z.string({ error: 'PASSWORD_REQUIRED' }).min(1, 'PASSWORD_REQUIRED'),
 });
 
 const dummyHash = hashPassword('senha-que-nunca-confere');
@@ -35,7 +35,7 @@ export async function login(input: unknown): Promise<AuthResult> {
   // não revela quais contas existem, nem pela resposta nem pelo tempo de resposta.
   const valid = await verifyPassword(password, user?.password_hash ?? (await dummyHash));
   if (!user || !valid) {
-    throw new AppError('E-mail, usuário ou senha incorretos', 401);
+    throw new AppError('INVALID_CREDENTIALS', 401);
   }
 
   return { token: await signToken(user.id), user: toPrivate(user) };

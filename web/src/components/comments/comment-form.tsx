@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { User } from "@/lib/types";
@@ -10,7 +11,7 @@ import { UserAvatar } from "../user-avatar";
 const MAX_LENGTH = 2000;
 
 type Props = {
-  user: Pick<User, "name" | "last_name">;
+  user: Pick<User, "display_name">;
   placeholder: string;
   submitLabel: string;
   initialValue?: string;
@@ -30,6 +31,7 @@ export function CommentForm({
   onSubmit,
   onCancel,
 }: Props) {
+  const t = useTranslations();
   const [value, setValue] = useState(initialValue);
   const [focused, setFocused] = useState(!!autoFocus || !!onCancel);
   const [saving, setSaving] = useState(false);
@@ -84,13 +86,13 @@ export function CommentForm({
               className="flex items-center justify-end gap-2 overflow-hidden"
             >
               <span className="mr-auto hidden text-xs text-muted-foreground sm:inline">
-                {value.length > MAX_LENGTH * 0.9 ? `${value.length}/${MAX_LENGTH}` : "Ctrl + Enter para enviar"}
+                {value.length > MAX_LENGTH * 0.9 ? `${value.length}/${MAX_LENGTH}` : t("comments.shortcut")}
               </span>
               <Button type="button" variant="ghost" className="rounded-full" onClick={cancel}>
-                Cancelar
+                {t("common.cancel")}
               </Button>
               <Button type="submit" className="rounded-full px-4" disabled={!trimmed || saving}>
-                {saving ? "Enviando…" : submitLabel}
+                {saving ? t("common.sending") : submitLabel}
               </Button>
             </motion.div>
           )}

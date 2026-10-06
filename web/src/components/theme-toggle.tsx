@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Moon, Sun } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -16,6 +17,7 @@ const useMounted = () =>
   );
 
 export function ThemeToggle() {
+  const t = useTranslations("theme");
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
   const isDark = mounted && resolvedTheme === "dark";
@@ -27,7 +29,7 @@ export function ThemeToggle() {
           variant="ghost"
           size="icon-lg"
           className="rounded-full"
-          aria-label={isDark ? "Usar tema claro" : "Usar tema escuro"}
+          aria-label={isDark ? t("useLight") : t("useDark")}
           onClick={() => setTheme(isDark ? "light" : "dark")}
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -44,7 +46,7 @@ export function ThemeToggle() {
           </AnimatePresence>
         </Button>
       </TooltipTrigger>
-      <TooltipContent>{isDark ? "Tema claro" : "Tema escuro"}</TooltipContent>
+      <TooltipContent>{isDark ? t("light") : t("dark")}</TooltipContent>
     </Tooltip>
   );
 }

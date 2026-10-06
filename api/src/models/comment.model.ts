@@ -6,15 +6,15 @@ import type { CursorPosition } from '../utils/cursor.js';
 export type { Comment };
 
 const content = z
-  .string({ error: 'O comentário é obrigatório' })
+  .string({ error: 'COMMENT_REQUIRED' })
   .trim()
-  .min(1, 'O comentário não pode ficar vazio')
-  .max(2000, 'O comentário pode ter no máximo 2000 caracteres');
+  .min(1, 'COMMENT_EMPTY')
+  .max(2000, 'COMMENT_TOO_LONG');
 
 // O autor é sempre o usuário autenticado (não vem no corpo da requisição).
 export const createCommentSchema = z.object({
   content,
-  parent_id: z.uuid('parent_id inválido').optional(),
+  parent_id: z.uuid('INVALID_ID').optional(),
 });
 
 export const updateCommentSchema = z.object({ content });
@@ -26,7 +26,7 @@ export const listCommentsQuerySchema = z.object({
 
 // Autor e quantidade de respostas vêm na mesma consulta.
 const include = {
-  user: { select: { id: true, username: true, name: true, last_name: true } },
+  user: { select: { id: true, username: true, display_name: true } },
   _count: { select: { replies: true } },
 } satisfies Prisma.CommentInclude;
 

@@ -1,9 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { motion, type Variants } from "motion/react";
-import { formatLikes, handle, timeAgo } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { handle } from "@/lib/format";
 import type { User, Video } from "@/lib/types";
+import { LikesCount } from "./likes-count";
+import { TimeAgo } from "./time-ago";
 import { UserAvatar } from "./user-avatar";
 import { VideoThumbnail } from "./video-thumbnail";
 
@@ -37,6 +40,12 @@ export function VideoGrid({ items }: { items: VideoWithAuthor[] }) {
   );
 }
 
+// Autor pode faltar (conta removida): mostra "Usuário desconhecido" traduzido.
+function AuthorHandle({ author }: { author: User | undefined }) {
+  const t = useTranslations("common");
+  return <>{author ? handle(author) : t("unknownUser")}</>;
+}
+
 export function VideoCard({ video, author }: VideoWithAuthor) {
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 400, damping: 28 }}>
@@ -52,9 +61,11 @@ export function VideoCard({ video, author }: VideoWithAuthor) {
             <h3 className="line-clamp-2 font-medium leading-snug transition-colors group-hover:text-primary">
               {video.title}
             </h3>
-            <p className="mt-1 text-sm text-muted-foreground">{handle(author)}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              <AuthorHandle author={author} />
+            </p>
             <p className="text-sm text-muted-foreground">
-              {formatLikes(video.likes_count)} · {timeAgo(video.created_at)}
+              <LikesCount count={video.likes_count} /> · <TimeAgo date={video.created_at} />
             </p>
           </div>
         </div>
@@ -78,8 +89,12 @@ export function VideoListItem({ video, author, index = 0 }: VideoWithAuthor & { 
           <h3 className="line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-primary">
             {video.title}
           </h3>
-          <p className="mt-1 text-xs text-muted-foreground">{handle(author)}</p>
-          <p className="text-xs text-muted-foreground">{timeAgo(video.created_at)}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            <AuthorHandle author={author} />
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <TimeAgo date={video.created_at} />
+          </p>
         </div>
       </Link>
     </motion.div>

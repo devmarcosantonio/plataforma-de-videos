@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { AtSign, Check, Loader2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { getJson } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ const DEBOUNCE_MS = 400;
 
 // Campo de @username que consulta a disponibilidade enquanto a pessoa digita.
 export function UsernameField({ disabled }: { disabled?: boolean }) {
+  const t = useTranslations("auth.username");
   const [value, setValue] = useState("");
   const [check, setCheck] = useState<CheckState | null>(null);
 
@@ -54,7 +56,7 @@ export function UsernameField({ disabled }: { disabled?: boolean }) {
           name="username"
           value={value}
           onChange={(event) => setValue(event.target.value.toLowerCase())}
-          placeholder="nome.de.usuario"
+          placeholder={t("placeholder")}
           required
           minLength={3}
           maxLength={30}
@@ -83,12 +85,12 @@ export function UsernameField({ disabled }: { disabled?: boolean }) {
       </div>
       <p className={cn("text-xs", invalid ? "text-destructive" : "text-muted-foreground")}>
         {current === "error"
-          ? "Não foi possível verificar agora."
+          ? t("checkError")
           : current && !current.available
             ? current.message
             : available
-              ? `@${normalized} está disponível`
-              : "3 a 30 caracteres: letras minúsculas, números, ponto e underline."}
+              ? t("available", { username: normalized })
+              : t("hint")}
       </p>
     </div>
   );

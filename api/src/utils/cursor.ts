@@ -15,7 +15,7 @@ export function encodeCursor(position: CursorPosition): string {
 export function decodeCursor(cursor: string): CursorPosition {
   const [created_at, id] = Buffer.from(cursor, 'base64url').toString('utf8').split('|');
   if (!created_at || !id || Number.isNaN(Date.parse(created_at)) || !UUID.test(id)) {
-    throw new AppError('Cursor inválido');
+    throw new AppError('INVALID_CURSOR');
   }
   return { created_at, id };
 }

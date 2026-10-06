@@ -1,7 +1,8 @@
 // Sessão no servidor: o token fica num cookie httpOnly definido pela API (via proxy /api/*).
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import type { AuthUser } from "./types";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3000";
@@ -28,7 +29,11 @@ export const getSession = cache(async (): Promise<AuthUser | null> => {
 // Para páginas que exigem login: manda para /login e volta depois.
 export async function requireSession(returnTo: string): Promise<AuthUser> {
   const user = await getSession();
-  if (!user) redirect(`/login?next=${encodeURIComponent(returnTo)}`);
+  if (!user) {
+    // Login no mesmo idioma da página atual.
+    const locale = await getLocale();
+    return redirect({ href: `/login?next=${encodeURIComponent(returnTo)}`, locale });
+  }
   return user;
 }
 

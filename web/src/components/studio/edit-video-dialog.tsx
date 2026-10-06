@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,6 +38,7 @@ export function EditVideoDialog({ video, onOpenChange, onSave }: Props) {
 }
 
 function EditForm({ video, onSave, onCancel }: { video: Video; onSave: Props["onSave"]; onCancel: () => void }) {
+  const t = useTranslations();
   const [title, setTitle] = useState(video.title);
   const [description, setDescription] = useState(video.description ?? "");
   const [saving, setSaving] = useState(false);
@@ -60,13 +62,13 @@ function EditForm({ video, onSave, onCancel }: { video: Video; onSave: Props["on
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
       <DialogHeader>
-        <DialogTitle>Editar vídeo</DialogTitle>
-        <DialogDescription>As alterações aparecem na hora para todo mundo.</DialogDescription>
+        <DialogTitle>{t("studio.editDialog.title")}</DialogTitle>
+        <DialogDescription>{t("studio.editDialog.description")}</DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="edit-title">Título</Label>
+          <Label htmlFor="edit-title">{t("studio.editDialog.videoTitle")}</Label>
           <span className="font-mono text-xs text-muted-foreground">
             {title.length}/{TITLE_MAX}
           </span>
@@ -84,7 +86,7 @@ function EditForm({ video, onSave, onCancel }: { video: Video; onSave: Props["on
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="edit-description">Descrição</Label>
+          <Label htmlFor="edit-description">{t("studio.editDialog.videoDescription")}</Label>
           <span className="font-mono text-xs text-muted-foreground">
             {description.length}/{DESCRIPTION_MAX}
           </span>
@@ -95,18 +97,18 @@ function EditForm({ video, onSave, onCancel }: { video: Video; onSave: Props["on
           onChange={(event) => setDescription(event.target.value)}
           maxLength={DESCRIPTION_MAX}
           rows={6}
-          placeholder="Conte do que se trata o vídeo"
+          placeholder={t("studio.editDialog.placeholder")}
           className="max-h-72"
         />
       </div>
 
       <DialogFooter>
         <Button type="button" variant="ghost" onClick={onCancel}>
-          Cancelar
+          {t("common.cancel")}
         </Button>
         <Button type="submit" disabled={saving || unchanged || !title.trim()}>
           {saving && <Loader2 className="animate-spin" />}
-          {saving ? "Salvando…" : "Salvar"}
+          {saving ? t("common.saving") : t("common.save")}
         </Button>
       </DialogFooter>
     </form>

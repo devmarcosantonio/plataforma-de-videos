@@ -8,7 +8,7 @@ const uuid = z.uuid();
 // (sem isso o Postgres rejeita o valor e a API responderia 500).
 export function validateIdParam(req: Request, res: Response, next: NextFunction, value: string) {
   if (!uuid.safeParse(value).success) {
-    next(new AppError('Recurso não encontrado', 404));
+    next(new AppError('RESOURCE_NOT_FOUND', 404));
     return;
   }
   next();

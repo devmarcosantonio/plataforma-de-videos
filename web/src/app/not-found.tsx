@@ -1,17 +1,11 @@
-import Link from "next/link";
-import { FileQuestion, Home } from "lucide-react";
-import { EmptyState } from "@/components/empty-state";
-import { Button } from "@/components/ui/button";
-
-export default function NotFound() {
+// 404 para requisições que nem chegam ao segmento [locale] (ex.: caminho inválido fora do proxy).
+// As páginas normais usam a 404 traduzida de app/[locale]/not-found.tsx.
+export default function GlobalNotFound() {
   return (
-    <EmptyState icon={<FileQuestion />} title="Página não encontrada" description="O conteúdo pode ter sido removido.">
-      <Button asChild variant="outline" className="rounded-full px-5">
-        <Link href="/">
-          <Home />
-          Voltar ao início
-        </Link>
-      </Button>
-    </EmptyState>
+    <html lang="pt-BR">
+      <body style={{ fontFamily: "system-ui, sans-serif", display: "grid", placeItems: "center", minHeight: "100vh" }}>
+        <p>404 · Página não encontrada / Page not found / Página no encontrada</p>
+      </body>
+    </html>
   );
 }

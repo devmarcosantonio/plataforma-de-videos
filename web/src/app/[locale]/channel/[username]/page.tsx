@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { MonitorPlay, VideoOff } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { FadeIn } from "@/components/fade-in";
@@ -8,19 +8,22 @@ import { FollowButton, FollowersCount, FollowProvider } from "@/components/follo
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";
 import { VideoGrid } from "@/components/video-card";
+import { Link } from "@/i18n/navigation";
 import { getProfile, getVideosByUser } from "@/lib/api";
 import { getSession } from "@/lib/auth";
-import { fullName, handle } from "@/lib/format";
+import { handle } from "@/lib/format";
 
 // Servida em /@username (rewrite no next.config.ts).
-export async function generateMetadata({ params }: PageProps<"/channel/[username]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[locale]/channel/[username]">): Promise<Metadata> {
   const { username } = await params;
   const profile = await getProfile(decodeURIComponent(username));
-  return { title: profile ? `${fullName(profile)} (${handle(profile)})` : "Canal" };
+  const t = await getTranslations("channel");
+  return { title: profile ? `${profile.display_name} (${handle(profile)})` : t("title") };
 }
 
-export default async function ChannelPage({ params }: PageProps<"/channel/[username]">) {
+export default async function ChannelPage({ params }: PageProps<"/[locale]/channel/[username]">) {
   const { username } = await params;
+  const t = await getTranslations("channel");
   const [profile, session] = await Promise.all([getProfile(decodeURIComponent(username)), getSession()]);
   if (!profile) notFound();
 
@@ -48,22 +51,20 @@ export default async function ChannelPage({ params }: PageProps<"/channel/[usern
               className="-mt-12 size-24 text-3xl ring-4 ring-card sm:-mt-14 sm:size-28"
             />
             <div className="min-w-0 flex-1">
-              <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">{fullName(profile)}</h1>
+              <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">{profile.display_name}</h1>
               <p className="mt-1 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
                 <span className="font-medium text-foreground">{handle(profile)}</span>
                 <span>·</span>
                 <FollowersCount />
                 <span>·</span>
-                <span>
-                  {profile.videos_count} vídeo{profile.videos_count === 1 ? "" : "s"}
-                </span>
+                <span>{t("videosCount", { count: profile.videos_count })}</span>
               </p>
             </div>
             {isSelf ? (
               <Button asChild variant="secondary" className="h-9 rounded-full px-4">
                 <Link href="/studio">
                   <MonitorPlay />
-                  Gerenciar canal
+                  {t("manage")}
                 </Link>
               </Button>
             ) : (
@@ -73,9 +74,9 @@ export default async function ChannelPage({ params }: PageProps<"/channel/[usern
         </FadeIn>
 
         <section className="mt-8">
-          <h2 className="mb-5 text-lg font-semibold">Vídeos</h2>
+          <h2 className="mb-5 text-lg font-semibold">{t("videos")}</h2>
           {videos.length === 0 ? (
-            <EmptyState icon={<VideoOff />} title="Nenhum vídeo publicado" description="Este canal ainda não publicou vídeos." />
+            <EmptyState icon={<VideoOff />} title={t("empty")} description={t("emptyHint")} />
           ) : (
             <VideoGrid items={videos.map((video) => ({ video, author: video.author }))} />
           )}

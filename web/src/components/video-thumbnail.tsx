@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Film, Play } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
-import { formatDuration, STATUS_LABEL } from "@/lib/format";
+import { formatDuration } from "@/lib/format";
 import type { Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function VideoThumbnail({ video, sizes, className }: { video: Video; sizes: string; className?: string }) {
+  const t = useTranslations("video.status");
   const [failed, setFailed] = useState(false);
   const duration = formatDuration(video.duration);
 
@@ -44,7 +46,7 @@ export function VideoThumbnail({ video, sizes, className }: { video: Video; size
           variant={video.status === "failed" ? "destructive" : "secondary"}
           className="absolute left-2 top-2 backdrop-blur"
         >
-          {STATUS_LABEL[video.status]}
+          {t(video.status)}
         </Badge>
       )}
 

@@ -3,6 +3,7 @@
 import { createContext, useContext, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Loader2, UserPlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/components/animated-number";
 import { Button } from "@/components/ui/button";
@@ -35,13 +36,14 @@ type ProviderProps = {
 
 // Compartilha o estado entre o botão e a contagem, que ficam em lugares diferentes da página.
 export function FollowProvider({ userId, initial, loggedIn, isSelf, children }: ProviderProps) {
+  const t = useTranslations("follow");
   const [status, setStatus] = useState(initial);
   const [pending, setPending] = useState(false);
   const goToLogin = useLoginRedirect();
 
   async function toggle() {
     if (!loggedIn) {
-      toast.info("Entre para seguir canais.");
+      toast.info(t("signInToFollow"));
       goToLogin();
       return;
     }
@@ -56,7 +58,7 @@ export function FollowProvider({ userId, initial, loggedIn, isSelf, children }: 
       setStatus(await sendJson<FollowStatus>(following ? "PUT" : "DELETE", `/users/${userId}/follow`, {}));
     } catch (error) {
       setStatus(previous);
-      toast.error(errorMessage(error, "Não foi possível atualizar."));
+      toast.error(errorMessage(error, t("error")));
     } finally {
       setPending(false);
     }
@@ -68,16 +70,18 @@ export function FollowProvider({ userId, initial, loggedIn, isSelf, children }: 
 }
 
 export function FollowersCount({ className }: { className?: string }) {
+  const t = useTranslations("follow");
   const { followers_count } = useFollow();
   return (
     <span className={cn("inline-flex items-center gap-1", className)}>
       <AnimatedNumber value={followers_count} />
-      {followers_count === 1 ? "seguidor" : "seguidores"}
+      {t("followersLabel", { count: followers_count })}
     </span>
   );
 }
 
 export function FollowButton({ className }: { className?: string }) {
+  const t = useTranslations("follow");
   const { following, pending, isSelf, toggle } = useFollow();
   const [hovering, setHovering] = useState(false);
 
@@ -85,7 +89,7 @@ export function FollowButton({ className }: { className?: string }) {
   if (isSelf) return null;
 
   // "Seguindo" vira "Deixar de seguir" ao passar o mouse, para deixar claro o que o clique faz.
-  const label = following ? (hovering ? "Deixar de seguir" : "Seguindo") : "Seguir";
+  const label = following ? (hovering ? t("unfollow") : t("following")) : t("follow");
 
   return (
     <motion.div whileTap={{ scale: 0.95 }} className="shrink-0">

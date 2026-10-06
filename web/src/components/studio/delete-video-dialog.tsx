@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export function DeleteVideoDialog({ video, onOpenChange, onConfirm }: Props) {
+  const t = useTranslations();
   const [deleting, setDeleting] = useState(false);
 
   async function confirm() {
@@ -39,18 +41,15 @@ export function DeleteVideoDialog({ video, onOpenChange, onConfirm }: Props) {
     <AlertDialog open={!!video} onOpenChange={(open) => !deleting && onOpenChange(open)}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Apagar “{video?.title}”?</AlertDialogTitle>
-          <AlertDialogDescription>
-            O vídeo será removido da plataforma e do servidor de vídeo, junto com curtidas e comentários. Essa ação
-            não pode ser desfeita.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{t("studio.deleteDialog.title", { title: video?.title ?? "" })}</AlertDialogTitle>
+          <AlertDialogDescription>{t("studio.deleteDialog.description")}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>{t("common.cancel")}</AlertDialogCancel>
           {/* Botão comum (não AlertDialogAction) para o diálogo só fechar depois que a API confirmar. */}
           <Button variant="destructive" onClick={confirm} disabled={deleting}>
             {deleting ? <Loader2 className="animate-spin" /> : <Trash2 />}
-            {deleting ? "Apagando…" : "Apagar vídeo"}
+            {deleting ? t("studio.deleteDialog.deleting") : t("studio.deleteDialog.confirm")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

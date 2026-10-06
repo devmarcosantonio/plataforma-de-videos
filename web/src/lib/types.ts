@@ -4,14 +4,16 @@ export type VideoStatus = "pending_upload" | "processing" | "ready" | "failed";
 export interface User {
   id: string;
   username: string;
-  name: string;
-  last_name: string;
+  // Nome livre (pessoa ou marca); quem identifica é o username.
+  display_name: string;
 }
 
 // O usuário logado vendo a própria conta.
 export interface AuthUser extends User {
   email: string;
   created_at: string;
+  // Idioma salvo na conta (nulo = segue o navegador).
+  locale: string | null;
 }
 
 // Página do canal: perfil público + números.

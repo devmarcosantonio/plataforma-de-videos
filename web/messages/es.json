@@ -1,0 +1,257 @@
+{
+  "metadata": {
+    "description": "Plataforma de videos"
+  },
+  "common": {
+    "unknownUser": "Usuario desconocido",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "sending": "Enviando…",
+    "loading": "Cargando…",
+    "loadMore": "Cargar más",
+    "edit": "Editar",
+    "remove": "Eliminar",
+    "signIn": "Iniciar sesión",
+    "comingSoon": "Próximamente",
+    "soon": "pronto",
+    "optional": "(opcional)",
+    "genericError": "Algo salió mal. Inténtalo de nuevo."
+  },
+  "nav": {
+    "home": "Inicio",
+    "following": "Siguiendo",
+    "studio": "Mi canal",
+    "upload": "Subir video",
+    "explore": "Explorar",
+    "history": "Historial",
+    "playlists": "Listas",
+    "openMenu": "Abrir menú"
+  },
+  "header": {
+    "search": "Buscar videos",
+    "upload": "Subir"
+  },
+  "theme": {
+    "useLight": "Usar tema claro",
+    "useDark": "Usar tema oscuro",
+    "light": "Tema claro",
+    "dark": "Tema oscuro"
+  },
+  "language": {
+    "label": "Idioma",
+    "change": "Cambiar idioma"
+  },
+  "account": {
+    "menu": "Menú de la cuenta",
+    "viewChannel": "Ver mi canal",
+    "manageChannel": "Administrar canal",
+    "upload": "Subir video",
+    "signOut": "Cerrar sesión",
+    "signedOut": "Cerraste la sesión."
+  },
+  "video": {
+    "status": {
+      "pending_upload": "Esperando subida",
+      "processing": "Procesando",
+      "ready": "Listo",
+      "failed": "Falló"
+    },
+    "player": {
+      "pending_upload": "El archivo de este video aún no se ha subido.",
+      "processing": "El video se está procesando. Esto puede tardar unos minutos.",
+      "failed": "Falló el procesamiento de este video."
+    },
+    "likes": "{count, plural, =0 {Sin me gusta} one {{formatted} me gusta} other {{formatted} me gusta}}",
+    "published": "Publicado <time></time>",
+    "noDescription": "Sin descripción.",
+    "showMore": "Mostrar más",
+    "showLess": "Mostrar menos",
+    "otherVideos": "Más videos",
+    "noOtherVideos": "Aún no hay otros videos.",
+    "sync": "Comprobar estado",
+    "syncError": "No se pudo actualizar el estado."
+  },
+  "reactions": {
+    "like": "Me gusta",
+    "removeLike": "Quitar me gusta",
+    "dislike": "No me gusta",
+    "removeDislike": "Quitar no me gusta",
+    "notReady": "Solo puedes reaccionar a videos listos",
+    "signInToReact": "Inicia sesión para reaccionar a los videos.",
+    "error": "No se pudo registrar tu reacción."
+  },
+  "follow": {
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "unfollow": "Dejar de seguir",
+    "followersLabel": "{count, plural, one {seguidor} other {seguidores}}",
+    "followers": "{count, plural, one {{formatted} seguidor} other {{formatted} seguidores}}",
+    "signInToFollow": "Inicia sesión para seguir canales.",
+    "error": "No se pudo actualizar."
+  },
+  "comments": {
+    "label": "{count, plural, one {comentario} other {comentarios}}",
+    "notReady": "Los comentarios se abren cuando el video esté listo.",
+    "signInPrompt": "Inicia sesión en tu cuenta para comentar.",
+    "placeholder": "Añade un comentario…",
+    "submit": "Comentar",
+    "shortcut": "Ctrl + Enter para enviar",
+    "reply": "Responder",
+    "replyPlaceholder": "Escribe una respuesta…",
+    "editPlaceholder": "Editar comentario",
+    "replies": "{count, plural, one {# respuesta} other {# respuestas}}",
+    "moreReplies": "Mostrar más respuestas",
+    "moreComments": "Mostrar más comentarios",
+    "removed": "Comentario eliminado",
+    "author": "Autor",
+    "edited": "(editado)",
+    "actions": "Acciones del comentario",
+    "removeTitle": "¿Eliminar comentario?",
+    "removeWithReplies": "Tiene respuestas, así que aparecerá como “Comentario eliminado” para no romper la conversación.",
+    "removeIrreversible": "Esta acción no se puede deshacer.",
+    "editedToast": "Comentario editado.",
+    "removedToast": "Comentario eliminado.",
+    "errors": {
+      "send": "No se pudo publicar el comentario.",
+      "reply": "No se pudo publicar la respuesta.",
+      "edit": "No se pudo editar el comentario.",
+      "remove": "No se pudo eliminar el comentario.",
+      "loadReplies": "No se pudieron cargar las respuestas.",
+      "loadMore": "No se pudieron cargar más comentarios."
+    }
+  },
+  "upload": {
+    "title": "Subir video",
+    "subtitle": "El archivo va directo al servidor de video y se procesa automáticamente.",
+    "videoTitle": "Título",
+    "description": "Descripción",
+    "dropzone": "Arrastra un video o haz clic para elegir",
+    "formats": "MP4, MOV, MKV, WebM…",
+    "removeFile": "Quitar archivo",
+    "notVideo": "Elige un archivo de video.",
+    "uploading": "Subiendo…",
+    "preparing": "Preparando…",
+    "submit": "Subir",
+    "cancelled": "Subida cancelada.",
+    "error": "Falló la subida. Inténtalo de nuevo.",
+    "done": "¡Video subido!",
+    "doneHint": "Ahora se está procesando. Esto puede tardar unos minutos.",
+    "watch": "Ver video"
+  },
+  "studio": {
+    "title": "Mi canal",
+    "stats": {
+      "videos": "Videos",
+      "likes": "Me gusta",
+      "comments": "Comentarios"
+    },
+    "myVideos": "Mis videos",
+    "upload": "Subir video",
+    "empty": "No hay videos en el canal",
+    "emptyHint": "Los videos que subas aparecerán aquí.",
+    "columns": {
+      "video": "Video",
+      "status": "Estado",
+      "date": "Fecha",
+      "likes": "Me gusta",
+      "comments": "Comentarios"
+    },
+    "noDescription": "Sin descripción",
+    "likesCount": "{count, plural, one {# me gusta} other {# me gusta}}",
+    "commentsCount": "{count, plural, one {# comentario} other {# comentarios}}",
+    "actions": "Acciones de “{title}”",
+    "view": "Ver video",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "updated": "Video actualizado.",
+    "saveError": "No se pudieron guardar los cambios.",
+    "deleted": "“{title}” fue eliminado.",
+    "deleteError": "No se pudo eliminar el video.",
+    "editDialog": {
+      "title": "Editar video",
+      "description": "Los cambios se ven al instante para todos.",
+      "videoTitle": "Título",
+      "videoDescription": "Descripción",
+      "placeholder": "Cuenta de qué trata el video"
+    },
+    "deleteDialog": {
+      "title": "¿Eliminar “{title}”?",
+      "description": "El video se eliminará de la plataforma y del servidor de video, junto con sus me gusta y comentarios. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar video",
+      "deleting": "Eliminando…"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Iniciar sesión",
+      "description": "Inicia sesión para dar me gusta, comentar y publicar videos.",
+      "login": "Correo o nombre de usuario",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "submitting": "Entrando…",
+      "noAccount": "¿No tienes cuenta?",
+      "createAccount": "Crear cuenta",
+      "welcome": "¡Bienvenido de nuevo, {handle}!",
+      "error": "No se pudo iniciar sesión."
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "description": "Toma menos de un minuto.",
+      "username": "Nombre de usuario",
+      "displayName": "Nombre visible",
+      "displayNamePlaceholder": "Tu nombre o el nombre del canal",
+      "displayNameHint": "Así te verán los demás. Si lo dejas en blanco, usamos tu @usuario.",
+      "email": "Correo",
+      "password": "Contraseña",
+      "passwordHint": "Al menos 8 caracteres.",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta…",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Iniciar sesión",
+      "welcome": "¡Cuenta creada! Bienvenido, {handle}.",
+      "error": "No se pudo crear la cuenta."
+    },
+    "password": {
+      "show": "Mostrar contraseña",
+      "hide": "Ocultar contraseña"
+    },
+    "username": {
+      "placeholder": "nombre.de.usuario",
+      "hint": "De 3 a 30 caracteres: letras minúsculas, números, punto y guion bajo.",
+      "available": "@{username} está disponible",
+      "checkError": "No se pudo comprobar ahora."
+    }
+  },
+  "home": {
+    "empty": "Aún no hay videos",
+    "emptyHint": "Sube el primer video y aparecerá aquí.",
+    "upload": "Subir video",
+    "noResults": "No se encontró nada para “{query}”",
+    "noResultsHint": "Prueba con otras palabras.",
+    "results": "{count, plural, one {# resultado} other {# resultados}} para"
+  },
+  "feed": {
+    "title": "Siguiendo",
+    "empty": "Aún no hay nada aquí",
+    "emptyHint": "Sigue canales para ver sus videos nuevos aquí.",
+    "discover": "Descubrir videos",
+    "loadError": "No se pudieron cargar más videos."
+  },
+  "channel": {
+    "title": "Canal",
+    "videosCount": "{count, plural, one {# video} other {# videos}}",
+    "manage": "Administrar canal",
+    "videos": "Videos",
+    "empty": "No hay videos publicados",
+    "emptyHint": "Este canal aún no ha publicado videos."
+  },
+  "errors": {
+    "loadTitle": "No se pudo cargar",
+    "loadHint": "Comprueba que la API esté en ejecución (npm run dev en la carpeta api) e inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "notFound": "Página no encontrada",
+    "notFoundHint": "Es posible que el contenido se haya eliminado.",
+    "backHome": "Volver al inicio"
+  }
+}

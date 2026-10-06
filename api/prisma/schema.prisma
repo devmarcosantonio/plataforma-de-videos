@@ -20,8 +20,10 @@ model User {
   id            String   @id @default(uuid(7)) @db.Uuid
   // Sempre em minúsculas (normalizado na API), por isso o índice único já é case-insensitive.
   username      String   @unique @db.VarChar(30)
-  name          String
-  last_name     String
+  // Nome livre (pessoa ou marca); não é único. Quem identifica é o username.
+  display_name  String   @db.VarChar(50)
+  // Idioma preferido ('pt-BR', 'en', 'es'); nulo = segue o navegador.
+  locale        String?  @db.VarChar(10)
   email         String   @unique
   password_hash String
   created_at    DateTime @default(now()) @db.Timestamptz(3)

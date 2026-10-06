@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LogIn, MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/components/animated-number";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,8 @@ type Props = {
 };
 
 export function CommentSection({ videoId, videoOwnerId, currentUser, canComment, initialPage, initialCount }: Props) {
+  const t = useTranslations("comments");
+  const tc = useTranslations("common");
   const [comments, setComments] = useState(initialPage.items);
   const [nextCursor, setNextCursor] = useState(initialPage.next_cursor);
   const [count, setCount] = useState(initialCount);
@@ -43,7 +46,7 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
       setComments((current) => [created, ...current]);
       setCount((value) => value + 1);
     } catch (err) {
-      toast.error(errorMessage(err, "Não foi possível enviar o comentário."));
+      toast.error(errorMessage(err, t("errors.send")));
       throw err;
     }
   }
@@ -62,7 +65,7 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
       });
       setNextCursor(page.next_cursor);
     } catch (err) {
-      toast.error(errorMessage(err, "Não foi possível carregar mais comentários."));
+      toast.error(errorMessage(err, t("errors.loadMore")));
     } finally {
       setLoadingMore(false);
     }
@@ -73,20 +76,20 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <MessageSquare className="size-5 text-primary" />
         <AnimatedNumber value={count} />
-        comentário{count !== 1 && "s"}
+        {t("label", { count })}
       </h2>
 
       <div className="mt-5">
         {!canComment ? (
-          <p className="text-sm text-muted-foreground">Os comentários abrem quando o vídeo estiver pronto.</p>
+          <p className="text-sm text-muted-foreground">{t("notReady")}</p>
         ) : currentUser ? (
-          <CommentForm user={currentUser} placeholder="Adicione um comentário…" submitLabel="Comentar" onSubmit={create} />
+          <CommentForm user={currentUser} placeholder={t("placeholder")} submitLabel={t("submit")} onSubmit={create} />
         ) : (
           <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed p-4">
-            <p className="flex-1 text-sm text-muted-foreground">Entre na sua conta para comentar.</p>
+            <p className="flex-1 text-sm text-muted-foreground">{t("signInPrompt")}</p>
             <Button variant="outline" className="rounded-full" onClick={goToLogin}>
               <LogIn />
-              Entrar
+              {tc("signIn")}
             </Button>
           </div>
         )}
@@ -108,7 +111,7 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
 
       {nextCursor && (
         <Button variant="outline" onClick={loadMore} disabled={loadingMore} className="mt-6 rounded-full px-5">
-          {loadingMore ? "Carregando…" : "Mostrar mais comentários"}
+          {loadingMore ? tc("loading") : t("moreComments")}
         </Button>
       )}
     </section>

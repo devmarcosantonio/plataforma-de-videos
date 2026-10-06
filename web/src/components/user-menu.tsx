@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { LogOut, MonitorPlay, Upload, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -13,12 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Link, useRouter } from "@/i18n/navigation";
 import { postJson } from "@/lib/client-api";
-import { channelHref, fullName, handle } from "@/lib/format";
+import { channelHref, handle } from "@/lib/format";
 import type { AuthUser } from "@/lib/types";
 import { UserAvatar } from "./user-avatar";
 
 export function UserMenu({ user }: { user: AuthUser }) {
+  const t = useTranslations("account");
   const router = useRouter();
 
   async function logout() {
@@ -27,14 +28,14 @@ export function UserMenu({ user }: { user: AuthUser }) {
     } finally {
       router.push("/");
       router.refresh();
-      toast.success("Você saiu da conta.");
+      toast.success(t("signedOut"));
     }
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-lg" className="rounded-full" aria-label="Menu da conta">
+        <Button variant="ghost" size="icon-lg" className="rounded-full" aria-label={t("menu")}>
           <UserAvatar user={user} className="transition-transform hover:scale-105" />
         </Button>
       </DropdownMenuTrigger>
@@ -42,7 +43,7 @@ export function UserMenu({ user }: { user: AuthUser }) {
         <DropdownMenuLabel className="flex items-center gap-3 py-2 font-normal">
           <UserAvatar user={user} size="lg" />
           <span className="flex min-w-0 flex-col">
-            <span className="truncate font-medium">{fullName(user)}</span>
+            <span className="truncate font-medium">{user.display_name}</span>
             <span className="truncate text-xs text-muted-foreground">{handle(user)}</span>
           </span>
         </DropdownMenuLabel>
@@ -50,25 +51,25 @@ export function UserMenu({ user }: { user: AuthUser }) {
         <DropdownMenuItem asChild>
           <Link href={channelHref(user)}>
             <UserRound />
-            Ver meu canal
+            {t("viewChannel")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/studio">
             <MonitorPlay />
-            Gerenciar canal
+            {t("manageChannel")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/upload">
             <Upload />
-            Enviar vídeo
+            {t("upload")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={logout}>
           <LogOut />
-          Sair
+          {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

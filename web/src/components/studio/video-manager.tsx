@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Eye, Film, MessageSquare, MoreVertical, Pencil, ThumbsUp, Trash2, Upload } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/components/animated-number";
 import { EmptyState } from "@/components/empty-state";
@@ -18,17 +18,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { VideoThumbnail } from "@/components/video-thumbnail";
+import { Link } from "@/i18n/navigation";
 import { errorMessage, sendJson } from "@/lib/client-api";
-import { STATUS_LABEL } from "@/lib/format";
 import type { Video } from "@/lib/types";
 import { DeleteVideoDialog } from "./delete-video-dialog";
 import { EditVideoDialog } from "./edit-video-dialog";
 
-const dateFormat = new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" });
-
 type Props = { initialVideos: Video[] };
 
 export function VideoManager({ initialVideos }: Props) {
+  const t = useTranslations("studio");
   const [videos, setVideos] = useState(initialVideos);
   const [editing, setEditing] = useState<Video | null>(null);
   const [deleting, setDeleting] = useState<Video | null>(null);
@@ -43,9 +42,9 @@ export function VideoManager({ initialVideos }: Props) {
     try {
       const updated = await sendJson<Video>("PATCH", `/videos/${video.id}`, changes);
       setVideos((current) => current.map((item) => (item.id === updated.id ? updated : item)));
-      toast.success("Vídeo atualizado.");
+      toast.success(t("updated"));
     } catch (error) {
-      toast.error(errorMessage(error, "Não foi possível salvar as alterações."));
+      toast.error(errorMessage(error, t("saveError")));
       throw error;
     }
   }
@@ -54,9 +53,9 @@ export function VideoManager({ initialVideos }: Props) {
     try {
       await sendJson<void>("DELETE", `/videos/${video.id}`, {});
       setVideos((current) => current.filter((item) => item.id !== video.id));
-      toast.success(`“${video.title}” foi apagado.`);
+      toast.success(t("deleted", { title: video.title }));
     } catch (error) {
-      toast.error(errorMessage(error, "Não foi possível apagar o vídeo."));
+      toast.error(errorMessage(error, t("deleteError")));
       throw error;
     }
   }
@@ -64,32 +63,32 @@ export function VideoManager({ initialVideos }: Props) {
   return (
     <>
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <StatCard icon={<Film />} label="Vídeos" value={totals.videos} delay={0} />
-        <StatCard icon={<ThumbsUp />} label="Curtidas" value={totals.likes} delay={0.05} />
-        <StatCard icon={<MessageSquare />} label="Comentários" value={totals.comments} delay={0.1} />
+        <StatCard icon={<Film />} label={t("stats.videos")} value={totals.videos} delay={0} />
+        <StatCard icon={<ThumbsUp />} label={t("stats.likes")} value={totals.likes} delay={0.05} />
+        <StatCard icon={<MessageSquare />} label={t("stats.comments")} value={totals.comments} delay={0.1} />
       </div>
 
       <div className="mt-10 flex items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold">Meus vídeos</h2>
+        <h2 className="text-lg font-semibold">{t("myVideos")}</h2>
         <Button asChild className="rounded-full">
           <Link href="/upload">
             <Upload />
-            Enviar vídeo
+            {t("upload")}
           </Link>
         </Button>
       </div>
 
       {videos.length === 0 ? (
-        <EmptyState icon={<Film />} title="Nenhum vídeo no canal" description="Os vídeos que você enviar aparecem aqui." />
+        <EmptyState icon={<Film />} title={t("empty")} description={t("emptyHint")} />
       ) : (
         <div className="mt-4 flex flex-col gap-3">
           {/* Cabeçalho das colunas (só em telas largas). */}
           <div className="hidden grid-cols-[minmax(0,1fr)_120px_110px_90px_90px_40px] gap-4 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground lg:grid">
-            <span>Vídeo</span>
-            <span>Status</span>
-            <span>Data</span>
-            <span className="text-right">Curtidas</span>
-            <span className="text-right">Comentários</span>
+            <span>{t("columns.video")}</span>
+            <span>{t("columns.status")}</span>
+            <span>{t("columns.date")}</span>
+            <span className="text-right">{t("columns.likes")}</span>
+            <span className="text-right">{t("columns.comments")}</span>
             <span />
           </div>
 
@@ -145,6 +144,9 @@ function StatCard({ icon, label, value, delay }: { icon: React.ReactNode; label:
 }
 
 function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => void; onDelete: () => void }) {
+  const t = useTranslations("studio");
+  const format = useFormatter();
+  const date = format.dateTime(new Date(video.created_at), { dateStyle: "medium" });
   return (
     <Card className="relative py-3 transition-colors hover:bg-muted/40">
       <CardContent className="grid items-center gap-4 px-3 sm:px-4 lg:grid-cols-[minmax(0,1fr)_120px_110px_90px_90px_40px]">
@@ -154,13 +156,13 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
           </Link>
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 pr-10 font-medium leading-snug lg:pr-0">{video.title}</p>
-            <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{video.description || "Sem descrição"}</p>
+            <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{video.description || t("noDescription")}</p>
             {/* Em telas pequenas, os dados das colunas aparecem aqui. */}
             <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground lg:hidden">
               <StatusBadge video={video} />
-              <span>{dateFormat.format(new Date(video.created_at))}</span>
-              <span>{video.likes_count} curtidas</span>
-              <span>{video.comments_count} comentários</span>
+              <span>{date}</span>
+              <span>{t("likesCount", { count: video.likes_count })}</span>
+              <span>{t("commentsCount", { count: video.comments_count })}</span>
             </p>
           </div>
         </div>
@@ -169,7 +171,7 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
           <StatusBadge video={video} />
         </div>
         <span className="hidden text-sm text-muted-foreground lg:block">
-          {dateFormat.format(new Date(video.created_at))}
+          {date}
         </span>
         <span className="hidden text-right font-mono text-sm tabular-nums lg:block">{video.likes_count}</span>
         <span className="hidden text-right font-mono text-sm tabular-nums lg:block">{video.comments_count}</span>
@@ -177,7 +179,7 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
         <div className="absolute right-3 top-3 lg:static">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full" aria-label={`Ações de “${video.title}”`}>
+              <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("actions", { title: video.title })}>
                 <MoreVertical />
               </Button>
             </DropdownMenuTrigger>
@@ -185,17 +187,17 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
               <DropdownMenuItem asChild>
                 <Link href={`/watch/${video.id}`}>
                   <Eye />
-                  Ver vídeo
+                  {t("view")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={onEdit}>
                 <Pencil />
-                Editar
+                {t("edit")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onSelect={onDelete}>
                 <Trash2 />
-                Apagar
+                {t("delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -206,10 +208,11 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
 }
 
 function StatusBadge({ video }: { video: Video }) {
+  const t = useTranslations("video.status");
   const variant = video.status === "failed" ? "destructive" : video.status === "ready" ? "secondary" : "outline";
   return (
     <Badge variant={variant} className={video.status === "ready" ? "bg-primary/15 text-primary" : undefined}>
-      {STATUS_LABEL[video.status]}
+      {t(video.status)}
     </Badge>
   );
 }

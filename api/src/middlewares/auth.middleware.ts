@@ -45,7 +45,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
 // Bloqueia a rota para quem não está logado.
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
-    next(new AppError('Faça login para continuar', 401));
+    next(new AppError('AUTH_REQUIRED', 401));
     return;
   }
   next();
