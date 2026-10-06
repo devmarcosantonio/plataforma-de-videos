@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { User } from "@/lib/types";
+import type { AuthUser } from "@/lib/types";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
 
-type Props = { children: React.ReactNode; users: User[]; currentUserId: string | null };
+type Props = { children: React.ReactNode; user: AuthUser | null };
 
-export function AppShell({ children, users, currentUserId }: Props) {
+export function AppShell({ children, user }: Props) {
   // Desktop: alterna entre menu largo e compacto. Mobile: abre como gaveta.
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -19,9 +19,9 @@ export function AppShell({ children, users, currentUserId }: Props) {
 
   return (
     <>
-      <Header onMenuClick={toggleMenu} users={users} currentUserId={currentUserId} />
+      <Header onMenuClick={toggleMenu} user={user} />
       <div className="flex">
-        <Sidebar collapsed={collapsed} mobileOpen={mobileOpen} onMobileOpenChange={setMobileOpen} />
+        <Sidebar collapsed={collapsed} mobileOpen={mobileOpen} onMobileOpenChange={setMobileOpen} loggedIn={!!user} />
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6">{children}</main>
       </div>
     </>

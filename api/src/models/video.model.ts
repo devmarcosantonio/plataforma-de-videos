@@ -3,25 +3,37 @@ import { prisma } from '../config/database.js';
 import type { Prisma, Video, VideoStatus } from '../generated/prisma/client.js';
 
 export type { Video, VideoStatus };
-export type VideoWithStats = Video & { likes_count: number; comments_count: number };
+export type VideoAuthor = { id: string; username: string; name: string; last_name: string };
+export type VideoWithStats = Video & { likes_count: number; comments_count: number; author: VideoAuthor };
 
+// O dono do vídeo é sempre o usuário autenticado (não vem no corpo da requisição).
 export const createVideoSchema = z.object({
-  // Temporário: virá do usuário autenticado quando houver login.
-  user_id: z.uuid('user_id inválido'),
   title: z.string({ error: 'O título é obrigatório' }).trim().min(1, 'O título é obrigatório').max(200),
   description: z.string().trim().max(5000).optional(),
 });
 
 export const importVideoSchema = z.object({
-  user_id: z.uuid('user_id inválido'),
   bunny_video_id: z.string({ error: 'bunny_video_id é obrigatório' }).trim().min(1, 'bunny_video_id é obrigatório'),
 });
 
+export const updateVideoSchema = z
+  .object({
+    title: z.string().trim().min(1, 'O título não pode ficar vazio').max(200, 'O título pode ter no máximo 200 caracteres').optional(),
+    // String vazia apaga a descrição.
+    description: z.string().trim().max(5000, 'A descrição pode ter no máximo 5000 caracteres').optional(),
+  })
+  .refine((data) => data.title !== undefined || data.description !== undefined, {
+    message: 'Informe o título ou a descrição',
+  });
+
+export const listVideosQuerySchema = z.object({ user_id: z.uuid('user_id inválido').optional() });
+
 export type CreateVideoInput = z.infer<typeof createVideoSchema>;
 
-// Contagens calculadas pelo banco junto com o vídeo. Só likes são públicos;
-// comentários removidos não contam.
+// Autor (dados públicos) e contagens calculadas pelo banco junto com o vídeo.
+// Só likes são públicos; comentários removidos não contam.
 const statsInclude = {
+  user: { select: { id: true, username: true, name: true, last_name: true } },
   _count: {
     select: {
       reactions: { where: { type: 'like' } },
@@ -32,13 +44,17 @@ const statsInclude = {
 
 type VideoWithCount = Prisma.VideoGetPayload<{ include: typeof statsInclude }>;
 
-function withStats({ _count, ...video }: VideoWithCount): VideoWithStats {
-  return { ...video, likes_count: _count.reactions, comments_count: _count.comments };
+function withStats({ _count, user, ...video }: VideoWithCount): VideoWithStats {
+  return { ...video, author: user, likes_count: _count.reactions, comments_count: _count.comments };
 }
 
 export const VideoModel = {
-  async findAllWithStats(): Promise<VideoWithStats[]> {
-    const videos = await prisma.video.findMany({ include: statsInclude, orderBy: { created_at: 'desc' } });
+  async findAllWithStats(filter: { user_id?: string } = {}): Promise<VideoWithStats[]> {
+    const videos = await prisma.video.findMany({
+      where: filter,
+      include: statsInclude,
+      orderBy: { created_at: 'desc' },
+    });
     return videos.map(withStats);
   },
 

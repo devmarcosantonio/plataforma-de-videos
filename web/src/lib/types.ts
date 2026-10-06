@@ -1,5 +1,19 @@
 export type VideoStatus = "pending_upload" | "processing" | "ready" | "failed";
 
+// Dados públicos de um usuário (o que qualquer pessoa vê).
+export interface User {
+  id: string;
+  username: string;
+  name: string;
+  last_name: string;
+}
+
+// O usuário logado vendo a própria conta.
+export interface AuthUser extends User {
+  email: string;
+  created_at: string;
+}
+
 export interface Video {
   id: string;
   user_id: string;
@@ -13,6 +27,7 @@ export interface Video {
   updated_at: string;
   likes_count: number;
   comments_count: number;
+  author: User;
 }
 
 export interface Comment {
@@ -23,7 +38,7 @@ export interface Comment {
   created_at: string;
   edited_at: string | null;
   deleted: boolean;
-  author: Pick<User, "id" | "username" | "name" | "last_name"> | null;
+  author: User | null;
   replies_count: number;
 }
 
@@ -39,14 +54,6 @@ export interface ReactionStatus {
   likes_count: number;
   // Só vem para o dono do vídeo.
   dislikes_count?: number;
-}
-
-export interface User {
-  id: string;
-  username: string;
-  name: string;
-  last_name: string;
-  email: string;
 }
 
 export interface Playback {

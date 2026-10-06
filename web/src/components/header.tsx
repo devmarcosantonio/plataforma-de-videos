@@ -4,17 +4,17 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { Clapperboard, Menu, Search, Upload } from "lucide-react";
+import { Clapperboard, LogIn, Menu, Search, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SITE_NAME } from "@/lib/format";
-import type { User } from "@/lib/types";
+import type { AuthUser } from "@/lib/types";
 import { ThemeToggle } from "./theme-toggle";
-import { UserSwitcher } from "./user-switcher";
+import { UserMenu } from "./user-menu";
 
-type Props = { onMenuClick: () => void; users: User[]; currentUserId: string | null };
+type Props = { onMenuClick: () => void; user: AuthUser | null };
 
-export function Header({ onMenuClick, users, currentUserId }: Props) {
+export function Header({ onMenuClick, user }: Props) {
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center gap-2 border-b bg-background/80 px-3 backdrop-blur-xl sm:gap-3 sm:px-4">
       <Button variant="ghost" size="icon-lg" className="rounded-full" onClick={onMenuClick} aria-label="Abrir menu">
@@ -36,14 +36,28 @@ export function Header({ onMenuClick, users, currentUserId }: Props) {
         <SearchBar />
       </Suspense>
 
-      <Button asChild className="h-9 shrink-0 rounded-full px-4">
-        <Link href="/upload">
-          <Upload />
-          <span className="hidden sm:inline">Enviar</span>
-        </Link>
-      </Button>
-      <ThemeToggle />
-      <UserSwitcher users={users} currentUserId={currentUserId} />
+      {user ? (
+        <>
+          <Button asChild className="h-9 shrink-0 rounded-full px-4">
+            <Link href="/upload">
+              <Upload />
+              <span className="hidden sm:inline">Enviar</span>
+            </Link>
+          </Button>
+          <ThemeToggle />
+          <UserMenu user={user} />
+        </>
+      ) : (
+        <>
+          <ThemeToggle />
+          <Button asChild variant="outline" className="h-9 shrink-0 rounded-full px-4">
+            <Link href="/login">
+              <LogIn />
+              Entrar
+            </Link>
+          </Button>
+        </>
+      )}
     </header>
   );
 }

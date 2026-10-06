@@ -4,31 +4,18 @@ import {
   createUserSchema,
   updateUserSchema,
   usernameSchema,
-  type PublicUser,
   type User,
 } from '../models/user.model.js';
 import { hashPassword } from '../utils/password.js';
 import { deleteCommentsByUser } from './comment.service.js';
 
-function toPublic({ password_hash, ...user }: User): PublicUser {
-  return user;
-}
+// O que qualquer pessoa pode ver de um usuário (sem e-mail).
+export type PublicProfile = Pick<User, 'id' | 'username' | 'name' | 'last_name' | 'created_at'>;
 
-export async function listUsers(): Promise<PublicUser[]> {
-  const users = await UserModel.findAll();
-  return users.map(toPublic);
-}
+// O que o próprio usuário vê da conta dele (sem o hash da senha).
+export type PrivateUser = Omit<User, 'password_hash'>;
 
-export async function getUser(id: string): Promise<PublicUser> {
-  const user = await UserModel.findById(id);
-  if (!user) throw new AppError('Usuário não encontrado', 404);
-  return toPublic(user);
-}
-
-// Perfil público (página de canal): sem e-mail.
-export async function getUserByUsername(username: string) {
-  const user = await UserModel.findByUsername(username.trim().toLowerCase());
-  if (!user) throw new AppError('Usuário não encontrado', 404);
+export function toPublicProfile(user: User): PublicProfile {
   return {
     id: user.id,
     username: user.username,
@@ -36,6 +23,31 @@ export async function getUserByUsername(username: string) {
     last_name: user.last_name,
     created_at: user.created_at,
   };
+}
+
+export function toPrivate({ password_hash, ...user }: User): PrivateUser {
+  return user;
+}
+
+function ensureSelf(actor: User, id: string) {
+  if (actor.id !== id) throw new AppError('Você só pode alterar a sua própria conta', 403);
+}
+
+export async function listUsers(): Promise<PublicProfile[]> {
+  const users = await UserModel.findAll();
+  return users.map(toPublicProfile);
+}
+
+export async function getUser(id: string): Promise<PublicProfile> {
+  const user = await UserModel.findById(id);
+  if (!user) throw new AppError('Usuário não encontrado', 404);
+  return toPublicProfile(user);
+}
+
+export async function getUserByUsername(username: string): Promise<PublicProfile> {
+  const user = await UserModel.findByUsername(username.trim().toLowerCase());
+  if (!user) throw new AppError('Usuário não encontrado', 404);
+  return toPublicProfile(user);
 }
 
 // Para o formulário avisar enquanto a pessoa digita: formato inválido não é erro, é "indisponível".
@@ -68,7 +80,8 @@ async function ensureUniqueFields(data: { email?: string; username?: string }, c
   }
 }
 
-export async function createUser(input: unknown): Promise<PublicUser> {
+// Usado pelo cadastro (POST /auth/register).
+export async function createUser(input: unknown): Promise<PrivateUser> {
   const { password, ...data } = createUserSchema.parse(input);
   await ensureUniqueFields(data);
 
@@ -76,33 +89,29 @@ export async function createUser(input: unknown): Promise<PublicUser> {
     ...data,
     password_hash: await hashPassword(password),
   });
-  return toPublic(user);
+  return toPrivate(user);
 }
 
-export async function updateUser(id: string, input: unknown): Promise<PublicUser> {
+export async function updateUser(actor: User, id: string, input: unknown): Promise<PrivateUser> {
+  ensureSelf(actor, id);
   const { password, ...data } = updateUserSchema.parse(input);
-
-  if (!(await UserModel.findById(id))) {
-    throw new AppError('Usuário não encontrado', 404);
-  }
-
   await ensureUniqueFields(data, id);
 
   const user = await UserModel.update(id, {
     ...data,
     ...(password !== undefined && { password_hash: await hashPassword(password) }),
   });
-  return toPublic(user);
+  return toPrivate(user);
 }
 
-export async function deleteUser(id: string): Promise<void> {
-  if (!(await UserModel.findById(id))) throw new AppError('Usuário não encontrado', 404);
+export async function deleteUser(actor: User, id: string): Promise<void> {
+  ensureSelf(actor, id);
 
   if ((await UserModel.countVideos(id)) > 0) {
-    throw new AppError('O usuário possui vídeos. Remova os vídeos antes de apagar a conta', 409);
+    throw new AppError('Você possui vídeos. Remova os vídeos antes de apagar a conta', 409);
   }
 
-  // Comentários seguem a regra de remoção; likes saem em cascata no banco.
+  // Comentários seguem a regra de remoção; reações saem em cascata no banco.
   await deleteCommentsByUser(id);
   await UserModel.delete(id);
 }

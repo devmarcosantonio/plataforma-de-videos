@@ -1,6 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from './generated/prisma/client.js';
+import { authenticate } from './middlewares/auth.middleware.js';
 import { AppError } from './utils/errors/app-error.js';
 import routes from './routes/index.js';
 import webhookRoutes from './routes/webhook.routes.js';
@@ -17,6 +18,8 @@ const app = express();
 app.use('/webhooks', webhookRoutes);
 
 app.use(express.json());
+// Identifica o usuário pelo token (cookie ou Authorization) em todas as rotas; quem bloqueia é o requireAuth.
+app.use(authenticate);
 app.use(routes);
 
 app.use((req: Request, res: Response) => {

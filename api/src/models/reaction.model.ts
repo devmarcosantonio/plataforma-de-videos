@@ -11,18 +11,9 @@ export interface ReactionStatus {
   dislikes_count?: number;
 }
 
-// user_id é temporário: virá do usuário autenticado quando houver login.
+// Quem reage é sempre o usuário autenticado.
 export const setReactionSchema = z.object({
-  user_id: z.uuid('user_id inválido'),
   type: z.enum(['like', 'dislike'], { error: 'type deve ser "like" ou "dislike"' }),
-});
-
-export const removeReactionSchema = z.object({
-  user_id: z.uuid('user_id inválido'),
-});
-
-export const reactionStatusQuerySchema = z.object({
-  user_id: z.uuid('user_id inválido').optional(),
 });
 
 const byKey = (userId: string, videoId: string) => ({

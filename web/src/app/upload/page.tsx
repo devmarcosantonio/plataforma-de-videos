@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { UploadForm } from "@/components/upload-form";
-import { getUsers } from "@/lib/api";
-import { getCurrentUserId } from "@/lib/current-user";
+import { requireSession } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Enviar vídeo" };
 
 export default async function UploadPage() {
-  const [users, currentUserId] = await Promise.all([getUsers(), getCurrentUserId()]);
+  await requireSession("/upload");
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -14,7 +13,7 @@ export default async function UploadPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         O arquivo vai direto para o servidor de vídeo e é processado automaticamente.
       </p>
-      <UploadForm initialUsers={users} currentUserId={currentUserId} />
+      <UploadForm />
     </div>
   );
 }

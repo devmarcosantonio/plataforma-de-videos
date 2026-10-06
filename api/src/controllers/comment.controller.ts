@@ -8,7 +8,7 @@ export async function index(req: Request<IdParams>, res: Response) {
 }
 
 export async function store(req: Request<IdParams>, res: Response) {
-  res.status(201).json(await commentService.createComment(req.params.id, req.body ?? {}));
+  res.status(201).json(await commentService.createComment(req.user!, req.params.id, req.body ?? {}));
 }
 
 export async function replies(req: Request<IdParams>, res: Response) {
@@ -16,10 +16,10 @@ export async function replies(req: Request<IdParams>, res: Response) {
 }
 
 export async function update(req: Request<IdParams>, res: Response) {
-  res.json(await commentService.updateComment(req.params.id, req.body ?? {}));
+  res.json(await commentService.updateComment(req.user!, req.params.id, req.body ?? {}));
 }
 
 export async function destroy(req: Request<IdParams>, res: Response) {
-  await commentService.deleteComment(req.params.id, req.body ?? {});
+  await commentService.deleteComment(req.user!, req.params.id);
   res.status(204).send();
 }

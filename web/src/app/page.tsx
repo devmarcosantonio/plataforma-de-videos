@@ -3,13 +3,13 @@ import { SearchX, Upload, VideoOff } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { VideoGrid } from "@/components/video-card";
-import { getUsersById, getVideos } from "@/lib/api";
+import { getVideos } from "@/lib/api";
 
 export default async function HomePage({ searchParams }: PageProps<"/">) {
   const { q } = await searchParams;
   const query = typeof q === "string" ? q.trim() : "";
 
-  const [videos, users] = await Promise.all([getVideos(), getUsersById()]);
+  const videos = await getVideos();
 
   const filtered = videos
     .filter((video) => !query || video.title.toLowerCase().includes(query.toLowerCase()))
@@ -40,7 +40,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
           <span className="font-medium text-foreground">“{query}”</span>
         </p>
       )}
-      <VideoGrid items={filtered.map((video) => ({ video, author: users.get(video.user_id) }))} />
+      <VideoGrid items={filtered.map((video) => ({ video, author: video.author }))} />
     </section>
   );
 }

@@ -38,6 +38,14 @@ export const bunnyClient = {
     return response.json() as Promise<BunnyVideo>;
   },
 
+  async updateTitle(videoId: string, title: string): Promise<void> {
+    const response = await request(`/videos/${encodeURIComponent(videoId)}`, {
+      method: 'POST',
+      body: JSON.stringify({ title }),
+    });
+    if (!response.ok) return fail(response);
+  },
+
   async getVideo(videoId: string): Promise<BunnyVideo | null> {
     const response = await request(`/videos/${encodeURIComponent(videoId)}`);
     if (response.status === 404) return null;

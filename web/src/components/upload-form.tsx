@@ -4,22 +4,17 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Upload as TusUpload } from "tus-js-client";
-import { FileVideo, Loader2, Play, UploadCloud, UserPlus, X } from "lucide-react";
+import { FileVideo, Loader2, Play, UploadCloud, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { errorMessage, postJson } from "@/lib/client-api";
-import { fullName, handle } from "@/lib/format";
-import type { UploadCredentials, User, Video } from "@/lib/types";
+import type { UploadCredentials, Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { UserAvatar } from "./user-avatar";
-import { UsernameField } from "./username-field";
 
 type Phase =
   | { name: "idle" }
@@ -27,14 +22,8 @@ type Phase =
   | { name: "uploading"; progress: number }
   | { name: "done"; videoId: string };
 
-type Props = { initialUsers: User[]; currentUserId: string | null };
-
-export function UploadForm({ initialUsers, currentUserId }: Props) {
-  const router = useRouter();
-  const [users, setUsers] = useState(initialUsers);
-  const [userId, setUserId] = useState(
-    initialUsers.find((user) => user.id === currentUserId)?.id ?? initialUsers[0]?.id ?? "",
-  );
+// O vídeo é sempre publicado pela conta logada (a página exige login).
+export function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
   const [phase, setPhase] = useState<Phase>({ name: "idle" });
   const uploadRef = useRef<TusUpload | null>(null);
@@ -43,7 +32,7 @@ export function UploadForm({ initialUsers, currentUserId }: Props) {
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!file || !userId) return;
+    if (!file) return;
 
     const form = new FormData(event.currentTarget);
     const title = String(form.get("title") ?? "");
@@ -52,7 +41,6 @@ export function UploadForm({ initialUsers, currentUserId }: Props) {
     try {
       setPhase({ name: "creating" });
       const { video, upload } = await postJson<{ video: Video; upload: UploadCredentials }>("/videos", {
-        user_id: userId,
         title,
         description,
       });
@@ -103,41 +91,6 @@ export function UploadForm({ initialUsers, currentUserId }: Props) {
         </motion.div>
       ) : (
         <motion.div key="form" exit={{ opacity: 0, y: -12 }} className="mt-8 flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Publicar como</CardTitle>
-              <CardDescription>Provisório até existir login.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              {users.length > 0 && (
-                <Select value={userId} onValueChange={setUserId} disabled={busy}>
-                  <SelectTrigger className="h-11 w-full">
-                    <SelectValue placeholder="Escolha um usuário" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        <UserAvatar user={user} size="sm" />
-                        {fullName(user)}
-                        <span className="text-muted-foreground">{handle(user)}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-              <QuickUserForm
-                startOpen={users.length === 0}
-                onCreated={(user) => {
-                  setUsers((current) => [...current, user]);
-                  setUserId(user.id);
-                  toast.success(`Usuário ${handle(user)} criado.`);
-                  // Atualiza o seletor de usuário do cabeçalho.
-                  router.refresh();
-                }}
-              />
-            </CardContent>
-          </Card>
-
           <form onSubmit={onSubmit} className="flex flex-col gap-6">
             <FilePicker file={file} onChange={setFile} disabled={busy} />
 
@@ -180,7 +133,7 @@ export function UploadForm({ initialUsers, currentUserId }: Props) {
                   Cancelar
                 </Button>
               )}
-              <Button type="submit" size="lg" className="rounded-full px-6" disabled={busy || !file || !userId}>
+              <Button type="submit" size="lg" className="rounded-full px-6" disabled={busy || !file}>
                 {busy ? <Loader2 className="animate-spin" /> : <UploadCloud />}
                 {phase.name === "creating" ? "Preparando…" : "Enviar"}
               </Button>
@@ -308,65 +261,6 @@ function FilePicker({
             onChange={(event) => onChange(event.target.files?.[0] ?? null)}
           />
         </motion.label>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// Enquanto não há login, permite criar um usuário rapidamente para publicar.
-function QuickUserForm({ startOpen, onCreated }: { startOpen: boolean; onCreated: (user: User) => void }) {
-  const [open, setOpen] = useState(startOpen);
-  const [saving, setSaving] = useState(false);
-
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSaving(true);
-    try {
-      const user = await postJson<User>("/users", Object.fromEntries(new FormData(event.currentTarget)));
-      onCreated(user);
-      setOpen(false);
-    } catch (err) {
-      toast.error(errorMessage(err, "Não foi possível criar o usuário."));
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return (
-    <AnimatePresence mode="wait" initial={false}>
-      {!open ? (
-        <motion.div key="button" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <Button type="button" variant="link" className="px-0" onClick={() => setOpen(true)}>
-            <UserPlus />
-            Criar usuário
-          </Button>
-        </motion.div>
-      ) : (
-        <motion.form
-          key="form"
-          onSubmit={onSubmit}
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="overflow-hidden"
-        >
-          <div className="grid gap-3 rounded-xl border bg-muted/30 p-4 sm:grid-cols-2">
-            <UsernameField disabled={saving} />
-            <Input name="name" placeholder="Nome" required className="h-10" />
-            <Input name="last_name" placeholder="Sobrenome" required className="h-10" />
-            <Input name="email" type="email" placeholder="E-mail" required className="h-10" />
-            <Input name="password" type="password" placeholder="Senha (mín. 8)" required minLength={8} className="h-10" />
-            <div className="flex justify-end gap-2 sm:col-span-2">
-              <Button type="button" variant="ghost" className="rounded-full" onClick={() => setOpen(false)}>
-                Cancelar
-              </Button>
-              <Button type="submit" className="rounded-full px-4" disabled={saving}>
-                {saving && <Loader2 className="animate-spin" />}
-                {saving ? "Criando…" : "Criar usuário"}
-              </Button>
-            </div>
-          </div>
-        </motion.form>
       )}
     </AnimatePresence>
   );

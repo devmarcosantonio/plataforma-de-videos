@@ -6,6 +6,7 @@ import { ThumbsDown, ThumbsUp, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useLoginRedirect } from "@/hooks/use-login-redirect";
 import { errorMessage, sendJson } from "@/lib/client-api";
 import type { ReactionStatus, ReactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -14,7 +15,7 @@ import { AnimatedNumber } from "./animated-number";
 type Props = {
   videoId: string;
   initial: ReactionStatus;
-  currentUserId: string | null;
+  loggedIn: boolean;
   disabled?: boolean;
 };
 
@@ -28,18 +29,21 @@ function predict(state: ReactionStatus, next: ReactionType | null): ReactionStat
   };
 }
 
-export function ReactionButtons({ videoId, initial, currentUserId, disabled }: Props) {
+export function ReactionButtons({ videoId, initial, loggedIn, disabled }: Props) {
   const [state, setState] = useState(initial);
   const [pending, setPending] = useState(false);
+  const goToLogin = useLoginRedirect();
 
-  const blockedReason = !currentUserId
-    ? "Escolha um usuário no topo da página para reagir"
-    : disabled
-      ? "Só é possível reagir a vídeos prontos"
-      : null;
+  const blockedReason = disabled ? "Só é possível reagir a vídeos prontos" : null;
 
   async function react(type: ReactionType) {
-    if (!currentUserId || pending) return;
+    // Visitante: o clique leva para o login e volta para este vídeo.
+    if (!loggedIn) {
+      toast.info("Entre para reagir aos vídeos.");
+      goToLogin();
+      return;
+    }
+    if (pending) return;
 
     // Clicar na reação já marcada remove; clicar na outra troca.
     const next = state.reaction === type ? null : type;
@@ -48,10 +52,11 @@ export function ReactionButtons({ videoId, initial, currentUserId, disabled }: P
     setPending(true);
 
     try {
-      const result = await sendJson<ReactionStatus>(next ? "PUT" : "DELETE", `/videos/${videoId}/reaction`, {
-        user_id: currentUserId,
-        ...(next && { type: next }),
-      });
+      const result = await sendJson<ReactionStatus>(
+        next ? "PUT" : "DELETE",
+        `/videos/${videoId}/reaction`,
+        next ? { type: next } : {},
+      );
       setState(result);
     } catch (err) {
       setState(previous);

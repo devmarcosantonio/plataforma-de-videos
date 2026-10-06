@@ -1,13 +1,12 @@
 import {
   CommentModel,
   createCommentSchema,
-  deleteCommentSchema,
   listCommentsQuerySchema,
   updateCommentSchema,
   type Comment,
   type CommentWithRelations,
 } from '../models/comment.model.js';
-import { UserModel } from '../models/user.model.js';
+import type { User } from '../models/user.model.js';
 import { VideoModel } from '../models/video.model.js';
 import { decodeCursor, encodeCursor } from '../utils/cursor.js';
 import { AppError } from '../utils/errors/app-error.js';
@@ -65,10 +64,6 @@ async function findCommentOrFail(id: string): Promise<Comment> {
   return comment;
 }
 
-async function ensureUser(userId: string) {
-  if (!(await UserModel.findById(userId))) throw new AppError('Usuário não encontrado', 404);
-}
-
 export async function listComments(videoId: string, query: unknown): Promise<CommentPage> {
   const { cursor, limit } = listCommentsQuerySchema.parse(query);
   await findVideoOrFail(videoId);
@@ -82,9 +77,8 @@ export async function listReplies(commentId: string, query: unknown): Promise<Co
   return toPage(await CommentModel.listReplies(commentId, cursor ? decodeCursor(cursor) : undefined, limit));
 }
 
-export async function createComment(videoId: string, input: unknown): Promise<PublicComment> {
+export async function createComment(actor: User, videoId: string, input: unknown): Promise<PublicComment> {
   const data = createCommentSchema.parse(input);
-  await ensureUser(data.user_id);
 
   const video = await findVideoOrFail(videoId);
   if (video.status !== 'ready') throw new AppError('Só é possível comentar em vídeos prontos', 409);
@@ -100,32 +94,31 @@ export async function createComment(videoId: string, input: unknown): Promise<Pu
 
   const comment = await CommentModel.create({
     video_id: videoId,
-    user_id: data.user_id,
+    user_id: actor.id,
     parent_id: parentId,
     content: data.content,
   });
   return toPublic(comment);
 }
 
-export async function updateComment(commentId: string, input: unknown): Promise<PublicComment> {
+export async function updateComment(actor: User, commentId: string, input: unknown): Promise<PublicComment> {
   const data = updateCommentSchema.parse(input);
   const comment = await findCommentOrFail(commentId);
 
   if (comment.deleted_at) throw new AppError('Comentário não encontrado', 404);
-  if (comment.user_id !== data.user_id) throw new AppError('Só o autor pode editar o comentário', 403);
+  if (comment.user_id !== actor.id) throw new AppError('Só o autor pode editar o comentário', 403);
 
   const updated = await CommentModel.update(comment.id, { content: data.content, edited_at: new Date() });
   return toPublic(updated);
 }
 
-export async function deleteComment(commentId: string, input: unknown): Promise<void> {
-  const { user_id } = deleteCommentSchema.parse(input);
+export async function deleteComment(actor: User, commentId: string): Promise<void> {
   const comment = await findCommentOrFail(commentId);
   if (comment.deleted_at) return;
 
   const video = await VideoModel.findById(comment.video_id);
-  const isAuthor = comment.user_id === user_id;
-  const isVideoOwner = video?.user_id === user_id;
+  const isAuthor = comment.user_id === actor.id;
+  const isVideoOwner = video?.user_id === actor.id;
   if (!isAuthor && !isVideoOwner) {
     throw new AppError('Só o autor ou o dono do vídeo podem remover o comentário', 403);
   }

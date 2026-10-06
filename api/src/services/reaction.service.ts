@@ -1,11 +1,5 @@
-import {
-  ReactionModel,
-  reactionStatusQuerySchema,
-  removeReactionSchema,
-  setReactionSchema,
-  type ReactionStatus,
-} from '../models/reaction.model.js';
-import { UserModel } from '../models/user.model.js';
+import { ReactionModel, setReactionSchema, type ReactionStatus } from '../models/reaction.model.js';
+import type { User } from '../models/user.model.js';
 import { VideoModel, type Video } from '../models/video.model.js';
 import { AppError } from '../utils/errors/app-error.js';
 
@@ -15,13 +9,9 @@ async function findVideoOrFail(videoId: string): Promise<Video> {
   return video;
 }
 
-async function ensureUser(userId: string) {
-  if (!(await UserModel.findById(userId))) throw new AppError('Usuário não encontrado', 404);
-}
-
-async function status(userId: string | undefined, video: Video): Promise<ReactionStatus> {
+async function status(actor: User | undefined, video: Video): Promise<ReactionStatus> {
   const [reaction, counts] = await Promise.all([
-    userId ? ReactionModel.find(userId, video.id) : null,
+    actor ? ReactionModel.find(actor.id, video.id) : null,
     ReactionModel.countByVideo(video.id),
   ]);
 
@@ -29,33 +19,29 @@ async function status(userId: string | undefined, video: Video): Promise<Reactio
     reaction: reaction?.type ?? null,
     likes_count: counts.like,
     // Como no YouTube: a contagem de "não gostei" só é visível para o dono do vídeo.
-    ...(userId === video.user_id && { dislikes_count: counts.dislike }),
+    ...(actor?.id === video.user_id && { dislikes_count: counts.dislike }),
   };
 }
 
-export async function getReactionStatus(videoId: string, query: unknown): Promise<ReactionStatus> {
-  const { user_id } = reactionStatusQuerySchema.parse(query);
-  return status(user_id, await findVideoOrFail(videoId));
+// Visitantes também podem consultar (veem só a contagem de likes).
+export async function getReactionStatus(actor: User | undefined, videoId: string): Promise<ReactionStatus> {
+  return status(actor, await findVideoOrFail(videoId));
 }
 
-export async function setReaction(videoId: string, input: unknown): Promise<ReactionStatus> {
-  const { user_id, type } = setReactionSchema.parse(input);
-  await ensureUser(user_id);
+export async function setReaction(actor: User, videoId: string, input: unknown): Promise<ReactionStatus> {
+  const { type } = setReactionSchema.parse(input);
 
   const video = await findVideoOrFail(videoId);
   if (video.status !== 'ready') {
     throw new AppError('Só é possível reagir a vídeos prontos', 409);
   }
 
-  await ReactionModel.set(user_id, videoId, type);
-  return status(user_id, video);
+  await ReactionModel.set(actor.id, videoId, type);
+  return status(actor, video);
 }
 
-export async function removeReaction(videoId: string, input: unknown): Promise<ReactionStatus> {
-  const { user_id } = removeReactionSchema.parse(input);
-  await ensureUser(user_id);
+export async function removeReaction(actor: User, videoId: string): Promise<ReactionStatus> {
   const video = await findVideoOrFail(videoId);
-
-  await ReactionModel.remove(user_id, videoId);
-  return status(user_id, video);
+  await ReactionModel.remove(actor.id, videoId);
+  return status(actor, video);
 }

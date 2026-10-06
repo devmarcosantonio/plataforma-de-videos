@@ -8,8 +8,8 @@ import { SyncButton } from "@/components/sync-button";
 import { UserAvatar } from "@/components/user-avatar";
 import { VideoListItem } from "@/components/video-card";
 import { VideoDescription } from "@/components/video-description";
-import { getComments, getPlayback, getReactionStatus, getUsersById, getVideo, getVideos } from "@/lib/api";
-import { getCurrentUserId } from "@/lib/current-user";
+import { getComments, getPlayback, getReactionStatus, getVideo, getVideos } from "@/lib/api";
+import { getSession } from "@/lib/auth";
 import { fullName, handle, STATUS_LABEL, timeAgo } from "@/lib/format";
 import type { Video } from "@/lib/types";
 
@@ -22,18 +22,18 @@ export async function generateMetadata({ params }: PageProps<"/watch/[id]">): Pr
 export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
   const { id } = await params;
 
-  const currentUserId = await getCurrentUserId();
-  const [video, videos, users, reactionStatus, comments] = await Promise.all([
+  const [video, videos, session, reactionStatus, comments] = await Promise.all([
     getVideo(id),
     getVideos(),
-    getUsersById(),
-    getReactionStatus(id, currentUserId),
+    getSession(),
+    getReactionStatus(id),
     getComments(id),
   ]);
   if (!video) notFound();
 
   const playback = video.status === "ready" ? await getPlayback(video.id) : null;
-  const author = users.get(video.user_id);
+  const author = video.author;
+  const isOwner = session?.id === video.user_id;
   const others = videos.filter((other) => other.id !== video.id);
 
   return (
@@ -49,7 +49,7 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
               allowFullScreen
             />
           ) : (
-            <PlayerPlaceholder video={video} />
+            <PlayerPlaceholder video={video} canSync={isOwner} />
           )}
         </FadeIn>
 
@@ -63,11 +63,11 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
               <p className="truncate text-sm text-muted-foreground">{author ? fullName(author) : null}</p>
             </div>
             <ReactionButtons
-              // Remonta ao trocar de usuário para refletir a reação dele.
-              key={currentUserId ?? "visitante"}
+              // Remonta ao entrar/sair para refletir a reação do usuário.
+              key={session?.id ?? "visitante"}
               videoId={video.id}
               initial={reactionStatus ?? { reaction: null, likes_count: video.likes_count }}
-              currentUserId={currentUserId}
+              loggedIn={!!session}
               disabled={video.status !== "ready"}
             />
           </div>
@@ -79,11 +79,11 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
 
         <FadeIn delay={0.15}>
           <CommentSection
-            // Remonta ao trocar de usuário para atualizar as ações disponíveis.
-            key={currentUserId ?? "visitante"}
+            // Remonta ao entrar/sair para atualizar as ações disponíveis.
+            key={session?.id ?? "visitante"}
             videoId={video.id}
             videoOwnerId={video.user_id}
-            currentUser={(currentUserId && users.get(currentUserId)) || null}
+            currentUser={session}
             canComment={video.status === "ready"}
             initialPage={comments}
             initialCount={video.comments_count}
@@ -98,7 +98,7 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
         ) : (
           <div className="flex flex-col gap-1">
             {others.map((other, index) => (
-              <VideoListItem key={other.id} index={index} video={other} author={users.get(other.user_id)} />
+              <VideoListItem key={other.id} index={index} video={other} author={other.author} />
             ))}
           </div>
         )}
@@ -107,7 +107,7 @@ export default async function WatchPage({ params }: PageProps<"/watch/[id]">) {
   );
 }
 
-function PlayerPlaceholder({ video }: { video: Video }) {
+function PlayerPlaceholder({ video, canSync }: { video: Video; canSync: boolean }) {
   const content = {
     pending_upload: {
       icon: <UploadCloud className="size-8" />,
@@ -129,7 +129,8 @@ function PlayerPlaceholder({ video }: { video: Video }) {
       {content.icon}
       <p className="font-medium text-white">{STATUS_LABEL[video.status]}</p>
       <p className="max-w-sm text-sm">{content.text}</p>
-      {video.status !== "failed" && <SyncButton videoId={video.id} />}
+      {/* Só o dono pode forçar a verificação no Bunny. */}
+      {canSync && video.status !== "failed" && <SyncButton videoId={video.id} />}
     </div>
   );
 }

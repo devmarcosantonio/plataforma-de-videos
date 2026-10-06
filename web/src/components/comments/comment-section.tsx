@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { MessageSquare } from "lucide-react";
+import { LogIn, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/components/animated-number";
 import { Button } from "@/components/ui/button";
+import { useLoginRedirect } from "@/hooks/use-login-redirect";
 import { errorMessage, getJson, sendJson } from "@/lib/client-api";
 import type { Comment, CommentPage, User } from "@/lib/types";
 import { CommentForm } from "./comment-form";
@@ -25,6 +26,7 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
   const [nextCursor, setNextCursor] = useState(initialPage.next_cursor);
   const [count, setCount] = useState(initialCount);
   const [loadingMore, setLoadingMore] = useState(false);
+  const goToLogin = useLoginRedirect();
 
   const ctx: ThreadContext = {
     videoId,
@@ -37,10 +39,7 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
   async function create(content: string) {
     if (!currentUser) return;
     try {
-      const created = await sendJson<Comment>("POST", `/videos/${videoId}/comments`, {
-        user_id: currentUser.id,
-        content,
-      });
+      const created = await sendJson<Comment>("POST", `/videos/${videoId}/comments`, { content });
       setComments((current) => [created, ...current]);
       setCount((value) => value + 1);
     } catch (err) {
@@ -83,7 +82,13 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
         ) : currentUser ? (
           <CommentForm user={currentUser} placeholder="Adicione um comentário…" submitLabel="Comentar" onSubmit={create} />
         ) : (
-          <p className="text-sm text-muted-foreground">Escolha um usuário no topo da página para comentar.</p>
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed p-4">
+            <p className="flex-1 text-sm text-muted-foreground">Entre na sua conta para comentar.</p>
+            <Button variant="outline" className="rounded-full" onClick={goToLogin}>
+              <LogIn />
+              Entrar
+            </Button>
+          </div>
         )}
       </div>
 

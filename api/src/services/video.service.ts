@@ -6,11 +6,13 @@ import {
   type BunnyUploadCredentials,
   type BunnyVideo,
 } from '../integrations/bunny/bunny.types.js';
-import { UserModel } from '../models/user.model.js';
+import type { User } from '../models/user.model.js';
 import {
   VideoModel,
   createVideoSchema,
   importVideoSchema,
+  listVideosQuerySchema,
+  updateVideoSchema,
   type Video,
   type VideoStatus,
   type VideoWithStats,
@@ -51,21 +53,17 @@ async function findOrFail(id: string): Promise<Video> {
   return video;
 }
 
-async function ensureUser(userId: string) {
-  if (!(await UserModel.findById(userId))) throw new AppError('Usuário não encontrado', 404);
-}
-
 export async function createVideo(
+  actor: User,
   input: unknown,
 ): Promise<{ video: Video; upload: BunnyUploadCredentials }> {
   const data = createVideoSchema.parse(input);
-  await ensureUser(data.user_id);
 
   const bunnyVideo = await bunnyClient.createVideo(data.title);
 
   try {
     const video = await VideoModel.create({
-      user_id: data.user_id,
+      user_id: actor.id,
       bunny_video_id: bunnyVideo.guid,
       title: data.title,
       description: data.description ?? null,
@@ -79,9 +77,8 @@ export async function createVideo(
 }
 
 // Registra um vídeo que já existe no Bunny (ex.: enviado antes da persistência no banco).
-export async function importVideo(input: unknown): Promise<Video> {
+export async function importVideo(actor: User, input: unknown): Promise<Video> {
   const data = importVideoSchema.parse(input);
-  await ensureUser(data.user_id);
 
   if (await VideoModel.findByBunnyId(data.bunny_video_id)) {
     throw new AppError('Este vídeo já está cadastrado', 409);
@@ -91,15 +88,41 @@ export async function importVideo(input: unknown): Promise<Video> {
   if (!bunnyVideo) throw new AppError('Vídeo não encontrado no Bunny', 404);
 
   return VideoModel.create({
-    user_id: data.user_id,
+    user_id: actor.id,
     bunny_video_id: bunnyVideo.guid,
     title: bunnyVideo.title.slice(0, 200) || 'Sem título',
     ...fromBunny(bunnyVideo),
   });
 }
 
-export async function listVideos(): Promise<VideoWithStats[]> {
-  return VideoModel.findAllWithStats();
+export async function listVideos(query: unknown): Promise<VideoWithStats[]> {
+  const { user_id } = listVideosQuerySchema.parse(query);
+  return VideoModel.findAllWithStats(user_id ? { user_id } : {});
+}
+
+async function findOwnedOrFail(id: string, actor: User): Promise<Video> {
+  const video = await findOrFail(id);
+  if (video.user_id !== actor.id) throw new AppError('Só o dono do vídeo pode fazer isso', 403);
+  return video;
+}
+
+export async function updateVideo(actor: User, id: string, input: unknown): Promise<VideoWithStats> {
+  const { title, description } = updateVideoSchema.parse(input);
+  const video = await findOwnedOrFail(id, actor);
+
+  await VideoModel.update(video.id, {
+    ...(title !== undefined && { title }),
+    ...(description !== undefined && { description: description || null }),
+  });
+
+  // Mantém o título igual no painel do Bunny; falhar aqui não desfaz a edição local.
+  if (title !== undefined && title !== video.title) {
+    await bunnyClient.updateTitle(video.bunny_video_id, title).catch((error) => {
+      console.error('Não foi possível atualizar o título no Bunny:', error);
+    });
+  }
+
+  return getVideo(video.id);
 }
 
 export async function getVideo(id: string): Promise<VideoWithStats> {
@@ -108,8 +131,8 @@ export async function getVideo(id: string): Promise<VideoWithStats> {
   return video;
 }
 
-export async function getUploadCredentials(id: string): Promise<BunnyUploadCredentials> {
-  const video = await findOrFail(id);
+export async function getUploadCredentials(actor: User, id: string): Promise<BunnyUploadCredentials> {
+  const video = await findOwnedOrFail(id, actor);
   if (video.status !== 'pending_upload') {
     throw new AppError('Este vídeo já foi enviado', 409);
   }
@@ -139,8 +162,8 @@ export async function syncVideo(video: Video): Promise<Video> {
   return VideoModel.update(video.id, fromBunny(bunnyVideo));
 }
 
-export async function syncVideoById(id: string): Promise<Video> {
-  return syncVideo(await findOrFail(id));
+export async function syncVideoById(actor: User, id: string): Promise<Video> {
+  return syncVideo(await findOwnedOrFail(id, actor));
 }
 
 export async function handleBunnyWebhook(libraryId: number, bunnyVideoId: string): Promise<void> {
@@ -153,8 +176,8 @@ export async function handleBunnyWebhook(libraryId: number, bunnyVideoId: string
   await syncVideo(video);
 }
 
-export async function deleteVideo(id: string): Promise<void> {
-  const video = await findOrFail(id);
+export async function deleteVideo(actor: User, id: string): Promise<void> {
+  const video = await findOwnedOrFail(id, actor);
   await bunnyClient.deleteVideo(video.bunny_video_id);
   // Likes e comentários saem em cascata no banco.
   await VideoModel.delete(video.id);

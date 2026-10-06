@@ -86,7 +86,6 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
     if (!ctx.currentUser || !replyingTo) return;
     try {
       const created = await sendJson<Comment>("POST", `/videos/${ctx.videoId}/comments`, {
-        user_id: ctx.currentUser.id,
         content,
         parent_id: replyingTo.id,
       });
@@ -105,10 +104,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
   async function edit(target: Comment, content: string) {
     if (!ctx.currentUser) return;
     try {
-      const updated = await sendJson<Comment>("PATCH", `/comments/${target.id}`, {
-        user_id: ctx.currentUser.id,
-        content,
-      });
+      const updated = await sendJson<Comment>("PATCH", `/comments/${target.id}`, { content });
       if (target.id === comment.id) setComment(updated);
       else setReplies((current) => current.map((r) => (r.id === updated.id ? updated : r)));
       toast.success("Comentário editado.");
@@ -121,7 +117,7 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
   async function remove(target: Comment) {
     if (!ctx.currentUser) return;
     try {
-      await sendJson<void>("DELETE", `/comments/${target.id}`, { user_id: ctx.currentUser.id });
+      await sendJson<void>("DELETE", `/comments/${target.id}`, {});
       ctx.onCountChange(-1);
       toast.success("Comentário removido.");
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { Compass, History, Home, ListVideo, Upload, type LucideIcon } from "lucide-react";
+import { Compass, History, Home, ListVideo, MonitorPlay, Upload, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -11,11 +11,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { SITE_NAME } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; label: string; icon: LucideIcon };
+type NavItem = { href: string; label: string; icon: LucideIcon; requiresLogin?: boolean };
 
 const MAIN: NavItem[] = [
   { href: "/", label: "Início", icon: Home },
-  { href: "/upload", label: "Enviar vídeo", icon: Upload },
+  { href: "/studio", label: "Meu canal", icon: MonitorPlay, requiresLogin: true },
+  { href: "/upload", label: "Enviar vídeo", icon: Upload, requiresLogin: true },
 ];
 
 const SOON: NavItem[] = [
@@ -24,9 +25,14 @@ const SOON: NavItem[] = [
   { href: "#", label: "Playlists", icon: ListVideo },
 ];
 
-type Props = { collapsed: boolean; mobileOpen: boolean; onMobileOpenChange: (open: boolean) => void };
+type Props = {
+  collapsed: boolean;
+  mobileOpen: boolean;
+  onMobileOpenChange: (open: boolean) => void;
+  loggedIn: boolean;
+};
 
-export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange }: Props) {
+export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn }: Props) {
   return (
     <>
       <motion.aside
@@ -35,7 +41,7 @@ export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange }: Props) {
         transition={{ type: "spring", stiffness: 400, damping: 36 }}
         className="sticky top-16 hidden h-[calc(100dvh-4rem)] shrink-0 overflow-x-hidden overflow-y-auto border-r lg:block"
       >
-        <Nav compact={collapsed} layoutId="nav-active-desktop" />
+        <Nav compact={collapsed} layoutId="nav-active-desktop" loggedIn={loggedIn} />
       </motion.aside>
 
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
@@ -43,19 +49,28 @@ export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange }: Props) {
           <SheetHeader className="border-b">
             <SheetTitle>{SITE_NAME}</SheetTitle>
           </SheetHeader>
-          <Nav compact={false} layoutId="nav-active-mobile" onNavigate={() => onMobileOpenChange(false)} />
+          <Nav
+            compact={false}
+            layoutId="nav-active-mobile"
+            loggedIn={loggedIn}
+            onNavigate={() => onMobileOpenChange(false)}
+          />
         </SheetContent>
       </Sheet>
     </>
   );
 }
 
-function Nav({ compact, layoutId, onNavigate }: { compact: boolean; layoutId: string; onNavigate?: () => void }) {
+type NavProps = { compact: boolean; layoutId: string; loggedIn: boolean; onNavigate?: () => void };
+
+function Nav({ compact, layoutId, loggedIn, onNavigate }: NavProps) {
   const pathname = usePathname();
+  // Itens que exigem login só aparecem para quem está logado.
+  const items = MAIN.filter((item) => loggedIn || !item.requiresLogin);
 
   return (
     <nav className={cn("flex flex-col gap-1", compact ? "p-2" : "p-3")}>
-      {MAIN.map((item) => {
+      {items.map((item) => {
         const active = pathname === item.href;
         const link = (
           <Link

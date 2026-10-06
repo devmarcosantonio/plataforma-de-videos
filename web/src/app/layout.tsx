@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell } from "@/components/app-shell";
 import { Providers } from "@/components/providers";
-import { getUsers } from "@/lib/api";
-import { getCurrentUserId } from "@/lib/current-user";
+import { getSession } from "@/lib/auth";
 import { SITE_NAME } from "@/lib/format";
 import "./globals.css";
 
@@ -24,7 +23,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // O layout não pode quebrar se a API estiver fora: as páginas mostram o erro.
-  const [users, currentUserId] = await Promise.all([getUsers().catch(() => []), getCurrentUserId()]);
+  const user = await getSession().catch(() => null);
 
   return (
     // suppressHydrationWarning: o next-themes define a classe do tema antes da hidratação.
@@ -35,7 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full">
         <Providers>
-          <AppShell users={users} currentUserId={currentUserId}>
+          <AppShell user={user}>
             {children}
           </AppShell>
         </Providers>

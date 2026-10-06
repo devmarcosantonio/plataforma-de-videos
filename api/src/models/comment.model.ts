@@ -11,18 +11,13 @@ const content = z
   .min(1, 'O comentário não pode ficar vazio')
   .max(2000, 'O comentário pode ter no máximo 2000 caracteres');
 
-// user_id é temporário: virá do usuário autenticado quando houver login.
-const userId = z.uuid('user_id inválido');
-
+// O autor é sempre o usuário autenticado (não vem no corpo da requisição).
 export const createCommentSchema = z.object({
-  user_id: userId,
   content,
   parent_id: z.uuid('parent_id inválido').optional(),
 });
 
-export const updateCommentSchema = z.object({ user_id: userId, content });
-
-export const deleteCommentSchema = z.object({ user_id: userId });
+export const updateCommentSchema = z.object({ content });
 
 export const listCommentsQuerySchema = z.object({
   cursor: z.string().optional(),

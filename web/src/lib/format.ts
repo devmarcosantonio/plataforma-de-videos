@@ -2,9 +2,6 @@ import type { User, VideoStatus } from "./types";
 
 export const SITE_NAME = "Plataforma";
 
-// Cookie do "usuário atual" provisório (até existir login).
-export const CURRENT_USER_COOKIE = "current_user_id";
-
 export function formatDuration(seconds: number | null): string | null {
   if (!seconds) return null;
   const total = Math.round(seconds);
