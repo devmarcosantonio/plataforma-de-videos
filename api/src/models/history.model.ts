@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { prisma } from '../config/database.js';
 import type { Prisma, WatchHistory } from '../generated/prisma/client.js';
+import { bannedUser } from './restriction.model.js';
+// Histórico e "Continuar assistindo" seguem a mesma regra das listagens (público, ativo, conta não banida).
+import { visibleVideo } from './video.model.js';
 import type { CursorPosition } from '../utils/cursor.js';
 
 export type { WatchHistory };
@@ -29,7 +32,7 @@ const videoInclude = {
       _count: {
         select: {
           reactions: { where: { type: 'like' } },
-          comments: { where: { deleted_at: null } },
+          comments: { where: { deleted_at: null, moderated_at: null, NOT: { user: bannedUser } } },
         },
       },
     },
@@ -75,7 +78,7 @@ export const HistoryModel = {
         }
       : {};
     const rows = await prisma.watchHistory.findMany({
-      where: { user_id: userId, ...after },
+      where: { user_id: userId, video: visibleVideo, ...after },
       orderBy: [{ last_watched_at: 'desc' }, { video_id: 'desc' }],
       take: limit + 1,
       include: videoInclude,
@@ -86,7 +89,7 @@ export const HistoryModel = {
   // "Continuar assistindo": começados (≥ 10 s) e não concluídos, de vídeos prontos.
   async continueWatching(userId: string, limit: number): Promise<HistoryRow[]> {
     return prisma.watchHistory.findMany({
-      where: { user_id: userId, completed: false, position_seconds: { gte: 10 }, video: { status: 'ready' } },
+      where: { user_id: userId, completed: false, position_seconds: { gte: 10 }, video: { status: 'ready', ...visibleVideo } },
       orderBy: { last_watched_at: 'desc' },
       take: limit,
       include: videoInclude,

@@ -2,7 +2,7 @@
 // Textos e números/datas localizados ficam nas mensagens (messages/*.json) e no formatador do next-intl.
 import type { User } from "./types";
 
-export const SITE_NAME = "Plataforma";
+export const SITE_NAME = "Criato";
 
 // Duração no formato de player (6:30, 1:02:05): igual em qualquer idioma.
 export function formatDuration(seconds: number | null): string | null {

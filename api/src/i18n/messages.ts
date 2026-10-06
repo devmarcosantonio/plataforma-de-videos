@@ -1,7 +1,9 @@
 // Mensagens da API em cada idioma. A resposta de erro sempre traz o `code` (estável, para os
 // clientes tratarem) e o texto já traduzido conforme o Accept-Language da requisição.
+import { ja, ko, zh } from './messages-cjk.js';
 
-export const LOCALES = ['pt-BR', 'en', 'es'] as const;
+// zh = chinês simplificado.
+export const LOCALES = ['pt-BR', 'en', 'es', 'ko', 'ja', 'zh'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'pt-BR';
 
@@ -82,10 +84,53 @@ const ptBR = {
 
   // Histórico
   POSITION_INVALID: 'Posição do vídeo inválida',
+
+  // Permissões e moderação
+  FORBIDDEN: 'Você não tem permissão para fazer isso',
+  UPLOAD_NOT_ALLOWED: 'Sua conta ainda não pode publicar vídeos. Solicite a permissão',
+  UPLOAD_ALREADY_ALLOWED: 'Sua conta já pode publicar vídeos',
+  UPLOAD_REQUEST_PENDING: 'Você já tem uma solicitação em análise',
+  UPLOAD_REQUEST_COOLDOWN: 'Aguarde um pouco antes de enviar uma nova solicitação',
+  UPLOAD_REQUEST_NOT_FOUND: 'Solicitação não encontrada',
+  UPLOAD_REQUEST_ALREADY_REVIEWED: 'Esta solicitação já foi analisada',
+  REQUEST_MESSAGE_REQUIRED: 'Conte por que você quer publicar vídeos',
+  REQUEST_MESSAGE_TOO_LONG: 'A motivação pode ter no máximo 1000 caracteres',
+  PORTFOLIO_URL_INVALID: 'Link inválido (use um endereço que comece com http:// ou https://)',
+  REVIEW_NOTE_REQUIRED: 'Informe o motivo',
+  REVIEW_NOTE_TOO_LONG: 'O motivo pode ter no máximo 500 caracteres',
+  CANNOT_ACT_ON_SAME_OR_HIGHER_ROLE: 'Você não pode fazer isso com alguém do mesmo nível ou acima',
+  CANNOT_CHANGE_OWN_ROLE: 'Você não pode alterar o seu próprio papel',
+  ROLE_INVALID: 'Papel inválido',
+  NOTIFICATION_NOT_FOUND: 'Notificação não encontrada',
+  RESTRICTED_COMMENT: 'Você está temporariamente impedido de comentar',
+  RESTRICTED_UPLOAD: 'Você está temporariamente impedido de publicar vídeos',
+  RESTRICTED_REACT: 'Você está temporariamente impedido de reagir a vídeos',
+  ACCOUNT_SUSPENDED: 'Sua conta está suspensa: no momento você só pode assistir aos vídeos',
+  ACCOUNT_BANNED: 'Esta conta foi banida',
+  RESTRICTION_NOT_FOUND: 'Restrição não encontrada',
+  RESTRICTION_ALREADY_REVOKED: 'Esta restrição já foi revogada',
+  RESTRICTION_NOT_ALLOWED: 'Só administradores podem aplicar ou revogar restrições permanentes e banimentos',
+  RESTRICTION_TYPES_REQUIRED: 'Escolha pelo menos um tipo de restrição',
+  RESTRICTION_TYPE_INVALID: 'Tipo de restrição inválido',
+  RESTRICTION_DURATION_INVALID: 'Prazo inválido',
+  REPORT_TARGET_INVALID: 'Tipo de conteúdo inválido para denúncia',
+  REPORT_TARGET_NOT_FOUND: 'O conteúdo denunciado não foi encontrado',
+  REPORT_REASON_INVALID: 'Escolha um motivo',
+  REPORT_DETAILS_TOO_LONG: 'Os detalhes devem ter no máximo 500 caracteres',
+  CANNOT_REPORT_SELF: 'Você não pode denunciar o próprio conteúdo',
+  ALREADY_REPORTED: 'Você já denunciou este conteúdo. A moderação vai analisar',
+  REPORT_LIMIT: 'Você atingiu o limite de denúncias por hoje. Tente amanhã',
+  CASE_NOT_FOUND: 'Caso não encontrado',
+  CASE_ALREADY_RESOLVED: 'Este caso já foi resolvido',
+  CASE_DECISION_INVALID: 'Decisão inválida para este caso',
+  VIDEO_NOT_ACTIVE: 'Este vídeo já está em revisão ou removido',
+  VISIBILITY_INVALID: 'Visibilidade inválida',
+  COMMENT_MODERATED: 'Este comentário foi removido pela moderação e não pode ser editado',
+  PURGE_CONFIRM_MISMATCH: 'Digite o título do vídeo exatamente como está para confirmar',
 } as const;
 
 export type MessageCode = keyof typeof ptBR;
-type Dictionary = Record<MessageCode, string>;
+export type Dictionary = Record<MessageCode, string>;
 
 const en: Dictionary = {
   VALIDATION_ERROR: 'Invalid data',
@@ -156,6 +201,48 @@ const en: Dictionary = {
   FOLLOWING_LIST_FORBIDDEN: 'You can only see who you follow',
 
   POSITION_INVALID: 'Invalid video position',
+
+  FORBIDDEN: "You don't have permission to do this",
+  UPLOAD_NOT_ALLOWED: "Your account can't publish videos yet. Request permission",
+  UPLOAD_ALREADY_ALLOWED: 'Your account can already publish videos',
+  UPLOAD_REQUEST_PENDING: 'You already have a request under review',
+  UPLOAD_REQUEST_COOLDOWN: 'Please wait a bit before sending a new request',
+  UPLOAD_REQUEST_NOT_FOUND: 'Request not found',
+  UPLOAD_REQUEST_ALREADY_REVIEWED: 'This request has already been reviewed',
+  REQUEST_MESSAGE_REQUIRED: 'Tell us why you want to publish videos',
+  REQUEST_MESSAGE_TOO_LONG: 'Your reason can be at most 1000 characters',
+  PORTFOLIO_URL_INVALID: 'Invalid link (use an address starting with http:// or https://)',
+  REVIEW_NOTE_REQUIRED: 'Please provide a reason',
+  REVIEW_NOTE_TOO_LONG: 'The reason can be at most 500 characters',
+  CANNOT_ACT_ON_SAME_OR_HIGHER_ROLE: "You can't do this to someone at the same level or above",
+  CANNOT_CHANGE_OWN_ROLE: "You can't change your own role",
+  ROLE_INVALID: 'Invalid role',
+  NOTIFICATION_NOT_FOUND: 'Notification not found',
+  RESTRICTED_COMMENT: "You're temporarily restricted from commenting",
+  RESTRICTED_UPLOAD: "You're temporarily restricted from publishing videos",
+  RESTRICTED_REACT: "You're temporarily restricted from reacting to videos",
+  ACCOUNT_SUSPENDED: 'Your account is suspended: for now you can only watch videos',
+  ACCOUNT_BANNED: 'This account has been banned',
+  RESTRICTION_NOT_FOUND: 'Restriction not found',
+  RESTRICTION_ALREADY_REVOKED: 'This restriction has already been revoked',
+  RESTRICTION_NOT_ALLOWED: 'Only administrators can apply or revoke permanent restrictions and bans',
+  RESTRICTION_TYPES_REQUIRED: 'Choose at least one restriction type',
+  RESTRICTION_TYPE_INVALID: 'Invalid restriction type',
+  RESTRICTION_DURATION_INVALID: 'Invalid duration',
+  REPORT_TARGET_INVALID: 'Invalid content type for a report',
+  REPORT_TARGET_NOT_FOUND: 'The reported content was not found',
+  REPORT_REASON_INVALID: 'Choose a reason',
+  REPORT_DETAILS_TOO_LONG: 'Details must be at most 500 characters',
+  CANNOT_REPORT_SELF: "You can't report your own content",
+  ALREADY_REPORTED: "You've already reported this content. The moderators will review it",
+  REPORT_LIMIT: "You've reached today's report limit. Try again tomorrow",
+  CASE_NOT_FOUND: 'Case not found',
+  CASE_ALREADY_RESOLVED: 'This case has already been resolved',
+  CASE_DECISION_INVALID: 'Invalid decision for this case',
+  VIDEO_NOT_ACTIVE: 'This video is already under review or removed',
+  VISIBILITY_INVALID: 'Invalid visibility',
+  COMMENT_MODERATED: 'This comment was removed by the moderators and cannot be edited',
+  PURGE_CONFIRM_MISMATCH: 'Type the video title exactly as it is to confirm',
 };
 
 const es: Dictionary = {
@@ -227,9 +314,51 @@ const es: Dictionary = {
   FOLLOWING_LIST_FORBIDDEN: 'Solo puedes ver a quién sigues',
 
   POSITION_INVALID: 'Posición del video no válida',
+
+  FORBIDDEN: 'No tienes permiso para hacer esto',
+  UPLOAD_NOT_ALLOWED: 'Tu cuenta aún no puede publicar videos. Solicita el permiso',
+  UPLOAD_ALREADY_ALLOWED: 'Tu cuenta ya puede publicar videos',
+  UPLOAD_REQUEST_PENDING: 'Ya tienes una solicitud en revisión',
+  UPLOAD_REQUEST_COOLDOWN: 'Espera un poco antes de enviar una nueva solicitud',
+  UPLOAD_REQUEST_NOT_FOUND: 'Solicitud no encontrada',
+  UPLOAD_REQUEST_ALREADY_REVIEWED: 'Esta solicitud ya fue revisada',
+  REQUEST_MESSAGE_REQUIRED: 'Cuéntanos por qué quieres publicar videos',
+  REQUEST_MESSAGE_TOO_LONG: 'La motivación puede tener como máximo 1000 caracteres',
+  PORTFOLIO_URL_INVALID: 'Enlace no válido (usa una dirección que empiece con http:// o https://)',
+  REVIEW_NOTE_REQUIRED: 'Indica el motivo',
+  REVIEW_NOTE_TOO_LONG: 'El motivo puede tener como máximo 500 caracteres',
+  CANNOT_ACT_ON_SAME_OR_HIGHER_ROLE: 'No puedes hacer esto con alguien de tu mismo nivel o superior',
+  CANNOT_CHANGE_OWN_ROLE: 'No puedes cambiar tu propio rol',
+  ROLE_INVALID: 'Rol no válido',
+  NOTIFICATION_NOT_FOUND: 'Notificación no encontrada',
+  RESTRICTED_COMMENT: 'Tienes una restricción temporal para comentar',
+  RESTRICTED_UPLOAD: 'Tienes una restricción temporal para publicar videos',
+  RESTRICTED_REACT: 'Tienes una restricción temporal para reaccionar a videos',
+  ACCOUNT_SUSPENDED: 'Tu cuenta está suspendida: por ahora solo puedes ver videos',
+  ACCOUNT_BANNED: 'Esta cuenta fue bloqueada',
+  RESTRICTION_NOT_FOUND: 'Restricción no encontrada',
+  RESTRICTION_ALREADY_REVOKED: 'Esta restricción ya fue revocada',
+  RESTRICTION_NOT_ALLOWED: 'Solo los administradores pueden aplicar o revocar restricciones permanentes y bloqueos',
+  RESTRICTION_TYPES_REQUIRED: 'Elige al menos un tipo de restricción',
+  RESTRICTION_TYPE_INVALID: 'Tipo de restricción inválido',
+  RESTRICTION_DURATION_INVALID: 'Plazo inválido',
+  REPORT_TARGET_INVALID: 'Tipo de contenido no válido para denunciar',
+  REPORT_TARGET_NOT_FOUND: 'No se encontró el contenido denunciado',
+  REPORT_REASON_INVALID: 'Elige un motivo',
+  REPORT_DETAILS_TOO_LONG: 'Los detalles deben tener como máximo 500 caracteres',
+  CANNOT_REPORT_SELF: 'No puedes denunciar tu propio contenido',
+  ALREADY_REPORTED: 'Ya denunciaste este contenido. La moderación lo revisará',
+  REPORT_LIMIT: 'Alcanzaste el límite de denuncias de hoy. Inténtalo mañana',
+  CASE_NOT_FOUND: 'Caso no encontrado',
+  CASE_ALREADY_RESOLVED: 'Este caso ya fue resuelto',
+  CASE_DECISION_INVALID: 'Decisión no válida para este caso',
+  VIDEO_NOT_ACTIVE: 'Este video ya está en revisión o eliminado',
+  VISIBILITY_INVALID: 'Visibilidad no válida',
+  COMMENT_MODERATED: 'La moderación eliminó este comentario y no se puede editar',
+  PURGE_CONFIRM_MISMATCH: 'Escribe el título del video exactamente igual para confirmar',
 };
 
-const dictionaries: Record<Locale, Dictionary> = { 'pt-BR': ptBR, en, es };
+const dictionaries: Record<Locale, Dictionary> = { 'pt-BR': ptBR, en, es, ko, ja, zh };
 
 export function isMessageCode(value: string): value is MessageCode {
   return value in ptBR;
@@ -255,6 +384,10 @@ export function negotiateLocale(header: string | undefined): Locale {
     if (tag.startsWith('pt')) return 'pt-BR';
     if (tag.startsWith('en')) return 'en';
     if (tag.startsWith('es')) return 'es';
+    if (tag.startsWith('ko')) return 'ko';
+    if (tag.startsWith('ja')) return 'ja';
+    // Chinês: zh, zh-CN, zh-Hans... (por enquanto só simplificado).
+    if (tag.startsWith('zh')) return 'zh';
   }
   return DEFAULT_LOCALE;
 }

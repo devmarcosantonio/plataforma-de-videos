@@ -4,7 +4,7 @@ import * as commentService from '../services/comment.service.js';
 type IdParams = { id: string };
 
 export async function index(req: Request<IdParams>, res: Response) {
-  res.json(await commentService.listComments(req.params.id, req.query));
+  res.json(await commentService.listComments(req.params.id, req.query, req.user));
 }
 
 export async function store(req: Request<IdParams>, res: Response) {
@@ -12,7 +12,7 @@ export async function store(req: Request<IdParams>, res: Response) {
 }
 
 export async function replies(req: Request<IdParams>, res: Response) {
-  res.json(await commentService.listReplies(req.params.id, req.query));
+  res.json(await commentService.listReplies(req.params.id, req.query, req.user));
 }
 
 export async function update(req: Request<IdParams>, res: Response) {

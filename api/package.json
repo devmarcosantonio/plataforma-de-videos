@@ -14,7 +14,8 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "user:role": "tsx src/scripts/set-role.ts"
   },
   "keywords": [],
   "author": "",

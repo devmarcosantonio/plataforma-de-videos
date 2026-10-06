@@ -29,7 +29,7 @@ export async function upload(req: Request<IdParams>, res: Response) {
 }
 
 export async function playback(req: Request<IdParams>, res: Response) {
-  res.json(await videoService.getPlayback(req.params.id));
+  res.json(await videoService.getPlayback(req.params.id, req.user));
 }
 
 export async function sync(req: Request<IdParams>, res: Response) {

@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale: hasLocale(routing.locales, locale) ? locale : routing.defaultLocale });
@@ -42,7 +43,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     // suppressHydrationWarning: o next-themes define a classe do tema antes da hidratação.
     <html
-      lang={locale}
+      // zh-CN: o navegador usa os glifos do chinês simplificado.
+      lang={locale === "zh" ? "zh-CN" : locale}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >

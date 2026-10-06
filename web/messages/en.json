@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "description": "Video platform"
+    "description": "Criato: watch and publish videos."
   },
   "common": {
     "unknownUser": "Unknown user",
@@ -22,15 +22,16 @@
     "home": "Home",
     "following": "Following",
     "studio": "My channel",
-    "upload": "Upload video",
+    "upload": "Create",
     "explore": "Explore",
     "history": "History",
     "playlists": "Playlists",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "admin": "Moderation"
   },
   "header": {
     "search": "Search videos",
-    "upload": "Upload"
+    "upload": "Create"
   },
   "theme": {
     "useLight": "Use light theme",
@@ -46,9 +47,10 @@
     "menu": "Account menu",
     "viewChannel": "View my channel",
     "manageChannel": "Manage channel",
-    "upload": "Upload video",
+    "upload": "Create",
     "signOut": "Sign out",
-    "signedOut": "You have signed out."
+    "signedOut": "You have signed out.",
+    "moderation": "Moderation"
   },
   "video": {
     "status": {
@@ -119,6 +121,21 @@
       "remove": "Could not remove the comment.",
       "loadReplies": "Could not load the replies.",
       "loadMore": "Could not load more comments."
+    },
+    "report": "Report",
+    "moderation": {
+      "placeholder": "Comment removed by the moderators",
+      "badge": "Removed by the moderators",
+      "remove": "Remove (moderation)",
+      "removeTitle": "Remove this comment?",
+      "removeDescription": "It disappears for everyone but is kept: it can be restored later. The author is notified with the reason.",
+      "removed": "Comment removed by the moderators.",
+      "restore": "Restore comment",
+      "restored": "Comment restored.",
+      "purge": "Delete permanently",
+      "purgeTitle": "Delete this comment permanently?",
+      "purgeDescription": "The text is erased and can't be recovered (a copy stays in the log). For something reversible, use “Remove (moderation)”. The author is notified.",
+      "purged": "Comment permanently deleted."
     }
   },
   "upload": {
@@ -137,7 +154,10 @@
     "error": "Upload failed. Please try again.",
     "done": "Video uploaded!",
     "doneHint": "It is now being processed. This may take a few minutes.",
-    "watch": "Watch video"
+    "watch": "Watch video",
+    "needsApproval": "To keep the platform safe, new channels need approval before publishing.",
+    "restricted": "Your account can't publish videos right now.",
+    "donePrivate": "It's private: publish it whenever you want from My channel."
   },
   "studio": {
     "title": "My channel",
@@ -147,7 +167,7 @@
       "comments": "Comments"
     },
     "myVideos": "My videos",
-    "upload": "Upload video",
+    "upload": "Create",
     "empty": "No videos on your channel",
     "emptyHint": "Videos you upload will show up here.",
     "columns": {
@@ -226,7 +246,7 @@
   "home": {
     "empty": "No videos yet",
     "emptyHint": "Upload the first video and it will show up here.",
-    "upload": "Upload video",
+    "upload": "Create",
     "noResults": "Nothing found for “{query}”",
     "noResultsHint": "Try different words.",
     "results": "{count, plural, one {# result} other {# results}} for"
@@ -284,6 +304,427 @@
       "clear": "Could not clear your history.",
       "settings": "Could not save your preference.",
       "loadMore": "Could not load more items."
+    }
+  },
+  "roles": {
+    "user": "User",
+    "moderator": "Moderator",
+    "admin": "Administrator"
+  },
+  "uploadAccess": {
+    "title": "Ask for permission to publish",
+    "intro": "Tell the moderators what you plan to publish. You'll get the answer in your notifications.",
+    "message": "About your channel",
+    "messagePlaceholder": "What kind of videos will you publish? How often? Do you already publish somewhere else?",
+    "link": "Link to previous work",
+    "linkHint": "Portfolio, another channel, social media… helps the moderators get to know you.",
+    "submit": "Send request",
+    "sent": "Request sent! You'll be notified once it's reviewed.",
+    "cancel": "Cancel request",
+    "cancelled": "Request cancelled.",
+    "pendingTitle": "Request under review",
+    "pendingHint": "Sent <time></time>. You'll be notified in your notifications.",
+    "approvedTitle": "You can publish now!",
+    "approvedHint": "Your request was approved by the moderators.",
+    "startUploading": "Upload my first video",
+    "rejectedTitle": "Your last request wasn't approved",
+    "rejectedWait": "You'll be able to send a new request shortly.",
+    "rejectedRetry": "You can send a new request now, taking the feedback above into account.",
+    "retryIn": "New request {time}"
+  },
+  "notifications": {
+    "label": "Notifications",
+    "labelUnread": "Notifications ({count} unread)",
+    "title": "Notifications",
+    "markAll": "Mark all as read",
+    "empty": "No notifications yet.",
+    "more": "Show more",
+    "types": {
+      "uploadRequestCreated": "@{username} asked for permission to publish videos.",
+      "uploadRequestApproved": "Your request was approved! You can publish videos now.",
+      "uploadRequestRejected": "Your request to publish wasn't approved.",
+      "uploadRequestRejectedNote": "Your request to publish wasn't approved: “{note}”",
+      "uploadAccessGranted": "The moderators enabled video publishing on your channel.",
+      "uploadAccessRevoked": "Your permission to publish videos was removed.",
+      "uploadAccessRevokedReason": "Your permission to publish videos was removed: “{reason}”",
+      "roleChanged": "Your role on the platform is now: {role}.",
+      "unknown": "New notification.",
+      "restrictionApplied": "The moderators restricted your account ({types}) until {until}. Reason: “{reason}”",
+      "restrictionAppliedPermanent": "The moderators restricted your account ({types}). Reason: “{reason}”",
+      "restrictionRevoked": "The {type} restriction on your account was lifted.",
+      "videoUnderReview": "Your video “{title}” is under review by the moderators and is offline for now.",
+      "videoRemoved": "Your video “{title}” was removed by the moderators. Reason: {reason}",
+      "videoRestored": "Your video “{title}” is back online.",
+      "commentRemoved": "One of your comments was removed by the moderators. Reason: {reason}",
+      "commentRestored": "One of your comments was restored by the moderators.",
+      "videoPurged": "Your video “{title}” was permanently deleted by the moderators. Reason: {reason}"
+    }
+  },
+  "admin": {
+    "title": "Moderation",
+    "subtitle": "You're signed in as {role}.",
+    "tabs": {
+      "requests": "Requests",
+      "users": "Users",
+      "logs": "Log",
+      "reports": "Reports"
+    },
+    "requests": {
+      "filter": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "empty": {
+        "pending": "No pending requests",
+        "approved": "No approved requests",
+        "rejected": "No rejected requests"
+      },
+      "emptyHint": "Requests for permission to publish show up here.",
+      "memberSince": "joined",
+      "ownRequest": "This is your own request: someone else on the moderation team needs to review it.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "{handle} can publish now.",
+      "rejected": "Request rejected.",
+      "reviewedBy": "by {handle}",
+      "approveDialog": {
+        "title": "Approve {handle}?",
+        "description": "They'll be able to publish videos right away and will be notified.",
+        "label": "Welcome message"
+      },
+      "rejectDialog": {
+        "title": "Reject {handle}'s request?",
+        "description": "The reason is sent to them, and they can ask again after a few minutes.",
+        "label": "Reason"
+      }
+    },
+    "users": {
+      "search": "Search by name, @username or email",
+      "empty": "No users found",
+      "videos": "{count, plural, one {# video} other {# videos}}",
+      "grant": "Approve",
+      "role": "Role",
+      "granted": "{handle} can publish now.",
+      "roleChanged": "{handle} is now {role}.",
+      "notApproved": "Awaiting approval",
+      "restrict": "Restrict",
+      "details": "Details"
+    },
+    "logs": {
+      "allHint": "All moderation actions, newest first.",
+      "mineHint": "The moderation actions you took.",
+      "empty": "No actions recorded",
+      "system": "System",
+      "actions": {
+        "uploadRequestApprove": "approved the request from",
+        "uploadRequestReject": "rejected the request from",
+        "uploadAccessGrant": "enabled publishing for",
+        "uploadAccessRevoke": "removed publishing permission from",
+        "roleChange": "changed the role ({role}) of",
+        "commentRemove": "removed a comment by",
+        "restrictionApply": "restricted ({types})",
+        "restrictionRevoke": "revoked the restriction ({types}) on",
+        "reportDismiss": "dismissed reports against",
+        "reportAction": "took action on reports against",
+        "videoReview": "put under review the video “{title}” by",
+        "videoRemove": "removed the video “{title}” by",
+        "videoRestore": "restored the video “{title}” by",
+        "commentRestore": "restored a comment by",
+        "commentPurge": "permanently deleted a comment by",
+        "videoPurge": "permanently deleted the video “{title}” by"
+      },
+      "selfDecision": "Decided on own content"
+    },
+    "restrict": {
+      "title": "Restrict {handle}",
+      "description": "They're notified with the reason. The restriction ends on its own when it expires.",
+      "types": "What to block",
+      "duration": "For how long",
+      "banPermanent": "A ban is always permanent (it can be revoked later).",
+      "reason": "Reason",
+      "reasonHint": "Shown to them and kept in the log.",
+      "submit": "Restrict",
+      "submitBan": "Ban",
+      "applied": "{handle} has been restricted."
+    },
+    "details": {
+      "back": "Back to users",
+      "videos": "{count, plural, one {# video} other {# videos}}",
+      "joined": "joined",
+      "restrict": "Restrict",
+      "access": "Access",
+      "actions": {
+        "upload": "Publish videos",
+        "comment": "Comment",
+        "react": "React",
+        "follow": "Follow channels"
+      },
+      "waitingApproval": "Awaiting moderator approval",
+      "allowed": "Allowed",
+      "approve": "Approve",
+      "approved": "Publishing enabled.",
+      "revoke": "Revoke",
+      "revoked": "Restriction revoked.",
+      "history": "Restriction history",
+      "noRestrictions": "No restrictions so far.",
+      "status": {
+        "active": "Active",
+        "expired": "Expired",
+        "revoked": "Revoked"
+      },
+      "appliedBy": "Applied by {handle} on {date}",
+      "revokedBy": "revoked by {handle} on {date}",
+      "system": "System",
+      "requests": "Publishing requests",
+      "noRequests": "No requests.",
+      "requestStatus": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "log": "Log",
+      "revokeDialog": {
+        "title": "Revoke the {type} restriction?",
+        "description": "It stops applying now and stays in the history. They'll be notified.",
+        "label": "Reason for revoking"
+      },
+      "reports": "Reports against this person",
+      "noReports": "No reports."
+    },
+    "reasonDialog": {
+      "reason": "Reason",
+      "note": "Note",
+      "noteHint": "Shown to the author along with the reason."
+    },
+    "reports": {
+      "filter": {
+        "open": "Open",
+        "actioned": "Actioned",
+        "dismissed": "Dismissed"
+      },
+      "sortLabel": "Sort",
+      "sort": {
+        "priority": "Priority (severity)",
+        "oldest": "Oldest",
+        "newest": "Newest",
+        "most_reported": "Most reported",
+        "least_reported": "Least reported"
+      },
+      "types": {
+        "video": "Video",
+        "comment": "Comment"
+      },
+      "count": "{count, plural, one {# report} other {# reports}}",
+      "openedAgo": "opened",
+      "last": "latest",
+      "oldestOpen": "Oldest open report:",
+      "reasons": {
+        "spam": "Spam",
+        "harassment": "Harassment",
+        "hate": "Hate",
+        "violence": "Violence",
+        "sexual": "Sexual",
+        "misleading": "Misleading",
+        "copyright": "Copyright",
+        "other": "Other"
+      },
+      "deletedAccount": "deleted account",
+      "author": "Author:",
+      "history": "See history",
+      "ownCase": "Report against your own content: someone else on the team needs to review it.",
+      "dismiss": "Dismiss",
+      "dismissReinstate": "Dismiss and release",
+      "restrictAuthor": "Restrict author",
+      "review": "Put under review",
+      "markActioned": "Mark as handled",
+      "remove": {
+        "video": "Remove video",
+        "comment": "Remove comment"
+      },
+      "status": {
+        "open": "Open",
+        "actioned": "Actioned",
+        "dismissed": "Dismissed"
+      },
+      "resolvedBy": "by {handle}",
+      "restored": "Video restored.",
+      "underReviewDone": "Video under review: it's offline until the decision.",
+      "afterRestrict": "Author restricted. Now remove the content or dismiss the report.",
+      "resolved": {
+        "dismiss": "Report dismissed.",
+        "remove": "Content removed.",
+        "actioned": "Case marked as handled."
+      },
+      "empty": {
+        "open": "No open reports",
+        "actioned": "No actioned cases",
+        "dismissed": "No dismissed cases"
+      },
+      "emptyHint": "Reports on videos and comments show up here, grouped by content.",
+      "gone": "The content was deleted by its author.",
+      "commentRemoved": "Comment removed",
+      "onVideo": "on the video “{title}”",
+      "open": "Open video",
+      "dialog": {
+        "dismiss": {
+          "title": "Dismiss the reports?",
+          "description": "The content doesn't break the rules. If it was under review, it goes back online. Nobody is notified.",
+          "label": "Internal note"
+        },
+        "actioned": {
+          "title": "Mark as handled?",
+          "description": "Use it when action was already taken (e.g. the author was restricted or deleted the content).",
+          "label": "Internal note"
+        },
+        "remove": {
+          "title": {
+            "video": "Remove the video?",
+            "comment": "Remove the comment?"
+          },
+          "description": "The author is notified with the reason. The video can be restored later; the comment can't."
+        },
+        "review": {
+          "title": {
+            "video": "Put the video under review?",
+            "comment": "Put under review?"
+          },
+          "description": "The video goes offline while you investigate. The owner is notified. The case stays open."
+        }
+      },
+      "ownCaseAdmin": "Your own content: as an admin you can decide. The decision is flagged in the log.",
+      "restoreTarget": {
+        "video": "Restore video",
+        "comment": "Restore comment"
+      },
+      "purge": "Delete permanently",
+      "purged": "Content permanently deleted.",
+      "commentModerated": "Removed by the moderators",
+      "purgeComment": {
+        "title": "Delete the comment permanently?",
+        "description": "The text is erased and can't be recovered (a copy stays in the log). The report is closed. For something reversible, use “Remove comment”."
+      }
+    },
+    "purge": {
+      "title": "Delete the video permanently?",
+      "description": "Erases the video from the database and the video server, with likes and comments. There's no undo. For something reversible, use “Remove video”. The owner is notified; title, owner and reason stay in the log.",
+      "typeTitle": "To confirm, type the title: {title}",
+      "confirm": "Delete permanently",
+      "reason": "Reason"
+    }
+  },
+  "restrictions": {
+    "types": {
+      "comment": "Comments",
+      "upload": "Publishing",
+      "react": "Reactions",
+      "suspend": "Suspension",
+      "ban": "Ban"
+    },
+    "effects": {
+      "comment": "They won't be able to comment or reply.",
+      "upload": "They won't be able to upload videos (published ones stay online).",
+      "react": "They won't be able to like/dislike.",
+      "suspend": "The account becomes watch-only.",
+      "ban": "They can't sign in anymore; channel, videos and comments are hidden."
+    },
+    "durations": {
+      "1h": "1 hour",
+      "24h": "24 hours",
+      "7d": "7 days",
+      "30d": "30 days",
+      "permanent": "Permanent"
+    },
+    "until": "until {date}",
+    "permanent": "permanent",
+    "reason": "Reason: {reason}",
+    "notice": {
+      "comment": "You can't comment until {until}.",
+      "upload": "You can't publish videos until {until}.",
+      "react": "You can't react to videos until {until}.",
+      "suspend": "Your account is suspended until {until}: for now you can only watch.",
+      "ban": "This account has been banned."
+    },
+    "noticePermanent": {
+      "comment": "You can no longer comment.",
+      "upload": "You can no longer publish videos.",
+      "react": "You can no longer react to videos.",
+      "suspend": "Your account is suspended: you can only watch.",
+      "ban": "This account has been banned."
+    }
+  },
+  "visibility": {
+    "label": "Visibility",
+    "private": {
+      "label": "Private",
+      "hint": "Only you can see it. Publish whenever you want."
+    },
+    "public": {
+      "label": "Public",
+      "hint": "Shows up for everyone once it's ready."
+    },
+    "underReview": "Under review",
+    "removed": "Removed",
+    "underReviewHint": "This video is under review by the moderators and isn't visible to anyone for now.",
+    "removedHint": "This video was removed by the moderators and isn't visible to anyone.",
+    "reason": "Reason: {reason}",
+    "moderatedHint": "Until the moderators release it, the video stays hidden even if it's public.",
+    "privateOwnerHint": "This video is private: only you can see it.",
+    "privateStaffHint": "Private video: you can see it because you're a moderator.",
+    "staffOnly": "You can see it because you're a moderator."
+  },
+  "report": {
+    "action": "Report",
+    "title": {
+      "video": "Report video",
+      "comment": "Report comment"
+    },
+    "description": "Your report is anonymous: only the moderators see it. The author won't know who reported.",
+    "reason": "Reason",
+    "details": "Details",
+    "detailsHint": "Help the moderators: what's wrong and where (e.g. at 2:10).",
+    "submit": "Send report",
+    "sent": "Report sent. Thanks for helping keep the platform safe.",
+    "reasons": {
+      "spam": {
+        "label": "Spam or scam",
+        "hint": "Repetitive ads, misleading links, requests for money."
+      },
+      "harassment": {
+        "label": "Harassment or bullying",
+        "hint": "Attacks, threats or humiliation of someone."
+      },
+      "hate": {
+        "label": "Hate speech",
+        "hint": "Attacks based on race, religion, gender, orientation, origin…"
+      },
+      "violence": {
+        "label": "Violence",
+        "hint": "Real assault, glorifying violence or shocking content."
+      },
+      "sexual": {
+        "label": "Sexual content",
+        "hint": "Nudity or explicit sexual content."
+      },
+      "misleading": {
+        "label": "Misleading information",
+        "hint": "False content that can cause harm."
+      },
+      "copyright": {
+        "label": "Copyright",
+        "hint": "Using someone else's content without permission."
+      },
+      "other": {
+        "label": "Something else",
+        "hint": "Explain in the details."
+      }
     }
   }
 }

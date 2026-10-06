@@ -1,0 +1,730 @@
+{
+  "metadata": {
+    "description": "Criato：观看和发布视频。"
+  },
+  "common": {
+    "unknownUser": "未知用户",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "正在保存…",
+    "sending": "正在发送…",
+    "loading": "正在加载…",
+    "loadMore": "加载更多",
+    "edit": "编辑",
+    "remove": "删除",
+    "signIn": "登录",
+    "comingSoon": "即将推出",
+    "soon": "即将",
+    "optional": "（可选）",
+    "genericError": "出错了，请重试。"
+  },
+  "nav": {
+    "home": "首页",
+    "following": "关注",
+    "studio": "我的频道",
+    "upload": "创作",
+    "explore": "探索",
+    "history": "历史记录",
+    "playlists": "播放列表",
+    "openMenu": "打开菜单",
+    "admin": "审核"
+  },
+  "header": {
+    "search": "搜索视频",
+    "upload": "创作"
+  },
+  "theme": {
+    "useLight": "使用浅色主题",
+    "useDark": "使用深色主题",
+    "light": "浅色主题",
+    "dark": "深色主题"
+  },
+  "language": {
+    "label": "语言",
+    "change": "更改语言"
+  },
+  "account": {
+    "menu": "账号菜单",
+    "viewChannel": "查看我的频道",
+    "manageChannel": "管理频道",
+    "upload": "创作",
+    "signOut": "退出登录",
+    "signedOut": "你已退出登录。",
+    "moderation": "审核"
+  },
+  "video": {
+    "status": {
+      "pending_upload": "等待上传",
+      "processing": "处理中",
+      "ready": "就绪",
+      "failed": "失败"
+    },
+    "player": {
+      "pending_upload": "该视频的文件尚未上传。",
+      "processing": "视频正在处理，可能需要几分钟。",
+      "failed": "该视频处理失败。"
+    },
+    "likes": "{count, plural, =0 {暂无点赞} other {{formatted} 个赞}}",
+    "published": "发布于 <time></time>",
+    "noDescription": "暂无简介。",
+    "showMore": "展开",
+    "showLess": "收起",
+    "otherVideos": "更多视频",
+    "noOtherVideos": "暂无其他视频。",
+    "sync": "检查状态",
+    "syncError": "无法更新状态。"
+  },
+  "reactions": {
+    "like": "赞",
+    "removeLike": "取消赞",
+    "dislike": "踩",
+    "removeDislike": "取消踩",
+    "notReady": "只能对已就绪的视频表态",
+    "signInToReact": "登录后即可对视频表态。",
+    "error": "无法保存你的表态。"
+  },
+  "follow": {
+    "follow": "关注",
+    "following": "已关注",
+    "unfollow": "取消关注",
+    "followersLabel": "{count, plural, other {位关注者}}",
+    "followers": "{count, plural, other {{formatted} 位关注者}}",
+    "signInToFollow": "登录后即可关注频道。",
+    "error": "无法更新。"
+  },
+  "comments": {
+    "label": "{count, plural, other {条评论}}",
+    "notReady": "视频就绪后即可评论。",
+    "signInPrompt": "登录账号后即可评论。",
+    "placeholder": "添加评论…",
+    "submit": "评论",
+    "shortcut": "按 Ctrl + Enter 发送",
+    "reply": "回复",
+    "replyPlaceholder": "写下回复…",
+    "editPlaceholder": "编辑评论",
+    "replies": "{count, plural, other {# 条回复}}",
+    "moreReplies": "显示更多回复",
+    "moreComments": "显示更多评论",
+    "removed": "评论已删除",
+    "author": "作者",
+    "edited": "（已编辑）",
+    "actions": "评论操作",
+    "removeTitle": "删除评论？",
+    "removeWithReplies": "这条评论有回复，删除后将显示为“评论已删除”，以保留对话。",
+    "removeIrreversible": "此操作无法撤销。",
+    "editedToast": "评论已编辑。",
+    "removedToast": "评论已删除。",
+    "errors": {
+      "send": "无法发表评论。",
+      "reply": "无法发表回复。",
+      "edit": "无法编辑评论。",
+      "remove": "无法删除评论。",
+      "loadReplies": "无法加载回复。",
+      "loadMore": "无法加载更多评论。"
+    },
+    "report": "举报",
+    "moderation": {
+      "placeholder": "该评论已被审核团队移除",
+      "badge": "已被审核移除",
+      "remove": "移除（审核）",
+      "removeTitle": "移除这条评论？",
+      "removeDescription": "评论将对所有人隐藏，但会被保留，之后可以恢复。作者会收到附带原因的通知。",
+      "removed": "评论已被审核移除。",
+      "restore": "恢复评论",
+      "restored": "评论已恢复。",
+      "purge": "永久删除",
+      "purgeTitle": "永久删除这条评论？",
+      "purgeDescription": "文字将被抹除且无法恢复（审核记录中会保留一份副本）。如需可撤销的操作，请使用“移除（审核）”。作者会收到通知。",
+      "purged": "评论已永久删除。"
+    }
+  },
+  "upload": {
+    "title": "上传视频",
+    "subtitle": "文件会直接发送到视频服务器并自动处理。",
+    "videoTitle": "标题",
+    "description": "简介",
+    "dropzone": "将视频拖到这里或点击选择",
+    "formats": "MP4、MOV、MKV、WebM…",
+    "removeFile": "移除文件",
+    "notVideo": "请选择视频文件。",
+    "uploading": "正在上传…",
+    "preparing": "正在准备…",
+    "submit": "上传",
+    "cancelled": "上传已取消。",
+    "error": "上传失败，请重试。",
+    "done": "视频已上传！",
+    "doneHint": "视频正在处理，可能需要几分钟。",
+    "watch": "观看视频",
+    "needsApproval": "为了保障平台安全，新频道需经审核批准后才能发布。",
+    "restricted": "你的账号目前无法发布视频。",
+    "donePrivate": "视频为私享状态，你可以随时在“我的频道”中发布。"
+  },
+  "studio": {
+    "title": "我的频道",
+    "stats": {
+      "videos": "视频",
+      "likes": "点赞",
+      "comments": "评论"
+    },
+    "myVideos": "我的视频",
+    "upload": "创作",
+    "empty": "你的频道还没有视频",
+    "emptyHint": "你上传的视频会显示在这里。",
+    "columns": {
+      "video": "视频",
+      "status": "状态",
+      "date": "日期",
+      "likes": "点赞",
+      "comments": "评论"
+    },
+    "noDescription": "暂无简介",
+    "likesCount": "{count, plural, other {# 个赞}}",
+    "commentsCount": "{count, plural, other {# 条评论}}",
+    "actions": "“{title}”的操作",
+    "view": "观看视频",
+    "edit": "编辑",
+    "delete": "删除",
+    "updated": "视频已更新。",
+    "saveError": "无法保存更改。",
+    "deleted": "“{title}”已删除。",
+    "deleteError": "无法删除视频。",
+    "editDialog": {
+      "title": "编辑视频",
+      "description": "更改会立即对所有人可见。",
+      "videoTitle": "标题",
+      "videoDescription": "简介",
+      "placeholder": "告诉观众这个视频讲了什么"
+    },
+    "deleteDialog": {
+      "title": "删除“{title}”？",
+      "description": "视频将从平台和视频服务器中删除，点赞和评论也会一并删除。此操作无法撤销。",
+      "confirm": "删除视频",
+      "deleting": "正在删除…"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "登录",
+      "description": "登录后即可点赞、评论和发布视频。",
+      "login": "邮箱或用户名",
+      "password": "密码",
+      "submit": "登录",
+      "submitting": "正在登录…",
+      "noAccount": "还没有账号？",
+      "createAccount": "创建账号",
+      "welcome": "欢迎回来，{handle}！",
+      "error": "无法登录。"
+    },
+    "register": {
+      "title": "创建账号",
+      "description": "不到一分钟即可完成。",
+      "username": "用户名",
+      "displayName": "显示名称",
+      "displayNamePlaceholder": "你的名字或频道名称",
+      "displayNameHint": "其他人看到的名称。如果留空，将使用你的 @用户名。",
+      "email": "邮箱",
+      "password": "密码",
+      "passwordHint": "至少 8 个字符。",
+      "submit": "创建账号",
+      "submitting": "正在创建账号…",
+      "hasAccount": "已有账号？",
+      "signIn": "登录",
+      "welcome": "账号已创建！欢迎你，{handle}。",
+      "error": "无法创建账号。"
+    },
+    "password": {
+      "show": "显示密码",
+      "hide": "隐藏密码"
+    },
+    "username": {
+      "placeholder": "user.name",
+      "hint": "3 到 30 个字符：小写字母、数字、点和下划线。",
+      "available": "@{username} 可以使用",
+      "checkError": "暂时无法检查。"
+    }
+  },
+  "home": {
+    "empty": "还没有视频",
+    "emptyHint": "上传第一个视频，它就会显示在这里。",
+    "upload": "创作",
+    "noResults": "未找到与“{query}”相关的内容",
+    "noResultsHint": "试试其他关键词。",
+    "results": "{count, plural, other {共 # 个结果}}，搜索："
+  },
+  "feed": {
+    "title": "关注",
+    "empty": "这里还什么都没有",
+    "emptyHint": "关注频道后，它们的新视频会显示在这里。",
+    "discover": "发现视频",
+    "loadError": "无法加载更多视频。"
+  },
+  "channel": {
+    "title": "频道",
+    "videosCount": "{count, plural, other {# 个视频}}",
+    "manage": "管理频道",
+    "videos": "视频",
+    "empty": "暂无已发布的视频",
+    "emptyHint": "这个频道还没有发布任何视频。"
+  },
+  "errors": {
+    "loadTitle": "无法加载",
+    "loadHint": "请检查 API 是否正在运行（在 api 文件夹中运行 npm run dev），然后重试。",
+    "retry": "重试",
+    "notFound": "页面不存在",
+    "notFoundHint": "内容可能已被删除。",
+    "backHome": "返回首页"
+  },
+  "history": {
+    "title": "历史记录",
+    "empty": "历史记录中没有视频",
+    "emptyHint": "你观看过的视频会显示在这里。",
+    "groups": {
+      "today": "今天",
+      "yesterday": "昨天",
+      "thisWeek": "本周",
+      "older": "更早"
+    },
+    "watched": "观看于 <time></time>",
+    "remove": "从历史记录中移除",
+    "removed": "已从历史记录中移除。",
+    "clear": "清除历史记录",
+    "clearTitle": "清除全部历史记录？",
+    "clearDescription": "所有视频都将从历史记录中移除。此操作无法撤销。",
+    "cleared": "历史记录已清除。",
+    "pause": "暂停历史记录",
+    "pauseHint": "暂停期间，你观看的内容不会被保存。",
+    "paused": "历史记录已暂停。",
+    "resumed": "历史记录已恢复。",
+    "pausedBanner": "历史记录已暂停：新观看的视频不会被保存。",
+    "continueWatching": "继续观看",
+    "resumeFrom": "从 {time} 继续播放",
+    "startOver": "从头开始",
+    "errors": {
+      "remove": "无法从历史记录中移除。",
+      "clear": "无法清除历史记录。",
+      "settings": "无法保存你的偏好设置。",
+      "loadMore": "无法加载更多内容。"
+    }
+  },
+  "roles": {
+    "user": "用户",
+    "moderator": "审核员",
+    "admin": "管理员"
+  },
+  "uploadAccess": {
+    "title": "申请发布权限",
+    "intro": "告诉审核团队你打算发布什么内容。审核结果会通过通知告诉你。",
+    "message": "关于你的频道",
+    "messagePlaceholder": "你会发布哪类视频？多久发布一次？是否已在其他平台发布过？",
+    "link": "过往作品链接",
+    "linkHint": "作品集、其他频道、社交媒体……帮助审核团队了解你。",
+    "submit": "提交申请",
+    "sent": "申请已提交！审核完成后会通知你。",
+    "cancel": "取消申请",
+    "cancelled": "申请已取消。",
+    "pendingTitle": "申请审核中",
+    "pendingHint": "提交于 <time></time>。结果会通过通知告诉你。",
+    "approvedTitle": "你现在可以发布了！",
+    "approvedHint": "你的申请已获审核团队批准。",
+    "startUploading": "上传我的第一个视频",
+    "rejectedTitle": "你上一次的申请未获批准",
+    "rejectedWait": "稍后即可重新提交申请。",
+    "rejectedRetry": "你现在可以参考上面的反馈重新提交申请。",
+    "retryIn": "可在 {time}重新申请"
+  },
+  "notifications": {
+    "label": "通知",
+    "labelUnread": "通知（{count} 条未读）",
+    "title": "通知",
+    "markAll": "全部标为已读",
+    "empty": "暂无通知。",
+    "more": "显示更多",
+    "types": {
+      "uploadRequestCreated": "@{username} 申请了视频发布权限。",
+      "uploadRequestApproved": "你的申请已获批准！现在可以发布视频了。",
+      "uploadRequestRejected": "你的发布申请未获批准。",
+      "uploadRequestRejectedNote": "你的发布申请未获批准：“{note}”",
+      "uploadAccessGranted": "审核团队已为你的频道开通视频发布权限。",
+      "uploadAccessRevoked": "你的视频发布权限已被撤销。",
+      "uploadAccessRevokedReason": "你的视频发布权限已被撤销：“{reason}”",
+      "roleChanged": "你在平台上的角色已变更为：{role}。",
+      "unknown": "新通知。",
+      "restrictionApplied": "审核团队已限制你的账号（{types}），直到 {until}。原因：“{reason}”",
+      "restrictionAppliedPermanent": "审核团队已限制你的账号（{types}）。原因：“{reason}”",
+      "restrictionRevoked": "你账号的“{type}”限制已解除。",
+      "videoUnderReview": "你的视频“{title}”正在接受审核，暂时下线。",
+      "videoRemoved": "你的视频“{title}”已被审核团队移除。原因：{reason}",
+      "videoRestored": "你的视频“{title}”已重新上线。",
+      "commentRemoved": "你的一条评论已被审核团队移除。原因：{reason}",
+      "commentRestored": "你的一条评论已被审核团队恢复。",
+      "videoPurged": "你的视频“{title}”已被审核团队永久删除。原因：{reason}"
+    }
+  },
+  "admin": {
+    "title": "审核",
+    "subtitle": "你当前的身份是{role}。",
+    "tabs": {
+      "requests": "申请",
+      "users": "用户",
+      "logs": "记录",
+      "reports": "举报"
+    },
+    "requests": {
+      "filter": {
+        "pending": "待处理",
+        "approved": "已批准",
+        "rejected": "已拒绝"
+      },
+      "status": {
+        "pending": "待处理",
+        "approved": "已批准",
+        "rejected": "已拒绝",
+        "cancelled": "已取消"
+      },
+      "empty": {
+        "pending": "没有待处理的申请",
+        "approved": "没有已批准的申请",
+        "rejected": "没有已拒绝的申请"
+      },
+      "emptyHint": "发布权限申请会显示在这里。",
+      "memberSince": "注册于",
+      "ownRequest": "这是你自己的申请：需要审核团队的其他成员处理。",
+      "approve": "批准",
+      "reject": "拒绝",
+      "approved": "{handle} 现在可以发布了。",
+      "rejected": "申请已拒绝。",
+      "reviewedBy": "处理人：{handle}",
+      "approveDialog": {
+        "title": "批准 {handle}？",
+        "description": "对方将立即获得视频发布权限，并会收到通知。",
+        "label": "欢迎留言"
+      },
+      "rejectDialog": {
+        "title": "拒绝 {handle} 的申请？",
+        "description": "原因会发送给对方，几分钟后对方可以重新申请。",
+        "label": "原因"
+      }
+    },
+    "users": {
+      "search": "按名称、@用户名或邮箱搜索",
+      "empty": "未找到用户",
+      "videos": "{count, plural, other {# 个视频}}",
+      "grant": "批准",
+      "role": "角色",
+      "granted": "{handle} 现在可以发布了。",
+      "roleChanged": "{handle} 现在是{role}。",
+      "notApproved": "等待批准",
+      "restrict": "限制",
+      "details": "详情"
+    },
+    "logs": {
+      "allHint": "全部审核操作，按时间从新到旧排列。",
+      "mineHint": "你执行过的审核操作。",
+      "empty": "暂无操作记录",
+      "system": "系统",
+      "actions": {
+        "uploadRequestApprove": "批准了以下用户的申请：",
+        "uploadRequestReject": "拒绝了以下用户的申请：",
+        "uploadAccessGrant": "为以下用户开通了发布权限：",
+        "uploadAccessRevoke": "撤销了以下用户的发布权限：",
+        "roleChange": "变更了角色（{role}）：",
+        "commentRemove": "移除了以下用户的一条评论：",
+        "restrictionApply": "施加了限制（{types}）：",
+        "restrictionRevoke": "解除了限制（{types}）：",
+        "reportDismiss": "驳回了针对以下用户的举报：",
+        "reportAction": "处理了针对以下用户的举报：",
+        "videoReview": "将视频“{title}”设为审核中，作者：",
+        "videoRemove": "移除了视频“{title}”，作者：",
+        "videoRestore": "恢复了视频“{title}”，作者：",
+        "commentRestore": "恢复了以下用户的一条评论：",
+        "commentPurge": "永久删除了以下用户的一条评论：",
+        "videoPurge": "永久删除了视频“{title}”，作者："
+      },
+      "selfDecision": "对本人内容作出的决定"
+    },
+    "restrict": {
+      "title": "限制 {handle}",
+      "description": "对方会收到附带原因的通知。限制到期后会自动解除。",
+      "types": "要限制的功能",
+      "duration": "持续时间",
+      "banPermanent": "封禁始终为永久（之后可以撤销）。",
+      "reason": "原因",
+      "reasonHint": "对方可以看到，并会保存在记录中。",
+      "submit": "限制",
+      "submitBan": "封禁",
+      "applied": "已限制 {handle}。"
+    },
+    "details": {
+      "back": "返回用户列表",
+      "videos": "{count, plural, other {# 个视频}}",
+      "joined": "注册于",
+      "restrict": "限制",
+      "access": "权限",
+      "actions": {
+        "upload": "发布视频",
+        "comment": "评论",
+        "react": "表态",
+        "follow": "关注频道"
+      },
+      "waitingApproval": "等待审核团队批准",
+      "allowed": "允许",
+      "approve": "批准",
+      "approved": "已开通发布权限。",
+      "revoke": "撤销",
+      "revoked": "限制已撤销。",
+      "history": "限制历史",
+      "noRestrictions": "目前没有任何限制。",
+      "status": {
+        "active": "生效中",
+        "expired": "已到期",
+        "revoked": "已撤销"
+      },
+      "appliedBy": "由 {handle} 于 {date} 施加",
+      "revokedBy": "由 {handle} 于 {date} 撤销",
+      "system": "系统",
+      "requests": "发布申请",
+      "noRequests": "暂无申请。",
+      "requestStatus": {
+        "pending": "待处理",
+        "approved": "已批准",
+        "rejected": "已拒绝",
+        "cancelled": "已取消"
+      },
+      "log": "记录",
+      "revokeDialog": {
+        "title": "撤销“{type}”限制？",
+        "description": "限制将立即失效，并保留在历史中。对方会收到通知。",
+        "label": "撤销原因"
+      },
+      "reports": "针对此用户的举报",
+      "noReports": "暂无举报。"
+    },
+    "reasonDialog": {
+      "reason": "原因",
+      "note": "备注",
+      "noteHint": "会和原因一起展示给作者。"
+    },
+    "reports": {
+      "filter": {
+        "open": "待处理",
+        "actioned": "已处理",
+        "dismissed": "已驳回"
+      },
+      "sortLabel": "排序",
+      "sort": {
+        "priority": "优先级（严重程度）",
+        "oldest": "最早",
+        "newest": "最新",
+        "most_reported": "举报最多",
+        "least_reported": "举报最少"
+      },
+      "types": {
+        "video": "视频",
+        "comment": "评论"
+      },
+      "count": "{count, plural, other {# 条举报}}",
+      "openedAgo": "创建于",
+      "last": "最近一次",
+      "oldestOpen": "最早的待处理举报：",
+      "reasons": {
+        "spam": "垃圾信息",
+        "harassment": "骚扰",
+        "hate": "仇恨",
+        "violence": "暴力",
+        "sexual": "色情",
+        "misleading": "误导",
+        "copyright": "版权",
+        "other": "其他"
+      },
+      "deletedAccount": "已注销的账号",
+      "author": "作者：",
+      "history": "查看历史",
+      "ownCase": "针对你本人内容的举报：需要审核团队的其他成员处理。",
+      "dismiss": "驳回",
+      "dismissReinstate": "驳回并恢复上线",
+      "restrictAuthor": "限制作者",
+      "review": "设为审核中",
+      "markActioned": "标记为已处理",
+      "remove": {
+        "video": "移除视频",
+        "comment": "移除评论"
+      },
+      "status": {
+        "open": "待处理",
+        "actioned": "已处理",
+        "dismissed": "已驳回"
+      },
+      "resolvedBy": "处理人：{handle}",
+      "restored": "视频已恢复。",
+      "underReviewDone": "视频已设为审核中：在作出决定前暂时下线。",
+      "afterRestrict": "已限制作者。接下来请移除内容或驳回举报。",
+      "resolved": {
+        "dismiss": "举报已驳回。",
+        "remove": "内容已移除。",
+        "actioned": "已标记为已处理。"
+      },
+      "empty": {
+        "open": "没有待处理的举报",
+        "actioned": "没有已处理的案例",
+        "dismissed": "没有已驳回的案例"
+      },
+      "emptyHint": "针对视频和评论的举报会显示在这里，并按内容分组。",
+      "gone": "作者已删除该内容。",
+      "commentRemoved": "评论已删除",
+      "onVideo": "所在视频：“{title}”",
+      "open": "打开视频",
+      "dialog": {
+        "dismiss": {
+          "title": "驳回这些举报？",
+          "description": "该内容没有违反规则。如果正在审核中，将恢复上线。不会通知任何人。",
+          "label": "内部备注"
+        },
+        "actioned": {
+          "title": "标记为已处理？",
+          "description": "在已经采取措施时使用（例如作者已被限制或已自行删除内容）。",
+          "label": "内部备注"
+        },
+        "remove": {
+          "title": {
+            "video": "移除该视频？",
+            "comment": "移除该评论？"
+          },
+          "description": "作者会收到附带原因的通知。视频之后可以恢复；评论无法恢复。"
+        },
+        "review": {
+          "title": {
+            "video": "将该视频设为审核中？",
+            "comment": "设为审核中？"
+          },
+          "description": "调查期间视频会暂时下线。作者会收到通知。案例保持待处理状态。"
+        }
+      },
+      "ownCaseAdmin": "这是你本人的内容：作为管理员你可以作出决定，该决定会在记录中被标记。",
+      "restoreTarget": {
+        "video": "恢复视频",
+        "comment": "恢复评论"
+      },
+      "purge": "永久删除",
+      "purged": "内容已永久删除。",
+      "commentModerated": "已被审核移除",
+      "purgeComment": {
+        "title": "永久删除该评论？",
+        "description": "文字将被抹除且无法恢复（记录中会保留一份副本）。举报将被关闭。如需可撤销的操作，请使用“移除评论”。"
+      }
+    },
+    "purge": {
+      "title": "永久删除该视频？",
+      "description": "将从数据库和视频服务器中抹除该视频，点赞和评论也会一并删除，无法撤销。如需可撤销的操作，请使用“移除视频”。作者会收到通知；标题、作者和原因会保存在记录中。",
+      "typeTitle": "请输入标题以确认：{title}",
+      "confirm": "永久删除",
+      "reason": "原因"
+    }
+  },
+  "restrictions": {
+    "types": {
+      "comment": "评论",
+      "upload": "发布",
+      "react": "表态",
+      "suspend": "停用",
+      "ban": "封禁"
+    },
+    "effects": {
+      "comment": "将无法评论或回复。",
+      "upload": "将无法上传视频（已发布的视频仍会保留）。",
+      "react": "将无法点赞或点踩。",
+      "suspend": "账号将仅能观看视频。",
+      "ban": "将无法再登录；频道、视频和评论都会被隐藏。"
+    },
+    "durations": {
+      "1h": "1 小时",
+      "24h": "24 小时",
+      "7d": "7 天",
+      "30d": "30 天",
+      "permanent": "永久"
+    },
+    "until": "至 {date}",
+    "permanent": "永久",
+    "reason": "原因：{reason}",
+    "notice": {
+      "comment": "在 {until} 之前你无法评论。",
+      "upload": "在 {until} 之前你无法发布视频。",
+      "react": "在 {until} 之前你无法对视频表态。",
+      "suspend": "你的账号已被停用至 {until}：目前只能观看视频。",
+      "ban": "该账号已被封禁。"
+    },
+    "noticePermanent": {
+      "comment": "你已无法再发表评论。",
+      "upload": "你已无法再发布视频。",
+      "react": "你已无法再对视频表态。",
+      "suspend": "你的账号已被停用：只能观看视频。",
+      "ban": "该账号已被封禁。"
+    }
+  },
+  "visibility": {
+    "label": "可见性",
+    "private": {
+      "label": "私享",
+      "hint": "只有你能看到。可以随时发布。"
+    },
+    "public": {
+      "label": "公开",
+      "hint": "就绪后所有人都能看到。"
+    },
+    "underReview": "审核中",
+    "removed": "已移除",
+    "underReviewHint": "该视频正在接受审核团队审核，目前对所有人隐藏。",
+    "removedHint": "该视频已被审核团队移除，对所有人隐藏。",
+    "reason": "原因：{reason}",
+    "moderatedHint": "在审核团队放行之前，即使设为公开，视频也会保持隐藏。",
+    "privateOwnerHint": "该视频为私享：只有你能看到。",
+    "privateStaffHint": "私享视频：你作为审核员可以看到。",
+    "staffOnly": "你作为审核员可以看到。"
+  },
+  "report": {
+    "action": "举报",
+    "title": {
+      "video": "举报视频",
+      "comment": "举报评论"
+    },
+    "description": "你的举报是匿名的：只有审核团队能看到，作者不会知道是谁举报的。",
+    "reason": "原因",
+    "details": "详细说明",
+    "detailsHint": "帮助审核团队：哪里有问题、出现在哪里（例如 2:10）。",
+    "submit": "提交举报",
+    "sent": "举报已提交。感谢你帮助维护平台安全。",
+    "reasons": {
+      "spam": {
+        "label": "垃圾信息或诈骗",
+        "hint": "重复广告、误导性链接、索要钱财。"
+      },
+      "harassment": {
+        "label": "骚扰或霸凌",
+        "hint": "对他人的攻击、威胁或羞辱。"
+      },
+      "hate": {
+        "label": "仇恨言论",
+        "hint": "基于种族、宗教、性别、性取向、出身等的攻击……"
+      },
+      "violence": {
+        "label": "暴力",
+        "hint": "真实的攻击行为、美化暴力或令人不适的内容。"
+      },
+      "sexual": {
+        "label": "色情内容",
+        "hint": "裸露或露骨的性内容。"
+      },
+      "misleading": {
+        "label": "误导性信息",
+        "hint": "可能造成伤害的虚假内容。"
+      },
+      "copyright": {
+        "label": "版权",
+        "hint": "未经许可使用他人的内容。"
+      },
+      "other": {
+        "label": "其他原因",
+        "hint": "请在详细说明中解释。"
+      }
+    }
+  }
+}

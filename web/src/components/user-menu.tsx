@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogOut, MonitorPlay, Upload, UserRound } from "lucide-react";
+import { LogOut, MonitorPlay, ShieldCheck, SquarePlus, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import {
 import { Link, useRouter } from "@/i18n/navigation";
 import { postJson } from "@/lib/client-api";
 import { channelHref, handle } from "@/lib/format";
+import { isStaff } from "@/lib/permissions";
 import type { AuthUser } from "@/lib/types";
 import { UserAvatar } from "./user-avatar";
 
@@ -62,10 +63,18 @@ export function UserMenu({ user }: { user: AuthUser }) {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/upload">
-            <Upload />
+            <SquarePlus />
             {t("upload")}
           </Link>
         </DropdownMenuItem>
+        {isStaff(user) && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin">
+              <ShieldCheck />
+              {t("moderation")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={logout}>
           <LogOut />

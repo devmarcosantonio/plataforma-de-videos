@@ -4,13 +4,14 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
-import { Clapperboard, LogIn, Menu, Search, Upload } from "lucide-react";
+import { Clapperboard, LogIn, Menu, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useRouter } from "@/i18n/navigation";
 import { SITE_NAME } from "@/lib/format";
 import type { AuthUser } from "@/lib/types";
 import { LocaleSwitcher } from "./locale-switcher";
+import { NotificationBell } from "./notifications/notification-bell";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
@@ -43,7 +44,7 @@ export function Header({ onMenuClick, user }: Props) {
       {user && (
         <Button asChild className="h-9 shrink-0 rounded-full px-4">
           <Link href="/upload">
-            <Upload />
+            <Plus />
             <span className="hidden sm:inline">{t("header.upload")}</span>
           </Link>
         </Button>
@@ -53,6 +54,7 @@ export function Header({ onMenuClick, user }: Props) {
         <LocaleSwitcher userId={user?.id ?? null} />
       </Suspense>
       <ThemeToggle />
+      {user && <NotificationBell />}
       {user ? (
         <UserMenu user={user} />
       ) : (

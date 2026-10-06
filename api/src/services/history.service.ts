@@ -4,6 +4,7 @@ import type { User } from '../models/user.model.js';
 import { VideoModel } from '../models/video.model.js';
 import { decodeCursor, encodeCursor } from '../utils/cursor.js';
 import { AppError } from '../utils/errors/app-error.js';
+import { findViewableOrFail } from './video-access.service.js';
 
 // A partir desta fração da duração o vídeo conta como concluído.
 const COMPLETED_RATIO = 0.9;
@@ -23,8 +24,7 @@ function toItem(row: HistoryRow) {
 export async function saveProgress(actor: User, videoId: string, input: unknown) {
   const { position } = progressSchema.parse(input);
 
-  const video = await VideoModel.findById(videoId);
-  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
+  const video = await findViewableOrFail(videoId, actor);
   if (video.status !== 'ready') throw new AppError('VIDEO_NOT_READY', 409);
 
   // Histórico pausado pelo usuário: não grava nada.

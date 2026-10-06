@@ -1,0 +1,730 @@
+{
+  "metadata": {
+    "description": "Criato: 동영상을 보고 올리세요."
+  },
+  "common": {
+    "unknownUser": "알 수 없는 사용자",
+    "cancel": "취소",
+    "save": "저장",
+    "saving": "저장 중…",
+    "sending": "보내는 중…",
+    "loading": "불러오는 중…",
+    "loadMore": "더 보기",
+    "edit": "수정",
+    "remove": "삭제",
+    "signIn": "로그인",
+    "comingSoon": "곧 출시",
+    "soon": "곧",
+    "optional": "(선택)",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요."
+  },
+  "nav": {
+    "home": "홈",
+    "following": "구독",
+    "studio": "내 채널",
+    "upload": "만들기",
+    "explore": "탐색",
+    "history": "시청 기록",
+    "playlists": "재생목록",
+    "openMenu": "메뉴 열기",
+    "admin": "관리"
+  },
+  "header": {
+    "search": "동영상 검색",
+    "upload": "만들기"
+  },
+  "theme": {
+    "useLight": "밝은 테마 사용",
+    "useDark": "어두운 테마 사용",
+    "light": "밝은 테마",
+    "dark": "어두운 테마"
+  },
+  "language": {
+    "label": "언어",
+    "change": "언어 변경"
+  },
+  "account": {
+    "menu": "계정 메뉴",
+    "viewChannel": "내 채널 보기",
+    "manageChannel": "채널 관리",
+    "upload": "만들기",
+    "signOut": "로그아웃",
+    "signedOut": "로그아웃되었습니다.",
+    "moderation": "관리"
+  },
+  "video": {
+    "status": {
+      "pending_upload": "업로드 대기 중",
+      "processing": "처리 중",
+      "ready": "준비 완료",
+      "failed": "실패"
+    },
+    "player": {
+      "pending_upload": "이 동영상의 파일이 아직 업로드되지 않았습니다.",
+      "processing": "동영상을 처리하고 있습니다. 몇 분 정도 걸릴 수 있습니다.",
+      "failed": "이 동영상을 처리하지 못했습니다."
+    },
+    "likes": "{count, plural, =0 {좋아요 없음} other {좋아요 {formatted}개}}",
+    "published": "<time></time> 게시",
+    "noDescription": "설명이 없습니다.",
+    "showMore": "더보기",
+    "showLess": "간략히",
+    "otherVideos": "다른 동영상",
+    "noOtherVideos": "아직 다른 동영상이 없습니다.",
+    "sync": "상태 확인",
+    "syncError": "상태를 업데이트하지 못했습니다."
+  },
+  "reactions": {
+    "like": "좋아요",
+    "removeLike": "좋아요 취소",
+    "dislike": "싫어요",
+    "removeDislike": "싫어요 취소",
+    "notReady": "준비된 동영상에만 반응할 수 있습니다",
+    "signInToReact": "로그인하면 동영상에 반응할 수 있습니다.",
+    "error": "반응을 저장하지 못했습니다."
+  },
+  "follow": {
+    "follow": "구독",
+    "following": "구독 중",
+    "unfollow": "구독 취소",
+    "followersLabel": "{count, plural, other {구독자}}",
+    "followers": "{count, plural, other {구독자 {formatted}명}}",
+    "signInToFollow": "로그인하면 채널을 구독할 수 있습니다.",
+    "error": "업데이트하지 못했습니다."
+  },
+  "comments": {
+    "label": "{count, plural, other {댓글}}",
+    "notReady": "동영상이 준비되면 댓글을 달 수 있습니다.",
+    "signInPrompt": "댓글을 달려면 로그인하세요.",
+    "placeholder": "댓글 추가…",
+    "submit": "댓글",
+    "shortcut": "Ctrl + Enter로 보내기",
+    "reply": "답글",
+    "replyPlaceholder": "답글 작성…",
+    "editPlaceholder": "댓글 수정",
+    "replies": "{count, plural, other {답글 #개}}",
+    "moreReplies": "답글 더보기",
+    "moreComments": "댓글 더보기",
+    "removed": "삭제된 댓글",
+    "author": "작성자",
+    "edited": "(수정됨)",
+    "actions": "댓글 작업",
+    "removeTitle": "댓글을 삭제할까요?",
+    "removeWithReplies": "답글이 있는 댓글이라 대화가 유지되도록 \"삭제된 댓글\"로 표시됩니다.",
+    "removeIrreversible": "이 작업은 되돌릴 수 없습니다.",
+    "editedToast": "댓글을 수정했습니다.",
+    "removedToast": "댓글을 삭제했습니다.",
+    "errors": {
+      "send": "댓글을 게시하지 못했습니다.",
+      "reply": "답글을 게시하지 못했습니다.",
+      "edit": "댓글을 수정하지 못했습니다.",
+      "remove": "댓글을 삭제하지 못했습니다.",
+      "loadReplies": "답글을 불러오지 못했습니다.",
+      "loadMore": "댓글을 더 불러오지 못했습니다."
+    },
+    "report": "신고",
+    "moderation": {
+      "placeholder": "관리팀이 삭제한 댓글입니다",
+      "badge": "관리팀이 삭제함",
+      "remove": "삭제(관리)",
+      "removeTitle": "이 댓글을 삭제할까요?",
+      "removeDescription": "모든 사람에게 숨겨지지만 보관되어 나중에 복원할 수 있습니다. 작성자에게 사유와 함께 알림이 갑니다.",
+      "removed": "관리팀이 댓글을 삭제했습니다.",
+      "restore": "댓글 복원",
+      "restored": "댓글을 복원했습니다.",
+      "purge": "영구 삭제",
+      "purgeTitle": "이 댓글을 영구 삭제할까요?",
+      "purgeDescription": "내용이 지워지며 복구할 수 없습니다(관리 기록에 사본이 남습니다). 되돌릴 수 있는 조치가 필요하면 \"삭제(관리)\"를 사용하세요. 작성자에게 알림이 갑니다.",
+      "purged": "댓글을 영구 삭제했습니다."
+    }
+  },
+  "upload": {
+    "title": "동영상 업로드",
+    "subtitle": "파일은 동영상 서버로 바로 전송되어 자동으로 처리됩니다.",
+    "videoTitle": "제목",
+    "description": "설명",
+    "dropzone": "동영상을 끌어다 놓거나 클릭해서 선택하세요",
+    "formats": "MP4, MOV, MKV, WebM…",
+    "removeFile": "파일 제거",
+    "notVideo": "동영상 파일을 선택하세요.",
+    "uploading": "업로드 중…",
+    "preparing": "준비 중…",
+    "submit": "업로드",
+    "cancelled": "업로드를 취소했습니다.",
+    "error": "업로드하지 못했습니다. 다시 시도해 주세요.",
+    "done": "동영상을 업로드했습니다!",
+    "doneHint": "지금 처리 중입니다. 몇 분 정도 걸릴 수 있습니다.",
+    "watch": "동영상 보기",
+    "needsApproval": "안전한 플랫폼을 위해 새 채널은 승인을 받은 후에 게시할 수 있습니다.",
+    "restricted": "현재 이 계정은 동영상을 게시할 수 없습니다.",
+    "donePrivate": "비공개 상태입니다. 원할 때 내 채널에서 공개하세요."
+  },
+  "studio": {
+    "title": "내 채널",
+    "stats": {
+      "videos": "동영상",
+      "likes": "좋아요",
+      "comments": "댓글"
+    },
+    "myVideos": "내 동영상",
+    "upload": "만들기",
+    "empty": "채널에 동영상이 없습니다",
+    "emptyHint": "업로드한 동영상이 여기에 표시됩니다.",
+    "columns": {
+      "video": "동영상",
+      "status": "상태",
+      "date": "날짜",
+      "likes": "좋아요",
+      "comments": "댓글"
+    },
+    "noDescription": "설명 없음",
+    "likesCount": "{count, plural, other {좋아요 #개}}",
+    "commentsCount": "{count, plural, other {댓글 #개}}",
+    "actions": "\"{title}\" 작업",
+    "view": "동영상 보기",
+    "edit": "수정",
+    "delete": "삭제",
+    "updated": "동영상을 업데이트했습니다.",
+    "saveError": "변경 사항을 저장하지 못했습니다.",
+    "deleted": "\"{title}\"을(를) 삭제했습니다.",
+    "deleteError": "동영상을 삭제하지 못했습니다.",
+    "editDialog": {
+      "title": "동영상 수정",
+      "description": "변경 사항은 바로 모든 사람에게 보입니다.",
+      "videoTitle": "제목",
+      "videoDescription": "설명",
+      "placeholder": "시청자에게 동영상 내용을 알려 주세요"
+    },
+    "deleteDialog": {
+      "title": "\"{title}\"을(를) 삭제할까요?",
+      "description": "동영상이 좋아요, 댓글과 함께 플랫폼과 동영상 서버에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "confirm": "동영상 삭제",
+      "deleting": "삭제 중…"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "로그인",
+      "description": "로그인하면 좋아요, 댓글, 동영상 게시를 할 수 있습니다.",
+      "login": "이메일 또는 사용자 이름",
+      "password": "비밀번호",
+      "submit": "로그인",
+      "submitting": "로그인 중…",
+      "noAccount": "계정이 없으신가요?",
+      "createAccount": "계정 만들기",
+      "welcome": "다시 오신 것을 환영합니다, {handle}님!",
+      "error": "로그인하지 못했습니다."
+    },
+    "register": {
+      "title": "계정 만들기",
+      "description": "1분이면 충분합니다.",
+      "username": "사용자 이름",
+      "displayName": "표시 이름",
+      "displayNamePlaceholder": "이름 또는 채널 이름",
+      "displayNameHint": "다른 사람에게 보이는 이름입니다. 비워 두면 @사용자 이름이 사용됩니다.",
+      "email": "이메일",
+      "password": "비밀번호",
+      "passwordHint": "8자 이상.",
+      "submit": "계정 만들기",
+      "submitting": "계정 만드는 중…",
+      "hasAccount": "이미 계정이 있으신가요?",
+      "signIn": "로그인",
+      "welcome": "계정이 만들어졌습니다! 환영합니다, {handle}님.",
+      "error": "계정을 만들지 못했습니다."
+    },
+    "password": {
+      "show": "비밀번호 표시",
+      "hide": "비밀번호 숨기기"
+    },
+    "username": {
+      "placeholder": "user.name",
+      "hint": "3~30자: 영문 소문자, 숫자, 마침표, 밑줄.",
+      "available": "@{username}을(를) 사용할 수 있습니다",
+      "checkError": "지금은 확인할 수 없습니다."
+    }
+  },
+  "home": {
+    "empty": "아직 동영상이 없습니다",
+    "emptyHint": "첫 동영상을 업로드하면 여기에 표시됩니다.",
+    "upload": "만들기",
+    "noResults": "\"{query}\"에 대한 검색 결과가 없습니다",
+    "noResultsHint": "다른 단어로 검색해 보세요.",
+    "results": "{count, plural, other {결과 #개}} · 검색어:"
+  },
+  "feed": {
+    "title": "구독",
+    "empty": "아직 아무것도 없습니다",
+    "emptyHint": "채널을 구독하면 새 동영상이 여기에 표시됩니다.",
+    "discover": "동영상 둘러보기",
+    "loadError": "동영상을 더 불러오지 못했습니다."
+  },
+  "channel": {
+    "title": "채널",
+    "videosCount": "{count, plural, other {동영상 #개}}",
+    "manage": "채널 관리",
+    "videos": "동영상",
+    "empty": "게시된 동영상이 없습니다",
+    "emptyHint": "이 채널은 아직 동영상을 게시하지 않았습니다."
+  },
+  "errors": {
+    "loadTitle": "불러오지 못했습니다",
+    "loadHint": "API가 실행 중인지 확인한 후(api 폴더에서 npm run dev) 다시 시도하세요.",
+    "retry": "다시 시도",
+    "notFound": "페이지를 찾을 수 없습니다",
+    "notFoundHint": "콘텐츠가 삭제되었을 수 있습니다.",
+    "backHome": "홈으로 돌아가기"
+  },
+  "history": {
+    "title": "시청 기록",
+    "empty": "시청 기록에 동영상이 없습니다",
+    "emptyHint": "시청한 동영상이 여기에 표시됩니다.",
+    "groups": {
+      "today": "오늘",
+      "yesterday": "어제",
+      "thisWeek": "이번 주",
+      "older": "이전"
+    },
+    "watched": "<time></time> 시청",
+    "remove": "시청 기록에서 삭제",
+    "removed": "시청 기록에서 삭제했습니다.",
+    "clear": "시청 기록 지우기",
+    "clearTitle": "시청 기록을 모두 지울까요?",
+    "clearDescription": "모든 동영상이 시청 기록에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+    "cleared": "시청 기록을 지웠습니다.",
+    "pause": "시청 기록 일시중지",
+    "pauseHint": "일시중지하는 동안에는 시청한 내용이 저장되지 않습니다.",
+    "paused": "시청 기록을 일시중지했습니다.",
+    "resumed": "시청 기록을 다시 시작했습니다.",
+    "pausedBanner": "시청 기록이 일시중지됨: 새로 본 동영상은 저장되지 않습니다.",
+    "continueWatching": "이어서 보기",
+    "resumeFrom": "{time}부터 이어서 재생",
+    "startOver": "처음부터",
+    "errors": {
+      "remove": "시청 기록에서 삭제하지 못했습니다.",
+      "clear": "시청 기록을 지우지 못했습니다.",
+      "settings": "설정을 저장하지 못했습니다.",
+      "loadMore": "항목을 더 불러오지 못했습니다."
+    }
+  },
+  "roles": {
+    "user": "사용자",
+    "moderator": "모더레이터",
+    "admin": "관리자"
+  },
+  "uploadAccess": {
+    "title": "게시 권한 요청",
+    "intro": "어떤 동영상을 올릴 계획인지 관리팀에 알려 주세요. 결과는 알림으로 알려 드립니다.",
+    "message": "채널 소개",
+    "messagePlaceholder": "어떤 동영상을 올릴 건가요? 얼마나 자주요? 다른 곳에서도 활동하고 있나요?",
+    "link": "이전 작업 링크",
+    "linkHint": "포트폴리오, 다른 채널, SNS 등… 관리팀이 회원님을 알아보는 데 도움이 됩니다.",
+    "submit": "요청 보내기",
+    "sent": "요청을 보냈습니다! 검토가 끝나면 알려 드립니다.",
+    "cancel": "요청 취소",
+    "cancelled": "요청을 취소했습니다.",
+    "pendingTitle": "요청 검토 중",
+    "pendingHint": "<time></time>에 보냄. 결과는 알림으로 알려 드립니다.",
+    "approvedTitle": "이제 게시할 수 있습니다!",
+    "approvedHint": "관리팀이 요청을 승인했습니다.",
+    "startUploading": "첫 동영상 업로드하기",
+    "rejectedTitle": "지난 요청이 승인되지 않았습니다",
+    "rejectedWait": "잠시 후 새 요청을 보낼 수 있습니다.",
+    "rejectedRetry": "위의 피드백을 참고해 지금 새 요청을 보낼 수 있습니다.",
+    "retryIn": "{time} 새 요청 가능"
+  },
+  "notifications": {
+    "label": "알림",
+    "labelUnread": "알림(읽지 않음 {count}개)",
+    "title": "알림",
+    "markAll": "모두 읽음으로 표시",
+    "empty": "아직 알림이 없습니다.",
+    "more": "더보기",
+    "types": {
+      "uploadRequestCreated": "@{username}님이 동영상 게시 권한을 요청했습니다.",
+      "uploadRequestApproved": "요청이 승인되었습니다! 이제 동영상을 게시할 수 있습니다.",
+      "uploadRequestRejected": "게시 요청이 승인되지 않았습니다.",
+      "uploadRequestRejectedNote": "게시 요청이 승인되지 않았습니다: \"{note}\"",
+      "uploadAccessGranted": "관리팀이 채널의 동영상 게시를 허용했습니다.",
+      "uploadAccessRevoked": "동영상 게시 권한이 해제되었습니다.",
+      "uploadAccessRevokedReason": "동영상 게시 권한이 해제되었습니다: \"{reason}\"",
+      "roleChanged": "플랫폼에서의 역할이 변경되었습니다: {role}.",
+      "unknown": "새 알림.",
+      "restrictionApplied": "관리팀이 {until}까지 계정을 제한했습니다({types}). 사유: \"{reason}\"",
+      "restrictionAppliedPermanent": "관리팀이 계정을 제한했습니다({types}). 사유: \"{reason}\"",
+      "restrictionRevoked": "계정의 {type} 제한이 해제되었습니다.",
+      "videoUnderReview": "동영상 \"{title}\"이(가) 관리팀 검토 중이라 잠시 비공개 상태입니다.",
+      "videoRemoved": "관리팀이 동영상 \"{title}\"을(를) 삭제했습니다. 사유: {reason}",
+      "videoRestored": "동영상 \"{title}\"이(가) 다시 공개되었습니다.",
+      "commentRemoved": "관리팀이 회원님의 댓글을 삭제했습니다. 사유: {reason}",
+      "commentRestored": "관리팀이 회원님의 댓글을 복원했습니다.",
+      "videoPurged": "관리팀이 동영상 \"{title}\"을(를) 영구 삭제했습니다. 사유: {reason}"
+    }
+  },
+  "admin": {
+    "title": "관리",
+    "subtitle": "현재 {role}(으)로 로그인되어 있습니다.",
+    "tabs": {
+      "requests": "요청",
+      "users": "사용자",
+      "logs": "기록",
+      "reports": "신고"
+    },
+    "requests": {
+      "filter": {
+        "pending": "대기 중",
+        "approved": "승인됨",
+        "rejected": "거절됨"
+      },
+      "status": {
+        "pending": "대기 중",
+        "approved": "승인됨",
+        "rejected": "거절됨",
+        "cancelled": "취소됨"
+      },
+      "empty": {
+        "pending": "대기 중인 요청이 없습니다",
+        "approved": "승인된 요청이 없습니다",
+        "rejected": "거절된 요청이 없습니다"
+      },
+      "emptyHint": "게시 권한 요청이 여기에 표시됩니다.",
+      "memberSince": "가입",
+      "ownRequest": "회원님 본인의 요청입니다. 관리팀의 다른 사람이 검토해야 합니다.",
+      "approve": "승인",
+      "reject": "거절",
+      "approved": "이제 {handle}님이 게시할 수 있습니다.",
+      "rejected": "요청을 거절했습니다.",
+      "reviewedBy": "처리: {handle}",
+      "approveDialog": {
+        "title": "{handle}님을 승인할까요?",
+        "description": "바로 동영상을 게시할 수 있게 되며 알림을 받습니다.",
+        "label": "환영 메시지"
+      },
+      "rejectDialog": {
+        "title": "{handle}님의 요청을 거절할까요?",
+        "description": "사유가 전달되며, 몇 분 후 다시 요청할 수 있습니다.",
+        "label": "사유"
+      }
+    },
+    "users": {
+      "search": "이름, @사용자 이름 또는 이메일로 검색",
+      "empty": "사용자를 찾을 수 없습니다",
+      "videos": "{count, plural, other {동영상 #개}}",
+      "grant": "승인",
+      "role": "역할",
+      "granted": "이제 {handle}님이 게시할 수 있습니다.",
+      "roleChanged": "{handle}님은 이제 {role}입니다.",
+      "notApproved": "승인 대기 중",
+      "restrict": "제한",
+      "details": "자세히"
+    },
+    "logs": {
+      "allHint": "모든 관리 작업, 최신순.",
+      "mineHint": "회원님이 한 관리 작업.",
+      "empty": "기록된 작업이 없습니다",
+      "system": "시스템",
+      "actions": {
+        "uploadRequestApprove": "다음 사용자의 요청을 승인함:",
+        "uploadRequestReject": "다음 사용자의 요청을 거절함:",
+        "uploadAccessGrant": "다음 사용자의 게시를 허용함:",
+        "uploadAccessRevoke": "다음 사용자의 게시 권한을 해제함:",
+        "roleChange": "역할을 변경함({role}):",
+        "commentRemove": "다음 사용자의 댓글을 삭제함:",
+        "restrictionApply": "제한을 적용함({types}):",
+        "restrictionRevoke": "제한을 해제함({types}):",
+        "reportDismiss": "다음 사용자에 대한 신고를 기각함:",
+        "reportAction": "다음 사용자에 대한 신고를 조치함:",
+        "videoReview": "동영상 \"{title}\"을(를) 검토 중으로 변경함, 작성자:",
+        "videoRemove": "동영상 \"{title}\"을(를) 삭제함, 작성자:",
+        "videoRestore": "동영상 \"{title}\"을(를) 복원함, 작성자:",
+        "commentRestore": "다음 사용자의 댓글을 복원함:",
+        "commentPurge": "다음 사용자의 댓글을 영구 삭제함:",
+        "videoPurge": "동영상 \"{title}\"을(를) 영구 삭제함, 작성자:"
+      },
+      "selfDecision": "본인 콘텐츠에 대한 결정"
+    },
+    "restrict": {
+      "title": "{handle}님 제한",
+      "description": "사유와 함께 알림이 갑니다. 제한은 기간이 끝나면 자동으로 해제됩니다.",
+      "types": "제한할 항목",
+      "duration": "기간",
+      "banPermanent": "차단은 항상 영구입니다(나중에 해제할 수 있음).",
+      "reason": "사유",
+      "reasonHint": "상대방에게 표시되며 기록에 남습니다.",
+      "submit": "제한",
+      "submitBan": "차단",
+      "applied": "{handle}님을 제한했습니다."
+    },
+    "details": {
+      "back": "사용자 목록으로",
+      "videos": "{count, plural, other {동영상 #개}}",
+      "joined": "가입",
+      "restrict": "제한",
+      "access": "권한",
+      "actions": {
+        "upload": "동영상 게시",
+        "comment": "댓글",
+        "react": "반응",
+        "follow": "채널 구독"
+      },
+      "waitingApproval": "관리팀 승인 대기 중",
+      "allowed": "허용됨",
+      "approve": "승인",
+      "approved": "게시를 허용했습니다.",
+      "revoke": "해제",
+      "revoked": "제한을 해제했습니다.",
+      "history": "제한 기록",
+      "noRestrictions": "지금까지 제한이 없습니다.",
+      "status": {
+        "active": "적용 중",
+        "expired": "만료됨",
+        "revoked": "해제됨"
+      },
+      "appliedBy": "{handle}님이 {date}에 적용",
+      "revokedBy": "{handle}님이 {date}에 해제",
+      "system": "시스템",
+      "requests": "게시 요청",
+      "noRequests": "요청이 없습니다.",
+      "requestStatus": {
+        "pending": "대기 중",
+        "approved": "승인됨",
+        "rejected": "거절됨",
+        "cancelled": "취소됨"
+      },
+      "log": "기록",
+      "revokeDialog": {
+        "title": "{type} 제한을 해제할까요?",
+        "description": "지금 바로 해제되며 기록에는 남습니다. 상대방에게 알림이 갑니다.",
+        "label": "해제 사유"
+      },
+      "reports": "이 사용자에 대한 신고",
+      "noReports": "신고가 없습니다."
+    },
+    "reasonDialog": {
+      "reason": "사유",
+      "note": "메모",
+      "noteHint": "사유와 함께 작성자에게 표시됩니다."
+    },
+    "reports": {
+      "filter": {
+        "open": "처리 대기",
+        "actioned": "조치됨",
+        "dismissed": "기각됨"
+      },
+      "sortLabel": "정렬",
+      "sort": {
+        "priority": "우선순위(심각도)",
+        "oldest": "오래된 순",
+        "newest": "최신순",
+        "most_reported": "신고 많은 순",
+        "least_reported": "신고 적은 순"
+      },
+      "types": {
+        "video": "동영상",
+        "comment": "댓글"
+      },
+      "count": "{count, plural, other {신고 #건}}",
+      "openedAgo": "접수",
+      "last": "최근",
+      "oldestOpen": "가장 오래된 미처리 신고:",
+      "reasons": {
+        "spam": "스팸",
+        "harassment": "괴롭힘",
+        "hate": "혐오",
+        "violence": "폭력",
+        "sexual": "선정적",
+        "misleading": "허위 정보",
+        "copyright": "저작권",
+        "other": "기타"
+      },
+      "deletedAccount": "탈퇴한 계정",
+      "author": "작성자:",
+      "history": "기록 보기",
+      "ownCase": "회원님 콘텐츠에 대한 신고입니다. 관리팀의 다른 사람이 검토해야 합니다.",
+      "dismiss": "기각",
+      "dismissReinstate": "기각하고 다시 공개",
+      "restrictAuthor": "작성자 제한",
+      "review": "검토 중으로 변경",
+      "markActioned": "처리 완료로 표시",
+      "remove": {
+        "video": "동영상 삭제",
+        "comment": "댓글 삭제"
+      },
+      "status": {
+        "open": "처리 대기",
+        "actioned": "조치됨",
+        "dismissed": "기각됨"
+      },
+      "resolvedBy": "처리: {handle}",
+      "restored": "동영상을 복원했습니다.",
+      "underReviewDone": "동영상을 검토 중으로 변경했습니다. 결정이 날 때까지 비공개됩니다.",
+      "afterRestrict": "작성자를 제한했습니다. 이제 콘텐츠를 삭제하거나 신고를 기각하세요.",
+      "resolved": {
+        "dismiss": "신고를 기각했습니다.",
+        "remove": "콘텐츠를 삭제했습니다.",
+        "actioned": "처리 완료로 표시했습니다."
+      },
+      "empty": {
+        "open": "처리 대기 중인 신고가 없습니다",
+        "actioned": "조치된 사례가 없습니다",
+        "dismissed": "기각된 사례가 없습니다"
+      },
+      "emptyHint": "동영상과 댓글에 대한 신고가 콘텐츠별로 묶여 여기에 표시됩니다.",
+      "gone": "작성자가 콘텐츠를 삭제했습니다.",
+      "commentRemoved": "삭제된 댓글",
+      "onVideo": "동영상: \"{title}\"",
+      "open": "동영상 열기",
+      "dialog": {
+        "dismiss": {
+          "title": "신고를 기각할까요?",
+          "description": "콘텐츠가 규칙을 위반하지 않았습니다. 검토 중이었다면 다시 공개됩니다. 아무에게도 알림이 가지 않습니다.",
+          "label": "내부 메모"
+        },
+        "actioned": {
+          "title": "처리 완료로 표시할까요?",
+          "description": "이미 조치를 한 경우에 사용하세요(예: 작성자를 제한했거나 작성자가 콘텐츠를 삭제함).",
+          "label": "내부 메모"
+        },
+        "remove": {
+          "title": {
+            "video": "동영상을 삭제할까요?",
+            "comment": "댓글을 삭제할까요?"
+          },
+          "description": "작성자에게 사유와 함께 알림이 갑니다. 동영상은 나중에 복원할 수 있지만 댓글은 복원할 수 없습니다."
+        },
+        "review": {
+          "title": {
+            "video": "동영상을 검토 중으로 변경할까요?",
+            "comment": "검토 중으로 변경할까요?"
+          },
+          "description": "조사하는 동안 동영상이 비공개됩니다. 작성자에게 알림이 갑니다. 사례는 계속 열려 있습니다."
+        }
+      },
+      "ownCaseAdmin": "회원님의 콘텐츠입니다. 관리자로서 결정할 수 있으며, 결정은 기록에 표시됩니다.",
+      "restoreTarget": {
+        "video": "동영상 복원",
+        "comment": "댓글 복원"
+      },
+      "purge": "영구 삭제",
+      "purged": "콘텐츠를 영구 삭제했습니다.",
+      "commentModerated": "관리팀이 삭제함",
+      "purgeComment": {
+        "title": "댓글을 영구 삭제할까요?",
+        "description": "내용이 지워지며 복구할 수 없습니다(기록에 사본이 남습니다). 신고가 종료됩니다. 되돌릴 수 있는 조치가 필요하면 \"댓글 삭제\"를 사용하세요."
+      }
+    },
+    "purge": {
+      "title": "동영상을 영구 삭제할까요?",
+      "description": "동영상이 좋아요, 댓글과 함께 데이터베이스와 동영상 서버에서 지워집니다. 되돌릴 수 없습니다. 되돌릴 수 있는 조치가 필요하면 \"동영상 삭제\"를 사용하세요. 작성자에게 알림이 가며, 제목·작성자·사유는 기록에 남습니다.",
+      "typeTitle": "확인을 위해 제목을 입력하세요: {title}",
+      "confirm": "영구 삭제",
+      "reason": "사유"
+    }
+  },
+  "restrictions": {
+    "types": {
+      "comment": "댓글",
+      "upload": "게시",
+      "react": "반응",
+      "suspend": "정지",
+      "ban": "차단"
+    },
+    "effects": {
+      "comment": "댓글과 답글을 달 수 없습니다.",
+      "upload": "동영상을 업로드할 수 없습니다(이미 게시된 동영상은 유지됨).",
+      "react": "좋아요/싫어요를 누를 수 없습니다.",
+      "suspend": "계정으로 시청만 할 수 있습니다.",
+      "ban": "더 이상 로그인할 수 없고, 채널·동영상·댓글이 숨겨집니다."
+    },
+    "durations": {
+      "1h": "1시간",
+      "24h": "24시간",
+      "7d": "7일",
+      "30d": "30일",
+      "permanent": "영구"
+    },
+    "until": "{date}까지",
+    "permanent": "영구",
+    "reason": "사유: {reason}",
+    "notice": {
+      "comment": "{until}까지 댓글을 달 수 없습니다.",
+      "upload": "{until}까지 동영상을 게시할 수 없습니다.",
+      "react": "{until}까지 동영상에 반응할 수 없습니다.",
+      "suspend": "{until}까지 계정이 정지되었습니다. 지금은 시청만 할 수 있습니다.",
+      "ban": "이 계정은 차단되었습니다."
+    },
+    "noticePermanent": {
+      "comment": "더 이상 댓글을 달 수 없습니다.",
+      "upload": "더 이상 동영상을 게시할 수 없습니다.",
+      "react": "더 이상 동영상에 반응할 수 없습니다.",
+      "suspend": "계정이 정지되었습니다. 시청만 할 수 있습니다.",
+      "ban": "이 계정은 차단되었습니다."
+    }
+  },
+  "visibility": {
+    "label": "공개 범위",
+    "private": {
+      "label": "비공개",
+      "hint": "나만 볼 수 있습니다. 원할 때 공개하세요."
+    },
+    "public": {
+      "label": "공개",
+      "hint": "준비되면 모든 사람에게 표시됩니다."
+    },
+    "underReview": "검토 중",
+    "removed": "삭제됨",
+    "underReviewHint": "이 동영상은 관리팀이 검토 중이며 지금은 아무에게도 보이지 않습니다.",
+    "removedHint": "이 동영상은 관리팀이 삭제했으며 아무에게도 보이지 않습니다.",
+    "reason": "사유: {reason}",
+    "moderatedHint": "관리팀이 허용할 때까지는 공개로 설정해도 동영상이 숨겨집니다.",
+    "privateOwnerHint": "비공개 동영상입니다. 나만 볼 수 있습니다.",
+    "privateStaffHint": "비공개 동영상: 관리팀이라서 볼 수 있습니다.",
+    "staffOnly": "관리팀이라서 볼 수 있습니다."
+  },
+  "report": {
+    "action": "신고",
+    "title": {
+      "video": "동영상 신고",
+      "comment": "댓글 신고"
+    },
+    "description": "신고는 익명입니다. 관리팀만 볼 수 있으며 작성자는 누가 신고했는지 알 수 없습니다.",
+    "reason": "사유",
+    "details": "자세한 내용",
+    "detailsHint": "무엇이 문제이고 어디에 있는지 알려 주세요(예: 2:10).",
+    "submit": "신고하기",
+    "sent": "신고했습니다. 안전한 플랫폼을 만드는 데 도움을 주셔서 감사합니다.",
+    "reasons": {
+      "spam": {
+        "label": "스팸 또는 사기",
+        "hint": "반복적인 광고, 오해의 소지가 있는 링크, 금전 요구."
+      },
+      "harassment": {
+        "label": "괴롭힘 또는 따돌림",
+        "hint": "다른 사람에 대한 공격, 위협 또는 모욕."
+      },
+      "hate": {
+        "label": "혐오 발언",
+        "hint": "인종, 종교, 성별, 성적 지향, 출신 등을 이유로 한 공격…"
+      },
+      "violence": {
+        "label": "폭력",
+        "hint": "실제 폭행, 폭력 미화 또는 충격적인 콘텐츠."
+      },
+      "sexual": {
+        "label": "선정적인 콘텐츠",
+        "hint": "노출 또는 노골적인 성적 콘텐츠."
+      },
+      "misleading": {
+        "label": "허위 정보",
+        "hint": "피해를 줄 수 있는 거짓 콘텐츠."
+      },
+      "copyright": {
+        "label": "저작권",
+        "hint": "다른 사람의 콘텐츠를 허락 없이 사용."
+      },
+      "other": {
+        "label": "기타 사유",
+        "hint": "자세한 내용에 설명해 주세요."
+      }
+    }
+  }
+}

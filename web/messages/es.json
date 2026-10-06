@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "description": "Plataforma de videos"
+    "description": "Criato: mira y publica videos."
   },
   "common": {
     "unknownUser": "Usuario desconocido",
@@ -22,15 +22,16 @@
     "home": "Inicio",
     "following": "Siguiendo",
     "studio": "Mi canal",
-    "upload": "Subir video",
+    "upload": "Crear",
     "explore": "Explorar",
     "history": "Historial",
     "playlists": "Listas",
-    "openMenu": "Abrir menú"
+    "openMenu": "Abrir menú",
+    "admin": "Moderación"
   },
   "header": {
     "search": "Buscar videos",
-    "upload": "Subir"
+    "upload": "Crear"
   },
   "theme": {
     "useLight": "Usar tema claro",
@@ -46,9 +47,10 @@
     "menu": "Menú de la cuenta",
     "viewChannel": "Ver mi canal",
     "manageChannel": "Administrar canal",
-    "upload": "Subir video",
+    "upload": "Crear",
     "signOut": "Cerrar sesión",
-    "signedOut": "Cerraste la sesión."
+    "signedOut": "Cerraste la sesión.",
+    "moderation": "Moderación"
   },
   "video": {
     "status": {
@@ -119,6 +121,21 @@
       "remove": "No se pudo eliminar el comentario.",
       "loadReplies": "No se pudieron cargar las respuestas.",
       "loadMore": "No se pudieron cargar más comentarios."
+    },
+    "report": "Denunciar",
+    "moderation": {
+      "placeholder": "Comentario eliminado por la moderación",
+      "badge": "Eliminado por la moderación",
+      "remove": "Eliminar (moderación)",
+      "removeTitle": "¿Eliminar este comentario?",
+      "removeDescription": "Desaparece para todos, pero se guarda: se puede restaurar después. El autor recibe un aviso con el motivo.",
+      "removed": "Comentario eliminado por la moderación.",
+      "restore": "Restaurar comentario",
+      "restored": "Comentario restaurado.",
+      "purge": "Eliminar definitivamente",
+      "purgeTitle": "¿Eliminar este comentario definitivamente?",
+      "purgeDescription": "El texto se borra y no se puede recuperar (una copia queda en el registro). Para algo reversible, usa “Eliminar (moderación)”. El autor recibe un aviso.",
+      "purged": "Comentario eliminado definitivamente."
     }
   },
   "upload": {
@@ -137,7 +154,10 @@
     "error": "Falló la subida. Inténtalo de nuevo.",
     "done": "¡Video subido!",
     "doneHint": "Ahora se está procesando. Esto puede tardar unos minutos.",
-    "watch": "Ver video"
+    "watch": "Ver video",
+    "needsApproval": "Para mantener la plataforma segura, los canales nuevos necesitan aprobación antes de publicar.",
+    "restricted": "Por ahora tu cuenta no puede publicar videos.",
+    "donePrivate": "Es privado: publícalo cuando quieras desde Mi canal."
   },
   "studio": {
     "title": "Mi canal",
@@ -147,7 +167,7 @@
       "comments": "Comentarios"
     },
     "myVideos": "Mis videos",
-    "upload": "Subir video",
+    "upload": "Crear",
     "empty": "No hay videos en el canal",
     "emptyHint": "Los videos que subas aparecerán aquí.",
     "columns": {
@@ -226,7 +246,7 @@
   "home": {
     "empty": "Aún no hay videos",
     "emptyHint": "Sube el primer video y aparecerá aquí.",
-    "upload": "Subir video",
+    "upload": "Crear",
     "noResults": "No se encontró nada para “{query}”",
     "noResultsHint": "Prueba con otras palabras.",
     "results": "{count, plural, one {# resultado} other {# resultados}} para"
@@ -284,6 +304,427 @@
       "clear": "No se pudo borrar el historial.",
       "settings": "No se pudo guardar la preferencia.",
       "loadMore": "No se pudieron cargar más elementos."
+    }
+  },
+  "roles": {
+    "user": "Usuario",
+    "moderator": "Moderador",
+    "admin": "Administrador"
+  },
+  "uploadAccess": {
+    "title": "Pide permiso para publicar",
+    "intro": "Cuéntale a la moderación qué piensas publicar. La respuesta llegará a tus notificaciones.",
+    "message": "Sobre tu canal",
+    "messagePlaceholder": "¿Qué tipo de videos vas a publicar? ¿Con qué frecuencia? ¿Ya publicas en otro lugar?",
+    "link": "Enlace a trabajos anteriores",
+    "linkHint": "Portafolio, otro canal, redes sociales… ayuda a la moderación a conocerte.",
+    "submit": "Enviar solicitud",
+    "sent": "¡Solicitud enviada! Te avisaremos cuando sea revisada.",
+    "cancel": "Cancelar solicitud",
+    "cancelled": "Solicitud cancelada.",
+    "pendingTitle": "Solicitud en revisión",
+    "pendingHint": "Enviada <time></time>. Te avisaremos en las notificaciones.",
+    "approvedTitle": "¡Ya puedes publicar!",
+    "approvedHint": "La moderación aprobó tu solicitud.",
+    "startUploading": "Subir mi primer video",
+    "rejectedTitle": "Tu última solicitud no fue aprobada",
+    "rejectedWait": "Podrás enviar una nueva solicitud en breve.",
+    "rejectedRetry": "Ya puedes enviar una nueva solicitud, teniendo en cuenta el comentario de arriba.",
+    "retryIn": "Nueva solicitud {time}"
+  },
+  "notifications": {
+    "label": "Notificaciones",
+    "labelUnread": "Notificaciones ({count} sin leer)",
+    "title": "Notificaciones",
+    "markAll": "Marcar todas como leídas",
+    "empty": "Aún no hay notificaciones.",
+    "more": "Ver más",
+    "types": {
+      "uploadRequestCreated": "@{username} pidió permiso para publicar videos.",
+      "uploadRequestApproved": "¡Tu solicitud fue aprobada! Ya puedes publicar videos.",
+      "uploadRequestRejected": "Tu solicitud para publicar no fue aprobada.",
+      "uploadRequestRejectedNote": "Tu solicitud para publicar no fue aprobada: “{note}”",
+      "uploadAccessGranted": "La moderación habilitó la publicación de videos en tu canal.",
+      "uploadAccessRevoked": "Se retiró tu permiso para publicar videos.",
+      "uploadAccessRevokedReason": "Se retiró tu permiso para publicar videos: “{reason}”",
+      "roleChanged": "Tu rol en la plataforma ahora es: {role}.",
+      "unknown": "Nueva notificación.",
+      "restrictionApplied": "La moderación restringió tu cuenta ({types}) hasta {until}. Motivo: “{reason}”",
+      "restrictionAppliedPermanent": "La moderación restringió tu cuenta ({types}). Motivo: “{reason}”",
+      "restrictionRevoked": "Se retiró la restricción de {type} de tu cuenta.",
+      "videoUnderReview": "Tu video “{title}” está en revisión por la moderación y por ahora no está disponible.",
+      "videoRemoved": "Tu video “{title}” fue eliminado por la moderación. Motivo: {reason}",
+      "videoRestored": "Tu video “{title}” volvió a estar disponible.",
+      "commentRemoved": "La moderación eliminó uno de tus comentarios. Motivo: {reason}",
+      "commentRestored": "La moderación restauró uno de tus comentarios.",
+      "videoPurged": "La moderación eliminó definitivamente tu video “{title}”. Motivo: {reason}"
+    }
+  },
+  "admin": {
+    "title": "Moderación",
+    "subtitle": "Estás como {role}.",
+    "tabs": {
+      "requests": "Solicitudes",
+      "users": "Usuarios",
+      "logs": "Registro",
+      "reports": "Denuncias"
+    },
+    "requests": {
+      "filter": {
+        "pending": "Pendientes",
+        "approved": "Aprobadas",
+        "rejected": "Rechazadas"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "approved": "Aprobada",
+        "rejected": "Rechazada",
+        "cancelled": "Cancelada"
+      },
+      "empty": {
+        "pending": "No hay solicitudes pendientes",
+        "approved": "No hay solicitudes aprobadas",
+        "rejected": "No hay solicitudes rechazadas"
+      },
+      "emptyHint": "Aquí aparecen las solicitudes de permiso para publicar.",
+      "memberSince": "cuenta creada",
+      "ownRequest": "Esta solicitud es tuya: otra persona de la moderación debe revisarla.",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "approved": "{handle} ya puede publicar.",
+      "rejected": "Solicitud rechazada.",
+      "reviewedBy": "por {handle}",
+      "approveDialog": {
+        "title": "¿Aprobar a {handle}?",
+        "description": "Podrá publicar videos de inmediato y recibirá un aviso.",
+        "label": "Mensaje de bienvenida"
+      },
+      "rejectDialog": {
+        "title": "¿Rechazar la solicitud de {handle}?",
+        "description": "El motivo se envía a la persona, que podrá pedir de nuevo después de unos minutos.",
+        "label": "Motivo"
+      }
+    },
+    "users": {
+      "search": "Buscar por nombre, @usuario o correo",
+      "empty": "No se encontraron usuarios",
+      "videos": "{count, plural, one {# video} other {# videos}}",
+      "grant": "Aprobar",
+      "role": "Rol",
+      "granted": "{handle} ya puede publicar.",
+      "roleChanged": "{handle} ahora es {role}.",
+      "notApproved": "Esperando aprobación",
+      "restrict": "Restringir",
+      "details": "Detalles"
+    },
+    "logs": {
+      "allHint": "Todas las acciones de moderación, de la más reciente a la más antigua.",
+      "mineHint": "Las acciones de moderación que realizaste.",
+      "empty": "No hay acciones registradas",
+      "system": "Sistema",
+      "actions": {
+        "uploadRequestApprove": "aprobó la solicitud de",
+        "uploadRequestReject": "rechazó la solicitud de",
+        "uploadAccessGrant": "habilitó la publicación para",
+        "uploadAccessRevoke": "quitó el permiso de publicar a",
+        "roleChange": "cambió el rol ({role}) de",
+        "commentRemove": "eliminó un comentario de",
+        "restrictionApply": "restringió ({types}) a",
+        "restrictionRevoke": "revocó la restricción ({types}) de",
+        "reportDismiss": "descartó denuncias contra",
+        "reportAction": "tomó medidas en denuncias contra",
+        "videoReview": "puso en revisión el video “{title}” de",
+        "videoRemove": "eliminó el video “{title}” de",
+        "videoRestore": "restauró el video “{title}” de",
+        "commentRestore": "restauró un comentario de",
+        "commentPurge": "eliminó definitivamente un comentario de",
+        "videoPurge": "eliminó definitivamente el video “{title}” de"
+      },
+      "selfDecision": "Decisión en causa propia"
+    },
+    "restrict": {
+      "title": "Restringir a {handle}",
+      "description": "La persona recibe un aviso con el motivo. La restricción vence sola al final del plazo.",
+      "types": "Qué bloquear",
+      "duration": "Por cuánto tiempo",
+      "banPermanent": "El bloqueo siempre es permanente (se puede revocar después).",
+      "reason": "Motivo",
+      "reasonHint": "La persona lo ve y queda en el registro.",
+      "submit": "Restringir",
+      "submitBan": "Bloquear",
+      "applied": "{handle} fue restringido."
+    },
+    "details": {
+      "back": "Volver a usuarios",
+      "videos": "{count, plural, one {# video} other {# videos}}",
+      "joined": "cuenta creada",
+      "restrict": "Restringir",
+      "access": "Accesos",
+      "actions": {
+        "upload": "Publicar videos",
+        "comment": "Comentar",
+        "react": "Reaccionar",
+        "follow": "Seguir canales"
+      },
+      "waitingApproval": "Esperando aprobación de la moderación",
+      "allowed": "Permitido",
+      "approve": "Aprobar",
+      "approved": "Publicación habilitada.",
+      "revoke": "Revocar",
+      "revoked": "Restricción revocada.",
+      "history": "Historial de restricciones",
+      "noRestrictions": "Sin restricciones hasta ahora.",
+      "status": {
+        "active": "Activa",
+        "expired": "Vencida",
+        "revoked": "Revocada"
+      },
+      "appliedBy": "Aplicada por {handle} el {date}",
+      "revokedBy": "revocada por {handle} el {date}",
+      "system": "Sistema",
+      "requests": "Solicitudes de publicación",
+      "noRequests": "Sin solicitudes.",
+      "requestStatus": {
+        "pending": "Pendiente",
+        "approved": "Aprobada",
+        "rejected": "Rechazada",
+        "cancelled": "Cancelada"
+      },
+      "log": "Registro",
+      "revokeDialog": {
+        "title": "¿Revocar la restricción de {type}?",
+        "description": "Deja de aplicarse ahora y queda en el historial. La persona recibe un aviso.",
+        "label": "Motivo de la revocación"
+      },
+      "reports": "Denuncias contra esta persona",
+      "noReports": "Sin denuncias."
+    },
+    "reasonDialog": {
+      "reason": "Motivo",
+      "note": "Observación",
+      "noteHint": "El autor la ve junto con el motivo."
+    },
+    "reports": {
+      "filter": {
+        "open": "Abiertas",
+        "actioned": "Con medidas",
+        "dismissed": "Descartadas"
+      },
+      "sortLabel": "Ordenar",
+      "sort": {
+        "priority": "Prioridad (gravedad)",
+        "oldest": "Más antiguas",
+        "newest": "Más recientes",
+        "most_reported": "Más denunciadas",
+        "least_reported": "Menos denunciadas"
+      },
+      "types": {
+        "video": "Video",
+        "comment": "Comentario"
+      },
+      "count": "{count, plural, one {# denuncia} other {# denuncias}}",
+      "openedAgo": "abierta",
+      "last": "última",
+      "oldestOpen": "Denuncia abierta más antigua:",
+      "reasons": {
+        "spam": "Spam",
+        "harassment": "Acoso",
+        "hate": "Odio",
+        "violence": "Violencia",
+        "sexual": "Sexual",
+        "misleading": "Engañoso",
+        "copyright": "Derechos de autor",
+        "other": "Otro"
+      },
+      "deletedAccount": "cuenta eliminada",
+      "author": "Autor:",
+      "history": "Ver historial",
+      "ownCase": "Denuncia contra tu propio contenido: otra persona de la moderación debe revisarla.",
+      "dismiss": "Descartar",
+      "dismissReinstate": "Descartar y liberar",
+      "restrictAuthor": "Restringir autor",
+      "review": "Poner en revisión",
+      "markActioned": "Marcar como resuelto",
+      "remove": {
+        "video": "Eliminar video",
+        "comment": "Eliminar comentario"
+      },
+      "status": {
+        "open": "Abierta",
+        "actioned": "Con medidas",
+        "dismissed": "Descartada"
+      },
+      "resolvedBy": "por {handle}",
+      "restored": "Video restaurado.",
+      "underReviewDone": "Video en revisión: no está disponible hasta la decisión.",
+      "afterRestrict": "Autor restringido. Ahora elimina el contenido o descarta la denuncia.",
+      "resolved": {
+        "dismiss": "Denuncia descartada.",
+        "remove": "Contenido eliminado.",
+        "actioned": "Caso marcado como resuelto."
+      },
+      "empty": {
+        "open": "No hay denuncias abiertas",
+        "actioned": "No hay casos con medidas",
+        "dismissed": "No hay casos descartados"
+      },
+      "emptyHint": "Aquí aparecen las denuncias de videos y comentarios, agrupadas por contenido.",
+      "gone": "El autor eliminó el contenido.",
+      "commentRemoved": "Comentario eliminado",
+      "onVideo": "en el video “{title}”",
+      "open": "Abrir video",
+      "dialog": {
+        "dismiss": {
+          "title": "¿Descartar las denuncias?",
+          "description": "El contenido no infringe las reglas. Si estaba en revisión, vuelve a estar disponible. Nadie recibe aviso.",
+          "label": "Nota interna"
+        },
+        "actioned": {
+          "title": "¿Marcar como resuelto?",
+          "description": "Úsalo cuando ya se tomó una medida (ej.: se restringió al autor o este eliminó el contenido).",
+          "label": "Nota interna"
+        },
+        "remove": {
+          "title": {
+            "video": "¿Eliminar el video?",
+            "comment": "¿Eliminar el comentario?"
+          },
+          "description": "El autor recibe un aviso con el motivo. El video se puede restaurar después; el comentario, no."
+        },
+        "review": {
+          "title": {
+            "video": "¿Poner el video en revisión?",
+            "comment": "¿Poner en revisión?"
+          },
+          "description": "El video deja de estar disponible mientras investigas. El dueño recibe un aviso. El caso sigue abierto."
+        }
+      },
+      "ownCaseAdmin": "Contenido tuyo: como admin puedes decidir. La decisión queda marcada en el registro.",
+      "restoreTarget": {
+        "video": "Restaurar video",
+        "comment": "Restaurar comentario"
+      },
+      "purge": "Eliminar definitivamente",
+      "purged": "Contenido eliminado definitivamente.",
+      "commentModerated": "Eliminado por la moderación",
+      "purgeComment": {
+        "title": "¿Eliminar el comentario definitivamente?",
+        "description": "El texto se borra y no se puede recuperar (una copia queda en el registro). La denuncia se cierra. Para algo reversible, usa “Eliminar comentario”."
+      }
+    },
+    "purge": {
+      "title": "¿Eliminar el video definitivamente?",
+      "description": "Borra el video de la base de datos y del servidor de video, con sus me gusta y comentarios. No se puede deshacer. Para algo reversible, usa “Eliminar video”. El dueño recibe un aviso; el título, el dueño y el motivo quedan en el registro.",
+      "typeTitle": "Para confirmar, escribe el título: {title}",
+      "confirm": "Eliminar definitivamente",
+      "reason": "Motivo"
+    }
+  },
+  "restrictions": {
+    "types": {
+      "comment": "Comentarios",
+      "upload": "Publicación",
+      "react": "Reacciones",
+      "suspend": "Suspensión",
+      "ban": "Bloqueo"
+    },
+    "effects": {
+      "comment": "No podrá comentar ni responder.",
+      "upload": "No podrá subir videos (los publicados siguen en línea).",
+      "react": "No podrá dar me gusta/no me gusta.",
+      "suspend": "La cuenta queda solo para ver.",
+      "ban": "No podrá entrar a la cuenta; el canal, los videos y los comentarios quedan ocultos."
+    },
+    "durations": {
+      "1h": "1 hora",
+      "24h": "24 horas",
+      "7d": "7 días",
+      "30d": "30 días",
+      "permanent": "Permanente"
+    },
+    "until": "hasta {date}",
+    "permanent": "permanente",
+    "reason": "Motivo: {reason}",
+    "notice": {
+      "comment": "No puedes comentar hasta {until}.",
+      "upload": "No puedes publicar videos hasta {until}.",
+      "react": "No puedes reaccionar a videos hasta {until}.",
+      "suspend": "Tu cuenta está suspendida hasta {until}: por ahora solo puedes ver videos.",
+      "ban": "Esta cuenta fue bloqueada."
+    },
+    "noticePermanent": {
+      "comment": "Ya no puedes comentar.",
+      "upload": "Ya no puedes publicar videos.",
+      "react": "Ya no puedes reaccionar a videos.",
+      "suspend": "Tu cuenta está suspendida: solo puedes ver videos.",
+      "ban": "Esta cuenta fue bloqueada."
+    }
+  },
+  "visibility": {
+    "label": "Visibilidad",
+    "private": {
+      "label": "Privado",
+      "hint": "Solo tú lo ves. Publícalo cuando quieras."
+    },
+    "public": {
+      "label": "Público",
+      "hint": "Aparece para todos cuando esté listo."
+    },
+    "underReview": "En revisión",
+    "removed": "Eliminado",
+    "underReviewHint": "Este video está en revisión por la moderación y por ahora nadie lo ve.",
+    "removedHint": "Este video fue eliminado por la moderación y nadie lo ve.",
+    "reason": "Motivo: {reason}",
+    "moderatedHint": "Hasta que la moderación lo libere, el video sigue oculto aunque sea público.",
+    "privateOwnerHint": "Este video es privado: solo tú lo ves.",
+    "privateStaffHint": "Video privado: lo ves porque eres de la moderación.",
+    "staffOnly": "Lo ves porque eres de la moderación."
+  },
+  "report": {
+    "action": "Denunciar",
+    "title": {
+      "video": "Denunciar video",
+      "comment": "Denunciar comentario"
+    },
+    "description": "Tu denuncia es anónima: solo la moderación la ve. El autor no sabrá quién denunció.",
+    "reason": "Motivo",
+    "details": "Detalles",
+    "detailsHint": "Ayuda a la moderación: qué está mal y dónde (ej.: minuto 2:10).",
+    "submit": "Enviar denuncia",
+    "sent": "Denuncia enviada. Gracias por ayudar a mantener la plataforma segura.",
+    "reasons": {
+      "spam": {
+        "label": "Spam o estafa",
+        "hint": "Publicidad repetitiva, enlaces engañosos, pedidos de dinero."
+      },
+      "harassment": {
+        "label": "Acoso o bullying",
+        "hint": "Ataques, amenazas o humillación a alguien."
+      },
+      "hate": {
+        "label": "Discurso de odio",
+        "hint": "Ataques por raza, religión, género, orientación, origen…"
+      },
+      "violence": {
+        "label": "Violencia",
+        "hint": "Agresión real, apología de la violencia o contenido impactante."
+      },
+      "sexual": {
+        "label": "Contenido sexual",
+        "hint": "Desnudez o contenido sexual explícito."
+      },
+      "misleading": {
+        "label": "Información engañosa",
+        "hint": "Contenido falso que puede causar daño."
+      },
+      "copyright": {
+        "label": "Derechos de autor",
+        "hint": "Uso de contenido de otra persona sin permiso."
+      },
+      "other": {
+        "label": "Otro motivo",
+        "hint": "Explícalo en los detalles."
+      }
     }
   }
 }

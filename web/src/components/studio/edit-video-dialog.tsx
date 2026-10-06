@@ -15,7 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Video } from "@/lib/types";
+import type { Video, VideoVisibility } from "@/lib/types";
+import { VisibilityPicker } from "../visibility-picker";
 
 const TITLE_MAX = 200;
 const DESCRIPTION_MAX = 5000;
@@ -23,7 +24,7 @@ const DESCRIPTION_MAX = 5000;
 type Props = {
   video: Video | null;
   onOpenChange: (open: boolean) => void;
-  onSave: (changes: { title: string; description: string }) => Promise<void>;
+  onSave: (changes: { title: string; description: string; visibility: VideoVisibility }) => Promise<void>;
 };
 
 export function EditVideoDialog({ video, onOpenChange, onSave }: Props) {
@@ -41,16 +42,18 @@ function EditForm({ video, onSave, onCancel }: { video: Video; onSave: Props["on
   const t = useTranslations();
   const [title, setTitle] = useState(video.title);
   const [description, setDescription] = useState(video.description ?? "");
+  const [visibility, setVisibility] = useState(video.visibility);
   const [saving, setSaving] = useState(false);
 
-  const unchanged = title.trim() === video.title && description.trim() === (video.description ?? "");
+  const unchanged =
+    title.trim() === video.title && description.trim() === (video.description ?? "") && visibility === video.visibility;
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!title.trim() || unchanged) return;
     setSaving(true);
     try {
-      await onSave({ title: title.trim(), description: description.trim() });
+      await onSave({ title: title.trim(), description: description.trim(), visibility });
       onCancel();
     } catch {
       // O erro já aparece em um toast; mantém o diálogo aberto para tentar de novo.
@@ -101,6 +104,11 @@ function EditForm({ video, onSave, onCancel }: { video: Video; onSave: Props["on
           className="max-h-72"
         />
       </div>
+
+      <VisibilityPicker value={visibility} onChange={setVisibility} disabled={saving} />
+      {video.moderation_status !== "active" && (
+        <p className="-mt-2 text-xs text-muted-foreground">{t("visibility.moderatedHint")}</p>
+      )}
 
       <DialogFooter>
         <Button type="button" variant="ghost" onClick={onCancel}>

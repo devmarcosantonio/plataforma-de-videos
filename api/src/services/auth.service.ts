@@ -3,6 +3,7 @@ import { UserModel, type User } from '../models/user.model.js';
 import { AppError } from '../utils/errors/app-error.js';
 import { signToken } from '../utils/jwt.js';
 import { hashPassword, verifyPassword } from '../utils/password.js';
+import { getAccess, isBanned, type Access } from './access.service.js';
 import { createUser, toPrivate, type PrivateUser } from './user.service.js';
 
 const loginSchema = z.object({
@@ -37,10 +38,13 @@ export async function login(input: unknown): Promise<AuthResult> {
   if (!user || !valid) {
     throw new AppError('INVALID_CREDENTIALS', 401);
   }
+  // Só depois da senha conferida: não revela a quem não sabe a senha que a conta existe e foi banida.
+  if (isBanned(await getAccess(user))) throw new AppError('ACCOUNT_BANNED', 403);
 
   return { token: await signToken(user.id), user: toPrivate(user) };
 }
 
-export function me(user: User): PrivateUser {
-  return toPrivate(user);
+// A própria conta, com os acessos calculados (o que pode fazer agora e por quê).
+export async function me(user: User): Promise<PrivateUser & { access: Access }> {
+  return { ...toPrivate(user), access: await getAccess(user) };
 }

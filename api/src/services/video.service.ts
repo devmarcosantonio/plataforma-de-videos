@@ -19,6 +19,8 @@ import {
 } from '../models/video.model.js';
 import { AppError } from '../utils/errors/app-error.js';
 import { withProgress } from './history.service.js';
+import { ensureCanUpload } from './upload-access.service.js';
+import { canViewVideo, findViewableOrFail } from './video-access.service.js';
 
 function toVideoStatus(status: BunnyVideoStatus): VideoStatus {
   switch (status) {
@@ -58,6 +60,7 @@ export async function createVideo(
   actor: User,
   input: unknown,
 ): Promise<{ video: Video; upload: BunnyUploadCredentials }> {
+  await ensureCanUpload(actor);
   const data = createVideoSchema.parse(input);
 
   const bunnyVideo = await bunnyClient.createVideo(data.title);
@@ -68,6 +71,7 @@ export async function createVideo(
       bunny_video_id: bunnyVideo.guid,
       title: data.title,
       description: data.description ?? null,
+      visibility: data.visibility,
     });
     return { video, upload: createUploadCredentials(bunnyVideo.guid) };
   } catch (error) {
@@ -79,6 +83,7 @@ export async function createVideo(
 
 // Registra um vídeo que já existe no Bunny (ex.: enviado antes da persistência no banco).
 export async function importVideo(actor: User, input: unknown): Promise<Video> {
+  await ensureCanUpload(actor);
   const data = importVideoSchema.parse(input);
 
   if (await VideoModel.findByBunnyId(data.bunny_video_id)) {
@@ -98,7 +103,8 @@ export async function importVideo(actor: User, input: unknown): Promise<Video> {
 
 export async function listVideos(actor: User | undefined, query: unknown) {
   const { user_id } = listVideosQuerySchema.parse(query);
-  return withProgress(actor, await VideoModel.findAllWithStats(user_id ? { user_id } : {}));
+  const own = !!actor && user_id === actor.id;
+  return withProgress(actor, await VideoModel.findAllWithStats(user_id ? { user_id } : {}, own));
 }
 
 async function findOwnedOrFail(id: string, actor: User): Promise<Video> {
@@ -108,12 +114,14 @@ async function findOwnedOrFail(id: string, actor: User): Promise<Video> {
 }
 
 export async function updateVideo(actor: User, id: string, input: unknown): Promise<VideoWithStats> {
-  const { title, description } = updateVideoSchema.parse(input);
+  const { title, description, visibility } = updateVideoSchema.parse(input);
   const video = await findOwnedOrFail(id, actor);
 
+  // O dono muda a visibilidade a qualquer momento; em revisão/removido o vídeo continua oculto mesmo assim.
   await VideoModel.update(video.id, {
     ...(title !== undefined && { title }),
     ...(description !== undefined && { description: description || null }),
+    ...(visibility !== undefined && { visibility }),
   });
 
   // Mantém o título igual no painel do Bunny; falhar aqui não desfaz a edição local.
@@ -123,17 +131,18 @@ export async function updateVideo(actor: User, id: string, input: unknown): Prom
     });
   }
 
-  return getVideo(video.id);
+  return getVideo(video.id, actor);
 }
 
 export async function getVideo(id: string, actor?: User) {
   const video = await VideoModel.findByIdWithStats(id);
-  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
+  if (!video || !canViewVideo(video, actor)) throw new AppError('VIDEO_NOT_FOUND', 404);
   const [withUserProgress] = await withProgress(actor, [video]);
   return withUserProgress;
 }
 
 export async function getUploadCredentials(actor: User, id: string): Promise<BunnyUploadCredentials> {
+  await ensureCanUpload(actor);
   const video = await findOwnedOrFail(id, actor);
   if (video.status !== 'pending_upload') {
     throw new AppError('VIDEO_ALREADY_UPLOADED', 409);
@@ -141,8 +150,8 @@ export async function getUploadCredentials(actor: User, id: string): Promise<Bun
   return createUploadCredentials(video.bunny_video_id);
 }
 
-export async function getPlayback(id: string) {
-  const video = await findOrFail(id);
+export async function getPlayback(id: string, actor?: User) {
+  const video = await findViewableOrFail(id, actor);
   if (video.status !== 'ready') {
     throw new AppError('VIDEO_NOT_READY', 409);
   }

@@ -20,5 +20,5 @@ export async function logout(req: Request, res: Response) {
 }
 
 export async function me(req: Request, res: Response) {
-  res.json(authService.me(req.user!));
+  res.json(await authService.me(req.user!));
 }

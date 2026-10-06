@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { Compass, History, Home, ListVideo, MonitorPlay, Upload, Users, type LucideIcon } from "lucide-react";
+import { Compass, History, Home, ListVideo, MonitorPlay, ShieldCheck, SquarePlus, Users, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -11,15 +11,16 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { SITE_NAME } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; label: NavKey; icon: LucideIcon; requiresLogin?: boolean };
-type NavKey = "home" | "following" | "studio" | "upload" | "explore" | "history" | "playlists";
+type NavItem = { href: string; label: NavKey; icon: LucideIcon; requiresLogin?: boolean; requiresStaff?: boolean };
+type NavKey = "home" | "following" | "studio" | "upload" | "explore" | "history" | "playlists" | "admin";
 
 const MAIN: NavItem[] = [
   { href: "/", label: "home", icon: Home },
   { href: "/following", label: "following", icon: Users, requiresLogin: true },
   { href: "/history", label: "history", icon: History, requiresLogin: true },
   { href: "/studio", label: "studio", icon: MonitorPlay, requiresLogin: true },
-  { href: "/upload", label: "upload", icon: Upload, requiresLogin: true },
+  { href: "/upload", label: "upload", icon: SquarePlus, requiresLogin: true },
+  { href: "/admin", label: "admin", icon: ShieldCheck, requiresLogin: true, requiresStaff: true },
 ];
 
 const SOON: NavItem[] = [
@@ -32,9 +33,10 @@ type Props = {
   mobileOpen: boolean;
   onMobileOpenChange: (open: boolean) => void;
   loggedIn: boolean;
+  staff: boolean;
 };
 
-export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn }: Props) {
+export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn, staff }: Props) {
   return (
     <>
       <motion.aside
@@ -43,7 +45,7 @@ export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn }:
         transition={{ type: "spring", stiffness: 400, damping: 36 }}
         className="sticky top-16 hidden h-[calc(100dvh-4rem)] shrink-0 overflow-x-hidden overflow-y-auto border-r lg:block"
       >
-        <Nav compact={collapsed} layoutId="nav-active-desktop" loggedIn={loggedIn} />
+        <Nav compact={collapsed} layoutId="nav-active-desktop" loggedIn={loggedIn} staff={staff} />
       </motion.aside>
 
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
@@ -55,6 +57,7 @@ export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn }:
             compact={false}
             layoutId="nav-active-mobile"
             loggedIn={loggedIn}
+            staff={staff}
             onNavigate={() => onMobileOpenChange(false)}
           />
         </SheetContent>
@@ -63,18 +66,18 @@ export function Sidebar({ collapsed, mobileOpen, onMobileOpenChange, loggedIn }:
   );
 }
 
-type NavProps = { compact: boolean; layoutId: string; loggedIn: boolean; onNavigate?: () => void };
+type NavProps = { compact: boolean; layoutId: string; loggedIn: boolean; staff: boolean; onNavigate?: () => void };
 
-function Nav({ compact, layoutId, loggedIn, onNavigate }: NavProps) {
+function Nav({ compact, layoutId, loggedIn, staff, onNavigate }: NavProps) {
   const t = useTranslations();
   const pathname = usePathname();
-  // Itens que exigem login só aparecem para quem está logado.
-  const items = MAIN.filter((item) => loggedIn || !item.requiresLogin);
+  // Itens que exigem login (ou papel de moderação) só aparecem para quem pode usá-los.
+  const items = MAIN.filter((item) => (loggedIn || !item.requiresLogin) && (staff || !item.requiresStaff));
 
   return (
     <nav className={cn("flex flex-col gap-1", compact ? "p-2" : "p-3")}>
       {items.map((item) => {
-        const active = pathname === item.href;
+        const active = pathname === item.href || (item.href === "/admin" && pathname.startsWith("/admin/"));
         const link = (
           <Link
             key={item.label}

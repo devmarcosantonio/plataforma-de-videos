@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { prisma } from '../config/database.js';
-import type { Comment, Prisma } from '../generated/prisma/client.js';
+import type { Comment, Prisma, ReportReason, User } from '../generated/prisma/client.js';
+import { bannedUser } from './restriction.model.js';
 import type { CursorPosition } from '../utils/cursor.js';
 
 export type { Comment };
@@ -47,7 +48,8 @@ function afterCursor(cursor: CursorPosition | undefined, order: Order): Prisma.C
 async function page(where: Prisma.CommentWhereInput, order: Order, cursor: CursorPosition | undefined, limit: number) {
   // Busca um a mais para saber se existe próxima página.
   const rows = await prisma.comment.findMany({
-    where: { ...where, ...afterCursor(cursor, order) },
+    // Comentários de conta banida ficam ocultos.
+    where: { ...where, NOT: { user: bannedUser }, ...afterCursor(cursor, order) },
     orderBy: [{ created_at: order }, { id: order }],
     take: limit + 1,
     include,
@@ -74,6 +76,26 @@ export const CommentModel = {
 
   async listReplies(parentId: string, cursor: CursorPosition | undefined, limit: number) {
     return page({ parent_id: parentId }, 'asc', cursor, limit);
+  },
+
+  // Remoção pela moderação (soft delete): o texto fica guardado, só deixa de aparecer. Reversível.
+  async moderate(
+    id: string,
+    actor: Pick<User, 'id'>,
+    data: { reason?: ReportReason; note?: string },
+    db: Prisma.TransactionClient | typeof prisma = prisma,
+  ): Promise<void> {
+    await db.comment.update({
+      where: { id },
+      data: { moderated_at: new Date(), moderated_by: actor.id, moderation_reason: data.reason ?? null, moderation_note: data.note ?? null },
+    });
+  },
+
+  async unmoderate(id: string): Promise<void> {
+    await prisma.comment.update({
+      where: { id },
+      data: { moderated_at: null, moderated_by: null, moderation_reason: null, moderation_note: null },
+    });
   },
 
   async findActiveByUser(userId: string): Promise<Comment[]> {

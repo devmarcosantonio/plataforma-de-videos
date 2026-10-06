@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { env } from '../config/env.js';
 import { UserModel, type User } from '../models/user.model.js';
+import { getAccess, isBanned } from '../services/access.service.js';
 import { AppError } from '../utils/errors/app-error.js';
 import { TOKEN_MAX_AGE_SECONDS, verifyToken } from '../utils/jwt.js';
 
@@ -37,7 +38,9 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
   const token = extractToken(req);
   if (token) {
     const userId = await verifyToken(token);
-    req.user = (userId && (await UserModel.findById(userId))) || undefined;
+    const user = userId ? await UserModel.findById(userId) : null;
+    // Conta banida: o token deixa de valer (a pessoa passa a ser tratada como visitante).
+    req.user = user && !isBanned(await getAccess(user)) ? user : undefined;
   }
   next();
 }

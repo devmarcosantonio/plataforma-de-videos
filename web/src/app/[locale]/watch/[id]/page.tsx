@@ -6,6 +6,8 @@ import { CommentSection } from "@/components/comments/comment-section";
 import { FadeIn } from "@/components/fade-in";
 import { FollowButton, FollowersCount, FollowProvider } from "@/components/follow/follow";
 import { ReactionButtons } from "@/components/reaction-buttons";
+import { ReportButton } from "@/components/report/report-dialog";
+import { HiddenNotice } from "@/components/hidden-notice";
 import { SyncButton } from "@/components/sync-button";
 import { UserAvatar } from "@/components/user-avatar";
 import { VideoListItem } from "@/components/video-card";
@@ -14,6 +16,7 @@ import { VideoDescription } from "@/components/video-description";
 import { Link } from "@/i18n/navigation";
 import { getComments, getPlayback, getProfile, getReactionStatus, getVideo, getVideos } from "@/lib/api";
 import { getSession } from "@/lib/auth";
+import { blockingRestriction } from "@/lib/permissions";
 import { channelHref, handle } from "@/lib/format";
 import type { Video } from "@/lib/types";
 
@@ -72,6 +75,10 @@ export default async function WatchPage({ params }: PageProps<"/[locale]/watch/[
           )}
         </FadeIn>
 
+        {(video.visibility !== "public" || video.moderation_status !== "active") && (
+          <HiddenNotice video={video} isOwner={isOwner} />
+        )}
+
         <FadeIn delay={0.05}>
           <h1 className="mt-5 text-xl font-semibold leading-snug tracking-tight sm:text-2xl">{video.title}</h1>
 
@@ -104,6 +111,9 @@ export default async function WatchPage({ params }: PageProps<"/[locale]/watch/[
               loggedIn={!!session}
               disabled={video.status !== "ready"}
             />
+            {!isOwner && video.visibility === "public" && video.moderation_status === "active" && (
+              <ReportButton type="video" id={video.id} loggedIn={!!session} />
+            )}
           </div>
         </FadeIn>
 
@@ -119,6 +129,7 @@ export default async function WatchPage({ params }: PageProps<"/[locale]/watch/[
             videoOwnerId={video.user_id}
             currentUser={session}
             canComment={video.status === "ready"}
+            restriction={session ? blockingRestriction(session.access, "comment") : null}
             initialPage={comments}
             initialCount={video.comments_count}
           />

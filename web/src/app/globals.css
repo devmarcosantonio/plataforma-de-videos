@@ -80,10 +80,23 @@
   --sidebar-ring: oklch(0.66 0.2 285);
 }
 
+/* Geist não tem caracteres coreanos, japoneses nem chineses: nessas páginas entram as fontes do sistema
+   (sem download), com a Noto como reserva quando estiver instalada. */
+html:lang(ko) {
+  --font-cjk: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR";
+}
+html:lang(ja) {
+  --font-cjk: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans JP", "Noto Sans CJK JP";
+}
+html:lang(zh-CN) {
+  --font-cjk: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC";
+}
+
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  /* --font-cjk só existe nas páginas em coreano, japonês e chinês (definido abaixo, por idioma). */
+  --font-sans: var(--font-geist-sans), var(--font-cjk, ui-sans-serif), sans-serif;
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  --font-heading: var(--font-geist-sans), var(--font-cjk, ui-sans-serif), sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

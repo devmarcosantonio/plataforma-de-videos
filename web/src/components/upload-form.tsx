@@ -12,9 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import { VisibilityPicker } from "@/components/visibility-picker";
 import { Link } from "@/i18n/navigation";
 import { errorMessage, postJson } from "@/lib/client-api";
-import type { UploadCredentials, Video } from "@/lib/types";
+import type { UploadCredentials, Video, VideoVisibility } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type Phase =
@@ -29,6 +30,8 @@ export function UploadForm() {
   const tc = useTranslations("common");
   const [file, setFile] = useState<File | null>(null);
   const [phase, setPhase] = useState<Phase>({ name: "idle" });
+  // Nasce privado: a pessoa confere o vídeo pronto e publica quando quiser.
+  const [visibility, setVisibility] = useState<VideoVisibility>("private");
   const uploadRef = useRef<TusUpload | null>(null);
 
   const busy = phase.name === "creating" || phase.name === "uploading";
@@ -46,6 +49,7 @@ export function UploadForm() {
       const { video, upload } = await postJson<{ video: Video; upload: UploadCredentials }>("/videos", {
         title,
         description,
+        visibility,
       });
 
       setPhase({ name: "uploading", progress: 0 });
@@ -90,7 +94,7 @@ export function UploadForm() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 22 }}
         >
-          <SuccessCard videoId={phase.videoId} />
+          <SuccessCard videoId={phase.videoId} visibility={visibility} />
         </motion.div>
       ) : (
         <motion.div key="form" exit={{ opacity: 0, y: -12 }} className="mt-8 flex flex-col gap-6">
@@ -107,6 +111,7 @@ export function UploadForm() {
                   <Label htmlFor="description">{t("description")}</Label>
                   <Textarea id="description" name="description" rows={4} maxLength={5000} disabled={busy} />
                 </div>
+                <VisibilityPicker value={visibility} onChange={setVisibility} disabled={busy} />
               </CardContent>
             </Card>
 
@@ -148,7 +153,7 @@ export function UploadForm() {
   );
 }
 
-function SuccessCard({ videoId }: { videoId: string }) {
+function SuccessCard({ videoId, visibility }: { videoId: string; visibility: VideoVisibility }) {
   const t = useTranslations("upload");
   return (
     <Card className="mt-8 items-center py-12 text-center">
@@ -177,7 +182,7 @@ function SuccessCard({ videoId }: { videoId: string }) {
         </motion.svg>
         <h2 className="text-xl font-semibold">{t("done")}</h2>
         <p className="max-w-sm text-sm text-muted-foreground">
-          {t("doneHint")}
+          {t("doneHint")} {visibility === "private" && t("donePrivate")}
         </p>
         <Button asChild className="mt-2 rounded-full px-5">
           <Link href={`/watch/${videoId}`}>

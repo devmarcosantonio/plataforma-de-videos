@@ -1,12 +1,13 @@
 import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  locales: ["pt-BR", "en", "es"],
+  // zh = chinês simplificado.
+  locales: ["pt-BR", "en", "es", "ko", "ja", "zh"],
   defaultLocale: "pt-BR",
-  // Português sem prefixo (URLs atuais continuam iguais); os outros idiomas com /en e /es.
+  // Português sem prefixo (URLs atuais continuam iguais); os outros com /en, /es, /ko, /ja e /zh.
   localePrefix: {
     mode: "as-needed",
-    prefixes: { en: "/en", es: "/es" },
+    prefixes: { en: "/en", es: "/es", ko: "/ko", ja: "/ja", zh: "/zh" },
   },
   // Na primeira visita usa o idioma do navegador; depois, o cookie da escolha do usuário.
   localeDetection: true,
@@ -23,4 +24,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   "pt-BR": "Português",
   en: "English",
   es: "Español",
+  ko: "한국어",
+  ja: "日本語",
+  zh: "简体中文",
 };

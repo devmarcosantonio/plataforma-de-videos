@@ -24,6 +24,11 @@ const envSchema = z.object({
   JWT_SECRET: z.string({ error: 'JWT_SECRET é obrigatória' }).min(32, 'JWT_SECRET deve ter pelo menos 32 caracteres'),
   // Duração da sessão, em dias.
   JWT_EXPIRES_IN_DAYS: z.coerce.number().int().positive().default(7),
+
+  // Espera, em minutos, para pedir de novo a permissão de publicar depois de uma recusa.
+  UPLOAD_REQUEST_COOLDOWN_MINUTES: z.coerce.number().int().min(0).default(5),
+  // Denúncias: quantas cada pessoa pode enviar a cada 24 horas.
+  REPORTS_PER_DAY: z.coerce.number().int().min(1).default(20),
 });
 
 const parsed = envSchema.safeParse(process.env);

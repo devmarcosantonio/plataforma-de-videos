@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { LOCALES } from '../i18n/messages.js';
 import { prisma } from '../config/database.js';
 import type { Prisma, User } from '../generated/prisma/client.js';
+import { bannedUser } from './restriction.model.js';
 
 export type { User };
 export type PublicUser = Omit<User, 'password_hash'>;
@@ -83,6 +84,15 @@ export const UserModel = {
 
   async findByUsername(username: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { username } });
+  },
+
+  async findVisibleById(id: string): Promise<User | null> {
+    return prisma.user.findFirst({ where: { id, NOT: bannedUser } });
+  },
+
+  // Página pública do canal: conta banida não aparece.
+  async findVisibleByUsername(username: string): Promise<User | null> {
+    return prisma.user.findFirst({ where: { username, NOT: bannedUser } });
   },
 
   async create(data: Prisma.UserCreateInput): Promise<User> {

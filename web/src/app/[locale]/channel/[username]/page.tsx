@@ -29,7 +29,10 @@ export default async function ChannelPage({ params }: PageProps<"/[locale]/chann
 
   const isSelf = session?.id === profile.id;
   // O canal público mostra só vídeos prontos (o "Meu canal" mostra todos para o dono).
-  const videos = (await getVideosByUser(profile.id)).filter((video) => video.status === "ready");
+  // O canal mostra o que todos veem; privados, em revisão e removidos só aparecem para o dono no "Meu canal".
+  const videos = (await getVideosByUser(profile.id)).filter(
+    (video) => video.status === "ready" && video.visibility === "public" && video.moderation_status === "active",
+  );
 
   return (
     <FollowProvider

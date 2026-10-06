@@ -3,8 +3,8 @@ import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 const AUTH_COOKIE = "token";
-const PROTECTED = ["/upload", "/studio", "/following", "/history"];
-const PREFIXED_LOCALES = ["en", "es"];
+const PROTECTED = ["/upload", "/studio", "/following", "/history", "/admin"];
+const PREFIXED_LOCALES = ["en", "es", "ko", "ja", "zh"];
 
 const intl = createIntlMiddleware(routing);
 
@@ -63,8 +63,8 @@ export const config = {
     // Canais podem ter ponto no nome (/@mabp.dev), que a regra acima trataria como arquivo estático:
     // incluídos explicitamente, com e sem prefixo de idioma.
     "/(@[^/]+)",
-    "/(en|es)/(@[^/]+)",
+    "/(en|es|ko|ja|zh)/(@[^/]+)",
     "/channel/(.+)",
-    "/(en|es)/channel/(.+)",
+    "/(en|es|ko|ja|zh)/channel/(.+)",
   ],
 };

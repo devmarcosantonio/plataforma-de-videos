@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Eye, Film, MessageSquare, MoreVertical, Pencil, ThumbsUp, Trash2, Upload } from "lucide-react";
+import { Eye, Film, MessageSquare, MoreVertical, Pencil, Plus, ThumbsUp, Trash2 } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/components/animated-number";
@@ -20,7 +20,8 @@ import {
 import { VideoThumbnail } from "@/components/video-thumbnail";
 import { Link } from "@/i18n/navigation";
 import { errorMessage, sendJson } from "@/lib/client-api";
-import type { Video } from "@/lib/types";
+import type { Video, VideoVisibility } from "@/lib/types";
+import { VideoModerationBadge } from "../video-moderation-badge";
 import { DeleteVideoDialog } from "./delete-video-dialog";
 import { EditVideoDialog } from "./edit-video-dialog";
 
@@ -38,7 +39,7 @@ export function VideoManager({ initialVideos }: Props) {
     comments: videos.reduce((sum, video) => sum + video.comments_count, 0),
   };
 
-  async function save(video: Video, changes: { title: string; description: string }) {
+  async function save(video: Video, changes: { title: string; description: string; visibility: VideoVisibility }) {
     try {
       const updated = await sendJson<Video>("PATCH", `/videos/${video.id}`, changes);
       setVideos((current) => current.map((item) => (item.id === updated.id ? updated : item)));
@@ -72,7 +73,7 @@ export function VideoManager({ initialVideos }: Props) {
         <h2 className="text-lg font-semibold">{t("myVideos")}</h2>
         <Button asChild className="rounded-full">
           <Link href="/upload">
-            <Upload />
+            <Plus />
             {t("upload")}
           </Link>
         </Button>
@@ -156,6 +157,10 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
           </Link>
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 pr-10 font-medium leading-snug lg:pr-0">{video.title}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+              <VideoModerationBadge video={video} />
+            </div>
+            {video.moderation_status !== "active" && <ModerationNote video={video} />}
             <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{video.description || t("noDescription")}</p>
             {/* Em telas pequenas, os dados das colunas aparecem aqui. */}
             <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground lg:hidden">
@@ -204,6 +209,20 @@ function VideoRow({ video, onEdit, onDelete }: { video: Video; onEdit: () => voi
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// Por que a moderação tirou o vídeo do ar (motivo pronto + observação).
+function ModerationNote({ video }: { video: Video }) {
+  const t = useTranslations("visibility");
+  const tr = useTranslations("report.reasons");
+  const reason = video.moderation_reason ? tr(`${video.moderation_reason}.label`) : null;
+  return (
+    <p className="mt-1 text-xs text-destructive">
+      {t(video.moderation_status === "removed" ? "removedHint" : "underReviewHint")}
+      {reason && ` ${t("reason", { reason })}`}
+      {video.moderation_note && ` — “${video.moderation_note}”`}
+    </p>
   );
 }
 

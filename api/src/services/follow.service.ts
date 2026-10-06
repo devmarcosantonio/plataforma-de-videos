@@ -3,6 +3,7 @@ import { UserModel, type User } from '../models/user.model.js';
 import { VideoModel, type VideoWithStats } from '../models/video.model.js';
 import { decodeCursor, encodeCursor } from '../utils/cursor.js';
 import { AppError } from '../utils/errors/app-error.js';
+import { ensureAccess } from './access.service.js';
 import { withProgress } from './history.service.js';
 
 export interface Page<T> {
@@ -24,6 +25,7 @@ async function status(actor: User | undefined, targetId: string): Promise<Follow
 
 export async function follow(actor: User, targetId: string): Promise<FollowStatus> {
   if (actor.id === targetId) throw new AppError('CANNOT_FOLLOW_SELF');
+  await ensureAccess(actor, 'follow');
   await ensureUserExists(targetId);
   await FollowModel.follow(actor.id, targetId);
   return status(actor, targetId);

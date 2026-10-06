@@ -1,12 +1,13 @@
 import { ReactionModel, setReactionSchema, type ReactionStatus } from '../models/reaction.model.js';
 import type { User } from '../models/user.model.js';
-import { VideoModel, type Video } from '../models/video.model.js';
+import type { Video } from '../models/video.model.js';
 import { AppError } from '../utils/errors/app-error.js';
+import { ensureAccess } from './access.service.js';
+import { findViewableOrFail } from './video-access.service.js';
 
-async function findVideoOrFail(videoId: string): Promise<Video> {
-  const video = await VideoModel.findById(videoId);
-  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
-  return video;
+// Reações só em vídeos que a pessoa pode ver (privado: só o dono e a moderação).
+function findVideoOrFail(videoId: string, actor: User | undefined): Promise<Video> {
+  return findViewableOrFail(videoId, actor);
 }
 
 async function status(actor: User | undefined, video: Video): Promise<ReactionStatus> {
@@ -25,13 +26,14 @@ async function status(actor: User | undefined, video: Video): Promise<ReactionSt
 
 // Visitantes também podem consultar (veem só a contagem de likes).
 export async function getReactionStatus(actor: User | undefined, videoId: string): Promise<ReactionStatus> {
-  return status(actor, await findVideoOrFail(videoId));
+  return status(actor, await findVideoOrFail(videoId, actor));
 }
 
 export async function setReaction(actor: User, videoId: string, input: unknown): Promise<ReactionStatus> {
   const { type } = setReactionSchema.parse(input);
+  await ensureAccess(actor, 'react');
 
-  const video = await findVideoOrFail(videoId);
+  const video = await findVideoOrFail(videoId, actor);
   if (video.status !== 'ready') {
     throw new AppError('REACTION_VIDEO_NOT_READY', 409);
   }
@@ -41,7 +43,7 @@ export async function setReaction(actor: User, videoId: string, input: unknown):
 }
 
 export async function removeReaction(actor: User, videoId: string): Promise<ReactionStatus> {
-  const video = await findVideoOrFail(videoId);
+  const video = await findVideoOrFail(videoId, actor);
   await ReactionModel.remove(actor.id, videoId);
   return status(actor, video);
 }

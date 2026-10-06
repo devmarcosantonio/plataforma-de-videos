@@ -10,6 +10,10 @@ import type { User } from '../models/user.model.js';
 import { VideoModel } from '../models/video.model.js';
 import { decodeCursor, encodeCursor } from '../utils/cursor.js';
 import { AppError } from '../utils/errors/app-error.js';
+import { hasPermission } from '../utils/permissions.js';
+import { ensureAccess } from './access.service.js';
+import { findViewableOrFail } from './video-access.service.js';
+import { moderateComment } from './content-moderation.service.js';
 
 export interface PublicComment {
   id: string;
@@ -19,6 +23,8 @@ export interface PublicComment {
   created_at: Date;
   edited_at: Date | null;
   deleted: boolean;
+  // Removido pela moderação (reversível). Para o público aparece como "removido pela moderação".
+  moderated: boolean;
   author: { id: string; username: string; display_name: string } | null;
   replies_count: number;
 }
@@ -28,34 +34,38 @@ export interface CommentPage {
   next_cursor: string | null;
 }
 
-function toPublic(comment: CommentWithRelations): PublicComment {
+// staffView: a moderação vê o texto e o autor de um comentário removido (para decidir restaurar).
+function toPublic(comment: CommentWithRelations, staffView = false): PublicComment {
   const deleted = comment.deleted_at !== null;
+  const moderated = !deleted && comment.moderated_at !== null;
+  const hidden = deleted || (moderated && !staffView);
   return {
     id: comment.id,
     video_id: comment.video_id,
     parent_id: comment.parent_id,
-    content: deleted ? null : comment.content,
+    content: hidden ? null : comment.content,
     created_at: comment.created_at,
     edited_at: comment.edited_at,
     deleted,
-    author: deleted ? null : comment.user,
+    moderated,
+    author: hidden ? null : comment.user,
     replies_count: comment._count.replies,
   };
 }
 
-function toPage(result: { items: CommentWithRelations[]; hasMore: boolean }): CommentPage {
+function toPage(result: { items: CommentWithRelations[]; hasMore: boolean }, actor?: User): CommentPage {
   const last = result.items.at(-1);
+  const staffView = hasPermission(actor, 'content:restore');
   return {
-    items: result.items.map(toPublic),
+    items: result.items.map((comment) => toPublic(comment, staffView)),
     next_cursor:
       result.hasMore && last ? encodeCursor({ created_at: last.created_at.toISOString(), id: last.id }) : null,
   };
 }
 
-async function findVideoOrFail(videoId: string) {
-  const video = await VideoModel.findById(videoId);
-  if (!video) throw new AppError('VIDEO_NOT_FOUND', 404);
-  return video;
+// Comentários só de vídeos que a pessoa pode ver (privado: só o dono e a moderação).
+function findVideoOrFail(videoId: string, actor: User | undefined) {
+  return findViewableOrFail(videoId, actor);
 }
 
 async function findCommentOrFail(id: string): Promise<Comment> {
@@ -64,30 +74,31 @@ async function findCommentOrFail(id: string): Promise<Comment> {
   return comment;
 }
 
-export async function listComments(videoId: string, query: unknown): Promise<CommentPage> {
+export async function listComments(videoId: string, query: unknown, actor?: User): Promise<CommentPage> {
   const { cursor, limit } = listCommentsQuerySchema.parse(query);
-  await findVideoOrFail(videoId);
-  return toPage(await CommentModel.listTopLevel(videoId, cursor ? decodeCursor(cursor) : undefined, limit));
+  await findVideoOrFail(videoId, actor);
+  return toPage(await CommentModel.listTopLevel(videoId, cursor ? decodeCursor(cursor) : undefined, limit), actor);
 }
 
-export async function listReplies(commentId: string, query: unknown): Promise<CommentPage> {
+export async function listReplies(commentId: string, query: unknown, actor?: User): Promise<CommentPage> {
   const { cursor, limit } = listCommentsQuerySchema.parse(query);
   const comment = await findCommentOrFail(commentId);
   if (comment.parent_id !== null) throw new AppError('REPLY_TO_REPLY_NOT_ALLOWED');
-  return toPage(await CommentModel.listReplies(commentId, cursor ? decodeCursor(cursor) : undefined, limit));
+  return toPage(await CommentModel.listReplies(commentId, cursor ? decodeCursor(cursor) : undefined, limit), actor);
 }
 
 export async function createComment(actor: User, videoId: string, input: unknown): Promise<PublicComment> {
   const data = createCommentSchema.parse(input);
+  await ensureAccess(actor, 'comment');
 
-  const video = await findVideoOrFail(videoId);
+  const video = await findVideoOrFail(videoId, actor);
   if (video.status !== 'ready') throw new AppError('COMMENT_VIDEO_NOT_READY', 409);
 
   let parentId: string | null = null;
   if (data.parent_id) {
     const parent = await findCommentOrFail(data.parent_id);
     if (parent.video_id !== videoId) throw new AppError('PARENT_COMMENT_OTHER_VIDEO');
-    if (parent.deleted_at) throw new AppError('PARENT_COMMENT_DELETED', 409);
+    if (parent.deleted_at || parent.moderated_at) throw new AppError('PARENT_COMMENT_DELETED', 409);
     // Só um nível de respostas: responder uma resposta entra na mesma conversa.
     parentId = parent.parent_id ?? parent.id;
   }
@@ -103,10 +114,13 @@ export async function createComment(actor: User, videoId: string, input: unknown
 
 export async function updateComment(actor: User, commentId: string, input: unknown): Promise<PublicComment> {
   const data = updateCommentSchema.parse(input);
+  await ensureAccess(actor, 'comment');
   const comment = await findCommentOrFail(commentId);
 
   if (comment.deleted_at) throw new AppError('COMMENT_NOT_FOUND', 404);
   if (comment.user_id !== actor.id) throw new AppError('COMMENT_AUTHOR_ONLY', 403);
+  // Removido pela moderação: o autor pode apagar de vez, mas não editar.
+  if (comment.moderated_at) throw new AppError('COMMENT_MODERATED', 409);
 
   const updated = await CommentModel.update(comment.id, { content: data.content, edited_at: new Date() });
   return toPublic(updated);
@@ -119,11 +133,15 @@ export async function deleteComment(actor: User, commentId: string): Promise<voi
   const video = await VideoModel.findById(comment.video_id);
   const isAuthor = comment.user_id === actor.id;
   const isVideoOwner = video?.user_id === actor.id;
-  if (!isAuthor && !isVideoOwner) {
-    throw new AppError('COMMENT_DELETE_FORBIDDEN', 403);
-  }
 
-  await CommentModel.remove(comment);
+  // Autor e dono do vídeo: exclusão real (mesmo se a moderação já tinha removido).
+  if (isAuthor || isVideoOwner) {
+    await CommentModel.remove(comment);
+    return;
+  }
+  // Moderação: só remove (soft delete, reversível), com registro.
+  if (!hasPermission(actor, 'content:remove')) throw new AppError('COMMENT_DELETE_FORBIDDEN', 403);
+  await moderateComment(actor, comment.id, {});
 }
 
 export async function deleteCommentsByUser(userId: string): Promise<void> {

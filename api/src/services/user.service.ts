@@ -47,7 +47,7 @@ export async function getUser(id: string): Promise<PublicProfile> {
 
 // Página do canal: perfil público + números (seguidores, seguindo, vídeos) + "is_following".
 export async function getUserByUsername(actor: User | undefined, username: string) {
-  const user = await UserModel.findByUsername(username.trim().toLowerCase().replace(/^@/, ''));
+  const user = await UserModel.findVisibleByUsername(username.trim().toLowerCase().replace(/^@/, ''));
   if (!user) throw new AppError('USER_NOT_FOUND', 404);
   return { ...toPublicProfile(user), ...(await profileStats(actor, user.id)) };
 }

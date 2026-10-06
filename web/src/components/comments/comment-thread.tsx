@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown, Loader2, MoreVertical, Pencil, Reply, Trash2 } from "lucide-react";
+import { ChevronDown, Flag, Loader2, MoreVertical, Pencil, Reply, RotateCcw, ShieldAlert, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -24,18 +24,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "@/i18n/navigation";
-import { errorMessage, getJson, sendJson } from "@/lib/client-api";
+import { errorMessage, getJson, postJson, sendJson } from "@/lib/client-api";
 import { channelHref, displayName, handle } from "@/lib/format";
-import type { Comment, CommentPage, User } from "@/lib/types";
+import type { AuthUser, Comment, CommentPage, ReportReason } from "@/lib/types";
+import { isAdmin, isStaff } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 import { TimeAgo } from "../time-ago";
 import { UserAvatar } from "../user-avatar";
+import { ReportDialog } from "../report/report-dialog";
+import { ReasonDialog } from "../admin/reason-dialog";
 import { CommentForm } from "./comment-form";
 
 export type ThreadContext = {
   videoId: string;
   videoOwnerId: string;
-  currentUser: User | null;
+  currentUser: AuthUser | null;
   canComment: boolean;
   onCountChange: (delta: number) => void;
 };
@@ -119,6 +122,57 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
     }
   }
 
+  // Moderação: remover (soft, reversível), restaurar e excluir de vez (admin).
+  function replace(target: Comment, patch: Partial<Comment>) {
+    if (target.id === comment.id) setComment({ ...comment, ...patch });
+    else setReplies((current) => current.map((r) => (r.id === target.id ? { ...r, ...patch } : r)));
+  }
+
+  async function moderate(target: Comment, data: { reason?: ReportReason; note?: string }) {
+    try {
+      await postJson(`/admin/comments/${target.id}/remove`, data);
+    } catch (error) {
+      toast.error(errorMessage(error, tc("genericError")));
+      throw error;
+    }
+    replace(target, { moderated: true });
+    ctx.onCountChange(-1);
+    toast.success(t("moderation.removed"));
+  }
+
+  async function restore(target: Comment) {
+    try {
+      await postJson(`/admin/comments/${target.id}/restore`, {});
+      replace(target, { moderated: false });
+      ctx.onCountChange(1);
+      toast.success(t("moderation.restored"));
+    } catch (error) {
+      toast.error(errorMessage(error, tc("genericError")));
+    }
+  }
+
+  async function purge(target: Comment, data: { reason?: ReportReason; note?: string }) {
+    try {
+      await postJson(`/admin/comments/${target.id}/purge`, data);
+    } catch (error) {
+      toast.error(errorMessage(error, tc("genericError")));
+      throw error;
+    }
+    toast.success(t("moderation.purged"));
+    // Se estava no ar, sai da contagem agora (removido pela moderação já tinha saído).
+    if (!target.moderated) ctx.onCountChange(-1);
+    // Mesmo comportamento da exclusão real.
+    if (target.id === comment.id) {
+      if (replyCount > 0) setComment({ ...comment, deleted: true, moderated: false, content: null, author: null });
+      else onRemoved(comment.id);
+      return;
+    }
+    setReplies((current) => current.filter((r) => r.id !== target.id));
+    const remaining = replyCount - 1;
+    setReplyCount(remaining);
+    if (comment.deleted && remaining === 0) onRemoved(comment.id);
+  }
+
   async function remove(target: Comment) {
     if (!ctx.currentUser) return;
     try {
@@ -150,6 +204,9 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
         onReply={() => setReplyingTo(comment)}
         onEdit={(content) => edit(comment, content)}
         onRemove={() => remove(comment)}
+        onModerate={(data) => moderate(comment, data)}
+        onRestore={() => restore(comment)}
+        onPurge={(data) => purge(comment, data)}
       />
 
       <div className="ml-11 flex flex-col gap-3">
@@ -197,6 +254,9 @@ export function CommentThread({ initial, ctx, onRemoved }: Props) {
                   onReply={() => setReplyingTo(r)}
                   onEdit={(content) => edit(r, content)}
                   onRemove={() => remove(r)}
+                  onModerate={(data) => moderate(r, data)}
+                  onRestore={() => restore(r)}
+                  onPurge={(data) => purge(r, data)}
                 />
               </motion.div>
             ))}
@@ -225,20 +285,37 @@ type ItemProps = {
   onReply: () => void;
   onEdit: (content: string) => Promise<void>;
   onRemove: () => void;
+  onModerate: (data: { reason?: ReportReason; note?: string }) => Promise<void>;
+  onRestore: () => void;
+  onPurge: (data: { reason?: ReportReason; note?: string }) => Promise<void>;
 };
 
-function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemProps) {
+function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove, onModerate, onRestore, onPurge }: ItemProps) {
   const t = useTranslations("comments");
   const tc = useTranslations("common");
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [moderating, setModerating] = useState(false);
+  const [purging, setPurging] = useState(false);
   const me = ctx.currentUser;
+  const staff = isStaff(me);
 
   if (comment.deleted) {
     return (
       <div className="flex items-center gap-3">
         <UserAvatar user={null} size={compact ? "sm" : "default"} />
         <p className="text-sm italic text-muted-foreground">{t("removed")}</p>
+      </div>
+    );
+  }
+
+  // Removido pela moderação: o público vê só o aviso; a moderação vê o texto e pode desfazer.
+  if (comment.moderated && !staff) {
+    return (
+      <div className="flex items-center gap-3">
+        <UserAvatar user={null} size={compact ? "sm" : "default"} />
+        <p className="text-sm italic text-muted-foreground">{t("moderation.placeholder")}</p>
       </div>
     );
   }
@@ -263,9 +340,16 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
 
   const isAuthor = !!me && comment.author?.id === me.id;
   const canRemove = isAuthor || (!!me && ctx.videoOwnerId === me.id);
+  // Comentário de outra pessoa pode ser denunciado.
+  const canReport = !!me && !isAuthor && !!comment.author && !comment.moderated;
+  // Moderação sobre comentário de outra pessoa (a API ainda confere a hierarquia).
+  const canModerate = staff && !isAuthor && !comment.moderated;
+  const canRestore = staff && comment.moderated;
+  // Admin escolhe: remover (reversível) ou excluir de vez, a qualquer momento.
+  const canPurge = isAdmin(me) && !isAuthor;
 
   return (
-    <div className="group/comment flex gap-3">
+    <div className={cn("group/comment flex gap-3", comment.moderated && "opacity-60")}>
       {comment.author ? (
         <Link href={channelHref(comment.author)} className="mt-0.5 h-fit shrink-0">
           <UserAvatar user={comment.author} size={compact ? "sm" : "default"} />
@@ -283,6 +367,7 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
             <span className="font-medium">{displayName(comment.author, tc("unknownUser"))}</span>
           )}
           {comment.author && <span className="text-xs text-muted-foreground">{handle(comment.author)}</span>}
+          {comment.moderated && <Badge variant="destructive">{t("moderation.badge")}</Badge>}
           {comment.author?.id === ctx.videoOwnerId && (
             <Badge variant="secondary" className="bg-primary/15 text-primary">
               {t("author")}
@@ -294,7 +379,7 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
           </span>
         </p>
         <p className="mt-1 whitespace-pre-line wrap-break-word text-sm">{comment.content}</p>
-        {me && ctx.canComment && (
+        {me && ctx.canComment && !comment.moderated && (
           <Button variant="ghost" size="xs" className="-ml-2 mt-1 rounded-full text-muted-foreground" onClick={onReply}>
             <Reply />
             {t("reply")}
@@ -302,7 +387,7 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
         )}
       </div>
 
-      {(isAuthor || canRemove) && (
+      {(isAuthor || canRemove || canReport || canModerate || canRestore || canPurge) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -315,7 +400,7 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {isAuthor && (
+            {isAuthor && !comment.moderated && (
               <DropdownMenuItem onSelect={() => setEditing(true)}>
                 <Pencil />
                 {tc("edit")}
@@ -327,9 +412,54 @@ function CommentItem({ comment, ctx, compact, onReply, onEdit, onRemove }: ItemP
                 {tc("remove")}
               </DropdownMenuItem>
             )}
+            {canReport && (
+              <DropdownMenuItem onSelect={() => setReporting(true)}>
+                <Flag />
+                {t("report")}
+              </DropdownMenuItem>
+            )}
+            {canModerate && (
+              <DropdownMenuItem variant="destructive" onSelect={() => setModerating(true)}>
+                <ShieldAlert />
+                {t("moderation.remove")}
+              </DropdownMenuItem>
+            )}
+            {canRestore && (
+              <DropdownMenuItem onSelect={onRestore}>
+                <RotateCcw />
+                {t("moderation.restore")}
+              </DropdownMenuItem>
+            )}
+            {canPurge && (
+              <DropdownMenuItem variant="destructive" onSelect={() => setPurging(true)}>
+                <Trash2 />
+                {t("moderation.purge")}
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
+      <ReasonDialog
+        open={moderating}
+        onOpenChange={setModerating}
+        title={t("moderation.removeTitle")}
+        description={t("moderation.removeDescription")}
+        confirmLabel={t("moderation.remove")}
+        reasonRequired
+        destructive
+        onConfirm={onModerate}
+      />
+      <ReasonDialog
+        open={purging}
+        onOpenChange={setPurging}
+        title={t("moderation.purgeTitle")}
+        description={t("moderation.purgeDescription")}
+        confirmLabel={t("moderation.purge")}
+        reasonRequired={false}
+        destructive
+        onConfirm={onPurge}
+      />
+      <ReportDialog target={reporting ? { type: "comment", id: comment.id } : null} onOpenChange={setReporting} />
 
       <AlertDialog open={confirming} onOpenChange={setConfirming}>
         <AlertDialogContent>

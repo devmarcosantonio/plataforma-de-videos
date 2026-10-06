@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { isStaff } from "@/lib/permissions";
 import type { AuthUser } from "@/lib/types";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
@@ -21,7 +22,7 @@ export function AppShell({ children, user }: Props) {
     <>
       <Header onMenuClick={toggleMenu} user={user} />
       <div className="flex">
-        <Sidebar collapsed={collapsed} mobileOpen={mobileOpen} onMobileOpenChange={setMobileOpen} loggedIn={!!user} />
+        <Sidebar collapsed={collapsed} mobileOpen={mobileOpen} onMobileOpenChange={setMobileOpen} loggedIn={!!user} staff={isStaff(user)} />
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6">{children}</main>
       </div>
     </>

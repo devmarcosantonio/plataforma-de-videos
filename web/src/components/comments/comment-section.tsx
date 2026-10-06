@@ -9,20 +9,31 @@ import { AnimatedNumber } from "@/components/animated-number";
 import { Button } from "@/components/ui/button";
 import { useLoginRedirect } from "@/hooks/use-login-redirect";
 import { errorMessage, getJson, sendJson } from "@/lib/client-api";
-import type { Comment, CommentPage, User } from "@/lib/types";
+import type { ActiveRestriction, AuthUser, Comment, CommentPage } from "@/lib/types";
+import { RestrictionNotice } from "../restriction-notice";
 import { CommentForm } from "./comment-form";
 import { CommentThread, itemMotion, type ThreadContext } from "./comment-thread";
 
 type Props = {
   videoId: string;
   videoOwnerId: string;
-  currentUser: User | null;
+  currentUser: AuthUser | null;
   canComment: boolean;
+  // Restrição que impede quem está logado de comentar (mostra prazo e motivo no lugar da caixa).
+  restriction?: ActiveRestriction | null;
   initialPage: CommentPage;
   initialCount: number;
 };
 
-export function CommentSection({ videoId, videoOwnerId, currentUser, canComment, initialPage, initialCount }: Props) {
+export function CommentSection({
+  videoId,
+  videoOwnerId,
+  currentUser,
+  canComment,
+  restriction,
+  initialPage,
+  initialCount,
+}: Props) {
   const t = useTranslations("comments");
   const tc = useTranslations("common");
   const [comments, setComments] = useState(initialPage.items);
@@ -35,7 +46,8 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
     videoId,
     videoOwnerId,
     currentUser,
-    canComment,
+    // Restrito: sem responder também (as respostas são comentários).
+    canComment: canComment && !restriction,
     onCountChange: (delta) => setCount((value) => value + delta),
   };
 
@@ -82,6 +94,8 @@ export function CommentSection({ videoId, videoOwnerId, currentUser, canComment,
       <div className="mt-5">
         {!canComment ? (
           <p className="text-sm text-muted-foreground">{t("notReady")}</p>
+        ) : restriction ? (
+          <RestrictionNotice restriction={restriction} />
         ) : currentUser ? (
           <CommentForm user={currentUser} placeholder={t("placeholder")} submitLabel={t("submit")} onSubmit={create} />
         ) : (

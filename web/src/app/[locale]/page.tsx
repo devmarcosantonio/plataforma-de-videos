@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { SearchX, Upload, VideoOff } from "lucide-react";
+import { Plus, SearchX, VideoOff } from "lucide-react";
 import { ContinueWatching } from "@/components/continue-watching";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ export default async function HomePage({ searchParams }: PageProps<"/[locale]">)
       <EmptyState icon={<VideoOff />} title={t("empty")} description={t("emptyHint")}>
         <Button asChild className="rounded-full px-5">
           <Link href="/upload">
-            <Upload />
+            <Plus />
             {t("upload")}
           </Link>
         </Button>

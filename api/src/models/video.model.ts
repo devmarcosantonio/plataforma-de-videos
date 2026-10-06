@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { prisma } from '../config/database.js';
-import type { Prisma, Video, VideoStatus } from '../generated/prisma/client.js';
+import type { Prisma, Video, VideoStatus, VideoVisibility } from '../generated/prisma/client.js';
+import { bannedUser } from './restriction.model.js';
 import type { CursorPosition } from '../utils/cursor.js';
 
-export type { Video, VideoStatus };
+export type { Video, VideoStatus, VideoVisibility };
 export type VideoAuthor = { id: string; username: string; display_name: string };
 export type VideoWithStats = Video & { likes_count: number; comments_count: number; author: VideoAuthor };
 
@@ -11,6 +12,8 @@ export type VideoWithStats = Video & { likes_count: number; comments_count: numb
 export const createVideoSchema = z.object({
   title: z.string({ error: 'TITLE_REQUIRED' }).trim().min(1, 'TITLE_REQUIRED').max(200, 'TITLE_TOO_LONG'),
   description: z.string().trim().max(5000, 'DESCRIPTION_TOO_LONG').optional(),
+  // Novo vídeo nasce privado: o dono confere e publica quando quiser.
+  visibility: z.enum(['public', 'private'], { error: 'VISIBILITY_INVALID' }).default('private'),
 });
 
 export const importVideoSchema = z.object({
@@ -22,14 +25,24 @@ export const updateVideoSchema = z
     title: z.string().trim().min(1, 'TITLE_EMPTY').max(200, 'TITLE_TOO_LONG').optional(),
     // String vazia apaga a descrição.
     description: z.string().trim().max(5000, 'DESCRIPTION_TOO_LONG').optional(),
+    visibility: z.enum(['public', 'private'], { error: 'VISIBILITY_INVALID' }).optional(),
   })
-  .refine((data) => data.title !== undefined || data.description !== undefined, {
+  .refine((data) => data.title !== undefined || data.description !== undefined || data.visibility !== undefined, {
     message: 'VIDEO_UPDATE_EMPTY',
   });
 
 export const listVideosQuerySchema = z.object({ user_id: z.uuid('INVALID_ID').optional() });
 
 export type CreateVideoInput = z.infer<typeof createVideoSchema>;
+
+// O que os outros veem: público (escolha do dono), ativo (moderação) e de conta não banida.
+// Nada é apagado: publicar, liberar a revisão ou revogar o banimento traz o vídeo de volta.
+export const visibleVideo: Prisma.VideoWhereInput = {
+  visibility: 'public',
+  moderation_status: 'active',
+  NOT: { user: bannedUser },
+};
+const visible = visibleVideo;
 
 // Autor (dados públicos) e contagens calculadas pelo banco junto com o vídeo.
 // Só likes são públicos; comentários removidos não contam.
@@ -38,21 +51,23 @@ const statsInclude = {
   _count: {
     select: {
       reactions: { where: { type: 'like' } },
-      comments: { where: { deleted_at: null } },
+      comments: { where: { deleted_at: null, moderated_at: null, NOT: { user: bannedUser } } },
     },
   },
 } satisfies Prisma.VideoInclude;
 
 type VideoWithCount = Prisma.VideoGetPayload<{ include: typeof statsInclude }>;
 
-function withStats({ _count, user, ...video }: VideoWithCount): VideoWithStats {
-  return { ...video, author: user, likes_count: _count.reactions, comments_count: _count.comments };
+// Quem moderou não aparece para o dono (só a decisão e o motivo).
+function withStats({ _count, user, moderated_by: _moderator, ...video }: VideoWithCount): VideoWithStats {
+  return { ...video, moderated_by: null, author: user, likes_count: _count.reactions, comments_count: _count.comments };
 }
 
 export const VideoModel = {
-  async findAllWithStats(filter: { user_id?: string } = {}): Promise<VideoWithStats[]> {
+  // ownerView: o dono vê todos os próprios vídeos no "Meu canal" (privados, em revisão, removidos).
+  async findAllWithStats(filter: { user_id?: string } = {}, ownerView = false): Promise<VideoWithStats[]> {
     const videos = await prisma.video.findMany({
-      where: filter,
+      where: { ...filter, ...(ownerView ? { NOT: { user: bannedUser } } : visible) },
       include: statsInclude,
       orderBy: { created_at: 'desc' },
     });
@@ -73,6 +88,7 @@ export const VideoModel = {
       where: {
         status: 'ready',
         user: { followers: { some: { follower_id: followerId } } },
+        ...visible,
         ...after,
       },
       orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
@@ -83,12 +99,22 @@ export const VideoModel = {
   },
 
   async countReadyByUser(userId: string): Promise<number> {
-    return prisma.video.count({ where: { user_id: userId, status: 'ready' } });
+    return prisma.video.count({ where: { user_id: userId, status: 'ready', ...visible } });
   },
 
   async findByIdWithStats(id: string): Promise<VideoWithStats | null> {
-    const video = await prisma.video.findUnique({ where: { id }, include: statsInclude });
+    // Quem pode ver (dono, moderação) é decidido no service.
+    const video = await prisma.video.findFirst({ where: { id, NOT: { user: bannedUser } }, include: statsInclude });
     return video && withStats(video);
+  },
+
+  // Para assistir: não encontra vídeo de conta banida.
+  async findVisibleById(id: string): Promise<Video | null> {
+    return prisma.video.findFirst({ where: { id, ...visible } });
+  },
+
+  async findByIdExceptBanned(id: string): Promise<Video | null> {
+    return prisma.video.findFirst({ where: { id, NOT: { user: bannedUser } } });
   },
 
   async findById(id: string): Promise<Video | null> {

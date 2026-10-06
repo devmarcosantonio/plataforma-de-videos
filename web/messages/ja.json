@@ -1,0 +1,730 @@
+{
+  "metadata": {
+    "description": "Criato：動画を見て、投稿しよう。"
+  },
+  "common": {
+    "unknownUser": "不明なユーザー",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中…",
+    "sending": "送信中…",
+    "loading": "読み込み中…",
+    "loadMore": "もっと見る",
+    "edit": "編集",
+    "remove": "削除",
+    "signIn": "ログイン",
+    "comingSoon": "近日公開",
+    "soon": "近日",
+    "optional": "（任意）",
+    "genericError": "問題が発生しました。もう一度お試しください。"
+  },
+  "nav": {
+    "home": "ホーム",
+    "following": "フォロー中",
+    "studio": "マイチャンネル",
+    "upload": "作成",
+    "explore": "探索",
+    "history": "履歴",
+    "playlists": "再生リスト",
+    "openMenu": "メニューを開く",
+    "admin": "モデレーション"
+  },
+  "header": {
+    "search": "動画を検索",
+    "upload": "作成"
+  },
+  "theme": {
+    "useLight": "ライトテーマを使用",
+    "useDark": "ダークテーマを使用",
+    "light": "ライトテーマ",
+    "dark": "ダークテーマ"
+  },
+  "language": {
+    "label": "言語",
+    "change": "言語を変更"
+  },
+  "account": {
+    "menu": "アカウントメニュー",
+    "viewChannel": "マイチャンネルを表示",
+    "manageChannel": "チャンネルを管理",
+    "upload": "作成",
+    "signOut": "ログアウト",
+    "signedOut": "ログアウトしました。",
+    "moderation": "モデレーション"
+  },
+  "video": {
+    "status": {
+      "pending_upload": "アップロード待ち",
+      "processing": "処理中",
+      "ready": "準備完了",
+      "failed": "失敗"
+    },
+    "player": {
+      "pending_upload": "この動画のファイルはまだアップロードされていません。",
+      "processing": "動画を処理しています。数分かかる場合があります。",
+      "failed": "この動画の処理に失敗しました。"
+    },
+    "likes": "{count, plural, =0 {高評価なし} other {高評価 {formatted} 件}}",
+    "published": "<time></time>に公開",
+    "noDescription": "説明はありません。",
+    "showMore": "もっと見る",
+    "showLess": "一部を表示",
+    "otherVideos": "その他の動画",
+    "noOtherVideos": "ほかの動画はまだありません。",
+    "sync": "状態を確認",
+    "syncError": "状態を更新できませんでした。"
+  },
+  "reactions": {
+    "like": "高評価",
+    "removeLike": "高評価を取り消す",
+    "dislike": "低評価",
+    "removeDislike": "低評価を取り消す",
+    "notReady": "準備ができた動画にのみ評価できます",
+    "signInToReact": "ログインすると動画を評価できます。",
+    "error": "評価を保存できませんでした。"
+  },
+  "follow": {
+    "follow": "フォロー",
+    "following": "フォロー中",
+    "unfollow": "フォロー解除",
+    "followersLabel": "{count, plural, other {フォロワー}}",
+    "followers": "{count, plural, other {フォロワー {formatted} 人}}",
+    "signInToFollow": "ログインするとチャンネルをフォローできます。",
+    "error": "更新できませんでした。"
+  },
+  "comments": {
+    "label": "{count, plural, other {件のコメント}}",
+    "notReady": "動画の準備ができるとコメントできます。",
+    "signInPrompt": "コメントするにはログインしてください。",
+    "placeholder": "コメントを追加…",
+    "submit": "コメント",
+    "shortcut": "Ctrl + Enter で送信",
+    "reply": "返信",
+    "replyPlaceholder": "返信を入力…",
+    "editPlaceholder": "コメントを編集",
+    "replies": "{count, plural, other {# 件の返信}}",
+    "moreReplies": "返信をもっと見る",
+    "moreComments": "コメントをもっと見る",
+    "removed": "削除されたコメント",
+    "author": "投稿者",
+    "edited": "（編集済み）",
+    "actions": "コメントの操作",
+    "removeTitle": "コメントを削除しますか？",
+    "removeWithReplies": "返信があるため、会話を残すために「削除されたコメント」と表示されます。",
+    "removeIrreversible": "この操作は元に戻せません。",
+    "editedToast": "コメントを編集しました。",
+    "removedToast": "コメントを削除しました。",
+    "errors": {
+      "send": "コメントを投稿できませんでした。",
+      "reply": "返信を投稿できませんでした。",
+      "edit": "コメントを編集できませんでした。",
+      "remove": "コメントを削除できませんでした。",
+      "loadReplies": "返信を読み込めませんでした。",
+      "loadMore": "コメントをさらに読み込めませんでした。"
+    },
+    "report": "報告",
+    "moderation": {
+      "placeholder": "モデレーターによって削除されたコメント",
+      "badge": "モデレーターが削除",
+      "remove": "削除（モデレーション）",
+      "removeTitle": "このコメントを削除しますか？",
+      "removeDescription": "全員から非表示になりますが保管され、あとで復元できます。投稿者には理由とともに通知されます。",
+      "removed": "モデレーターがコメントを削除しました。",
+      "restore": "コメントを復元",
+      "restored": "コメントを復元しました。",
+      "purge": "完全に削除",
+      "purgeTitle": "このコメントを完全に削除しますか？",
+      "purgeDescription": "テキストは消去され、復元できません（モデレーション記録にコピーが残ります）。元に戻せる操作が必要な場合は「削除（モデレーション）」を使用してください。投稿者に通知されます。",
+      "purged": "コメントを完全に削除しました。"
+    }
+  },
+  "upload": {
+    "title": "動画をアップロード",
+    "subtitle": "ファイルは動画サーバーに直接送信され、自動的に処理されます。",
+    "videoTitle": "タイトル",
+    "description": "説明",
+    "dropzone": "動画をドラッグするか、クリックして選択",
+    "formats": "MP4、MOV、MKV、WebM…",
+    "removeFile": "ファイルを削除",
+    "notVideo": "動画ファイルを選択してください。",
+    "uploading": "アップロード中…",
+    "preparing": "準備中…",
+    "submit": "アップロード",
+    "cancelled": "アップロードをキャンセルしました。",
+    "error": "アップロードに失敗しました。もう一度お試しください。",
+    "done": "動画をアップロードしました！",
+    "doneHint": "現在処理中です。数分かかる場合があります。",
+    "watch": "動画を見る",
+    "needsApproval": "安全なプラットフォームを保つため、新しいチャンネルは承認を受けてから公開できます。",
+    "restricted": "現在、このアカウントでは動画を公開できません。",
+    "donePrivate": "非公開の状態です。マイチャンネルからいつでも公開できます。"
+  },
+  "studio": {
+    "title": "マイチャンネル",
+    "stats": {
+      "videos": "動画",
+      "likes": "高評価",
+      "comments": "コメント"
+    },
+    "myVideos": "自分の動画",
+    "upload": "作成",
+    "empty": "チャンネルに動画がありません",
+    "emptyHint": "アップロードした動画がここに表示されます。",
+    "columns": {
+      "video": "動画",
+      "status": "状態",
+      "date": "日付",
+      "likes": "高評価",
+      "comments": "コメント"
+    },
+    "noDescription": "説明なし",
+    "likesCount": "{count, plural, other {高評価 # 件}}",
+    "commentsCount": "{count, plural, other {コメント # 件}}",
+    "actions": "「{title}」の操作",
+    "view": "動画を見る",
+    "edit": "編集",
+    "delete": "削除",
+    "updated": "動画を更新しました。",
+    "saveError": "変更を保存できませんでした。",
+    "deleted": "「{title}」を削除しました。",
+    "deleteError": "動画を削除できませんでした。",
+    "editDialog": {
+      "title": "動画を編集",
+      "description": "変更はすぐに全員に表示されます。",
+      "videoTitle": "タイトル",
+      "videoDescription": "説明",
+      "placeholder": "動画の内容を視聴者に伝えましょう"
+    },
+    "deleteDialog": {
+      "title": "「{title}」を削除しますか？",
+      "description": "動画は高評価やコメントとともに、プラットフォームと動画サーバーから削除されます。この操作は元に戻せません。",
+      "confirm": "動画を削除",
+      "deleting": "削除中…"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "ログイン",
+      "description": "ログインすると、高評価、コメント、動画の投稿ができます。",
+      "login": "メールアドレスまたはユーザー名",
+      "password": "パスワード",
+      "submit": "ログイン",
+      "submitting": "ログイン中…",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "createAccount": "アカウントを作成",
+      "welcome": "おかえりなさい、{handle} さん！",
+      "error": "ログインできませんでした。"
+    },
+    "register": {
+      "title": "アカウントを作成",
+      "description": "1 分もかかりません。",
+      "username": "ユーザー名",
+      "displayName": "表示名",
+      "displayNamePlaceholder": "あなたの名前またはチャンネル名",
+      "displayNameHint": "ほかの人に表示される名前です。空欄の場合は @ユーザー名 が使われます。",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "passwordHint": "8 文字以上。",
+      "submit": "アカウントを作成",
+      "submitting": "アカウントを作成中…",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "signIn": "ログイン",
+      "welcome": "アカウントを作成しました！ようこそ、{handle} さん。",
+      "error": "アカウントを作成できませんでした。"
+    },
+    "password": {
+      "show": "パスワードを表示",
+      "hide": "パスワードを隠す"
+    },
+    "username": {
+      "placeholder": "user.name",
+      "hint": "3〜30 文字：英小文字、数字、ピリオド、アンダースコア。",
+      "available": "@{username} は使用できます",
+      "checkError": "現在確認できません。"
+    }
+  },
+  "home": {
+    "empty": "まだ動画がありません",
+    "emptyHint": "最初の動画をアップロードすると、ここに表示されます。",
+    "upload": "作成",
+    "noResults": "「{query}」に一致する結果はありません",
+    "noResultsHint": "別のキーワードで試してください。",
+    "results": "{count, plural, other {# 件の結果}}：検索語"
+  },
+  "feed": {
+    "title": "フォロー中",
+    "empty": "まだ何もありません",
+    "emptyHint": "チャンネルをフォローすると、新しい動画がここに表示されます。",
+    "discover": "動画を探す",
+    "loadError": "動画をさらに読み込めませんでした。"
+  },
+  "channel": {
+    "title": "チャンネル",
+    "videosCount": "{count, plural, other {動画 # 本}}",
+    "manage": "チャンネルを管理",
+    "videos": "動画",
+    "empty": "公開されている動画はありません",
+    "emptyHint": "このチャンネルはまだ動画を公開していません。"
+  },
+  "errors": {
+    "loadTitle": "読み込めませんでした",
+    "loadHint": "API が起動しているか確認して（api フォルダで npm run dev）、もう一度お試しください。",
+    "retry": "再試行",
+    "notFound": "ページが見つかりません",
+    "notFoundHint": "コンテンツが削除された可能性があります。",
+    "backHome": "ホームに戻る"
+  },
+  "history": {
+    "title": "履歴",
+    "empty": "履歴に動画はありません",
+    "emptyHint": "視聴した動画がここに表示されます。",
+    "groups": {
+      "today": "今日",
+      "yesterday": "昨日",
+      "thisWeek": "今週",
+      "older": "それ以前"
+    },
+    "watched": "<time></time>に視聴",
+    "remove": "履歴から削除",
+    "removed": "履歴から削除しました。",
+    "clear": "履歴を消去",
+    "clearTitle": "履歴をすべて消去しますか？",
+    "clearDescription": "すべての動画が履歴から削除されます。この操作は元に戻せません。",
+    "cleared": "履歴を消去しました。",
+    "pause": "履歴を一時停止",
+    "pauseHint": "一時停止中は、視聴した内容が保存されません。",
+    "paused": "履歴を一時停止しました。",
+    "resumed": "履歴を再開しました。",
+    "pausedBanner": "履歴は一時停止中です：新しく視聴した動画は保存されません。",
+    "continueWatching": "続きを見る",
+    "resumeFrom": "{time} から再生",
+    "startOver": "最初から",
+    "errors": {
+      "remove": "履歴から削除できませんでした。",
+      "clear": "履歴を消去できませんでした。",
+      "settings": "設定を保存できませんでした。",
+      "loadMore": "さらに読み込めませんでした。"
+    }
+  },
+  "roles": {
+    "user": "ユーザー",
+    "moderator": "モデレーター",
+    "admin": "管理者"
+  },
+  "uploadAccess": {
+    "title": "公開の許可をリクエスト",
+    "intro": "どんな動画を公開する予定か、モデレーターに教えてください。結果は通知でお知らせします。",
+    "message": "チャンネルについて",
+    "messagePlaceholder": "どんな動画を公開しますか？どのくらいの頻度ですか？ほかの場所でも公開していますか？",
+    "link": "これまでの作品へのリンク",
+    "linkHint": "ポートフォリオ、ほかのチャンネル、SNS など。モデレーターがあなたを知る手がかりになります。",
+    "submit": "リクエストを送信",
+    "sent": "リクエストを送信しました！審査が終わるとお知らせします。",
+    "cancel": "リクエストを取り消す",
+    "cancelled": "リクエストを取り消しました。",
+    "pendingTitle": "リクエストを審査中",
+    "pendingHint": "<time></time>に送信しました。結果は通知でお知らせします。",
+    "approvedTitle": "公開できるようになりました！",
+    "approvedHint": "モデレーターがリクエストを承認しました。",
+    "startUploading": "最初の動画をアップロード",
+    "rejectedTitle": "前回のリクエストは承認されませんでした",
+    "rejectedWait": "しばらくすると新しいリクエストを送信できます。",
+    "rejectedRetry": "上のフィードバックを参考に、今すぐ新しいリクエストを送信できます。",
+    "retryIn": "{time}に再リクエスト可能"
+  },
+  "notifications": {
+    "label": "通知",
+    "labelUnread": "通知（未読 {count} 件）",
+    "title": "通知",
+    "markAll": "すべて既読にする",
+    "empty": "まだ通知はありません。",
+    "more": "もっと見る",
+    "types": {
+      "uploadRequestCreated": "@{username} さんが動画公開の許可をリクエストしました。",
+      "uploadRequestApproved": "リクエストが承認されました！動画を公開できます。",
+      "uploadRequestRejected": "公開のリクエストは承認されませんでした。",
+      "uploadRequestRejectedNote": "公開のリクエストは承認されませんでした：「{note}」",
+      "uploadAccessGranted": "モデレーターがあなたのチャンネルで動画の公開を許可しました。",
+      "uploadAccessRevoked": "動画を公開する権限が取り消されました。",
+      "uploadAccessRevokedReason": "動画を公開する権限が取り消されました：「{reason}」",
+      "roleChanged": "プラットフォームでのあなたの役割が変更されました：{role}。",
+      "unknown": "新しい通知。",
+      "restrictionApplied": "モデレーターが {until} までアカウントを制限しました（{types}）。理由：「{reason}」",
+      "restrictionAppliedPermanent": "モデレーターがアカウントを制限しました（{types}）。理由：「{reason}」",
+      "restrictionRevoked": "アカウントの「{type}」の制限が解除されました。",
+      "videoUnderReview": "動画「{title}」はモデレーターが審査中のため、一時的に非公開になっています。",
+      "videoRemoved": "動画「{title}」はモデレーターによって削除されました。理由：{reason}",
+      "videoRestored": "動画「{title}」が再び公開されました。",
+      "commentRemoved": "あなたのコメントがモデレーターによって削除されました。理由：{reason}",
+      "commentRestored": "あなたのコメントがモデレーターによって復元されました。",
+      "videoPurged": "動画「{title}」はモデレーターによって完全に削除されました。理由：{reason}"
+    }
+  },
+  "admin": {
+    "title": "モデレーション",
+    "subtitle": "{role}としてログインしています。",
+    "tabs": {
+      "requests": "リクエスト",
+      "users": "ユーザー",
+      "logs": "記録",
+      "reports": "報告"
+    },
+    "requests": {
+      "filter": {
+        "pending": "保留中",
+        "approved": "承認済み",
+        "rejected": "却下"
+      },
+      "status": {
+        "pending": "保留中",
+        "approved": "承認済み",
+        "rejected": "却下",
+        "cancelled": "取り消し"
+      },
+      "empty": {
+        "pending": "保留中のリクエストはありません",
+        "approved": "承認済みのリクエストはありません",
+        "rejected": "却下したリクエストはありません"
+      },
+      "emptyHint": "公開許可のリクエストがここに表示されます。",
+      "memberSince": "登録",
+      "ownRequest": "これはあなた自身のリクエストです。モデレーションチームのほかのメンバーが審査する必要があります。",
+      "approve": "承認",
+      "reject": "却下",
+      "approved": "{handle} さんが公開できるようになりました。",
+      "rejected": "リクエストを却下しました。",
+      "reviewedBy": "担当：{handle}",
+      "approveDialog": {
+        "title": "{handle} さんを承認しますか？",
+        "description": "すぐに動画を公開できるようになり、通知が届きます。",
+        "label": "歓迎メッセージ"
+      },
+      "rejectDialog": {
+        "title": "{handle} さんのリクエストを却下しますか？",
+        "description": "理由が本人に送られ、数分後に再度リクエストできます。",
+        "label": "理由"
+      }
+    },
+    "users": {
+      "search": "名前、@ユーザー名、メールアドレスで検索",
+      "empty": "ユーザーが見つかりません",
+      "videos": "{count, plural, other {動画 # 本}}",
+      "grant": "承認",
+      "role": "役割",
+      "granted": "{handle} さんが公開できるようになりました。",
+      "roleChanged": "{handle} さんは{role}になりました。",
+      "notApproved": "承認待ち",
+      "restrict": "制限",
+      "details": "詳細"
+    },
+    "logs": {
+      "allHint": "すべてのモデレーション操作（新しい順）。",
+      "mineHint": "あなたが行ったモデレーション操作。",
+      "empty": "記録された操作はありません",
+      "system": "システム",
+      "actions": {
+        "uploadRequestApprove": "次のユーザーのリクエストを承認：",
+        "uploadRequestReject": "次のユーザーのリクエストを却下：",
+        "uploadAccessGrant": "次のユーザーの公開を許可：",
+        "uploadAccessRevoke": "次のユーザーの公開権限を取り消し：",
+        "roleChange": "役割を変更（{role}）：",
+        "commentRemove": "次のユーザーのコメントを削除：",
+        "restrictionApply": "制限を適用（{types}）：",
+        "restrictionRevoke": "制限を解除（{types}）：",
+        "reportDismiss": "次のユーザーへの報告を却下：",
+        "reportAction": "次のユーザーへの報告に対応：",
+        "videoReview": "動画「{title}」を審査中に変更、投稿者：",
+        "videoRemove": "動画「{title}」を削除、投稿者：",
+        "videoRestore": "動画「{title}」を復元、投稿者：",
+        "commentRestore": "次のユーザーのコメントを復元：",
+        "commentPurge": "次のユーザーのコメントを完全に削除：",
+        "videoPurge": "動画「{title}」を完全に削除、投稿者："
+      },
+      "selfDecision": "自身のコンテンツに対する判断"
+    },
+    "restrict": {
+      "title": "{handle} さんを制限",
+      "description": "理由とともに本人に通知されます。期間が終わると制限は自動的に解除されます。",
+      "types": "制限する内容",
+      "duration": "期間",
+      "banPermanent": "停止（BAN）は常に無期限です（あとで解除できます）。",
+      "reason": "理由",
+      "reasonHint": "本人に表示され、記録に残ります。",
+      "submit": "制限",
+      "submitBan": "BAN",
+      "applied": "{handle} さんを制限しました。"
+    },
+    "details": {
+      "back": "ユーザー一覧に戻る",
+      "videos": "{count, plural, other {動画 # 本}}",
+      "joined": "登録",
+      "restrict": "制限",
+      "access": "権限",
+      "actions": {
+        "upload": "動画の公開",
+        "comment": "コメント",
+        "react": "評価",
+        "follow": "チャンネルのフォロー"
+      },
+      "waitingApproval": "モデレーターの承認待ち",
+      "allowed": "許可",
+      "approve": "承認",
+      "approved": "公開を許可しました。",
+      "revoke": "解除",
+      "revoked": "制限を解除しました。",
+      "history": "制限の履歴",
+      "noRestrictions": "これまでに制限はありません。",
+      "status": {
+        "active": "有効",
+        "expired": "期限切れ",
+        "revoked": "解除済み"
+      },
+      "appliedBy": "{handle} さんが {date} に適用",
+      "revokedBy": "{handle} さんが {date} に解除",
+      "system": "システム",
+      "requests": "公開リクエスト",
+      "noRequests": "リクエストはありません。",
+      "requestStatus": {
+        "pending": "保留中",
+        "approved": "承認済み",
+        "rejected": "却下",
+        "cancelled": "取り消し"
+      },
+      "log": "記録",
+      "revokeDialog": {
+        "title": "「{type}」の制限を解除しますか？",
+        "description": "すぐに解除され、履歴には残ります。本人に通知されます。",
+        "label": "解除の理由"
+      },
+      "reports": "このユーザーへの報告",
+      "noReports": "報告はありません。"
+    },
+    "reasonDialog": {
+      "reason": "理由",
+      "note": "メモ",
+      "noteHint": "理由とともに投稿者に表示されます。"
+    },
+    "reports": {
+      "filter": {
+        "open": "未対応",
+        "actioned": "対応済み",
+        "dismissed": "却下"
+      },
+      "sortLabel": "並べ替え",
+      "sort": {
+        "priority": "優先度（深刻度）",
+        "oldest": "古い順",
+        "newest": "新しい順",
+        "most_reported": "報告が多い順",
+        "least_reported": "報告が少ない順"
+      },
+      "types": {
+        "video": "動画",
+        "comment": "コメント"
+      },
+      "count": "{count, plural, other {報告 # 件}}",
+      "openedAgo": "受付",
+      "last": "最新",
+      "oldestOpen": "最も古い未対応の報告：",
+      "reasons": {
+        "spam": "スパム",
+        "harassment": "嫌がらせ",
+        "hate": "ヘイト",
+        "violence": "暴力",
+        "sexual": "性的",
+        "misleading": "誤解を招く",
+        "copyright": "著作権",
+        "other": "その他"
+      },
+      "deletedAccount": "削除されたアカウント",
+      "author": "投稿者：",
+      "history": "履歴を見る",
+      "ownCase": "あなたのコンテンツへの報告です。チームのほかのメンバーが審査する必要があります。",
+      "dismiss": "却下",
+      "dismissReinstate": "却下して再公開",
+      "restrictAuthor": "投稿者を制限",
+      "review": "審査中にする",
+      "markActioned": "対応済みにする",
+      "remove": {
+        "video": "動画を削除",
+        "comment": "コメントを削除"
+      },
+      "status": {
+        "open": "未対応",
+        "actioned": "対応済み",
+        "dismissed": "却下"
+      },
+      "resolvedBy": "担当：{handle}",
+      "restored": "動画を復元しました。",
+      "underReviewDone": "動画を審査中にしました。判断が出るまで非公開になります。",
+      "afterRestrict": "投稿者を制限しました。次にコンテンツを削除するか、報告を却下してください。",
+      "resolved": {
+        "dismiss": "報告を却下しました。",
+        "remove": "コンテンツを削除しました。",
+        "actioned": "対応済みにしました。"
+      },
+      "empty": {
+        "open": "未対応の報告はありません",
+        "actioned": "対応済みのケースはありません",
+        "dismissed": "却下したケースはありません"
+      },
+      "emptyHint": "動画とコメントへの報告が、コンテンツごとにまとめてここに表示されます。",
+      "gone": "投稿者がコンテンツを削除しました。",
+      "commentRemoved": "削除されたコメント",
+      "onVideo": "動画「{title}」",
+      "open": "動画を開く",
+      "dialog": {
+        "dismiss": {
+          "title": "報告を却下しますか？",
+          "description": "コンテンツはルールに違反していません。審査中だった場合は再公開されます。誰にも通知されません。",
+          "label": "内部メモ"
+        },
+        "actioned": {
+          "title": "対応済みにしますか？",
+          "description": "すでに対応済みの場合に使用します（例：投稿者を制限した、投稿者がコンテンツを削除した）。",
+          "label": "内部メモ"
+        },
+        "remove": {
+          "title": {
+            "video": "動画を削除しますか？",
+            "comment": "コメントを削除しますか？"
+          },
+          "description": "投稿者に理由とともに通知されます。動画はあとで復元できますが、コメントはできません。"
+        },
+        "review": {
+          "title": {
+            "video": "動画を審査中にしますか？",
+            "comment": "審査中にしますか？"
+          },
+          "description": "調査中は動画が非公開になります。投稿者に通知されます。ケースは未対応のままです。"
+        }
+      },
+      "ownCaseAdmin": "あなた自身のコンテンツです。管理者として判断できますが、その判断は記録で明示されます。",
+      "restoreTarget": {
+        "video": "動画を復元",
+        "comment": "コメントを復元"
+      },
+      "purge": "完全に削除",
+      "purged": "コンテンツを完全に削除しました。",
+      "commentModerated": "モデレーターが削除",
+      "purgeComment": {
+        "title": "コメントを完全に削除しますか？",
+        "description": "テキストは消去され、復元できません（記録にコピーが残ります）。報告はクローズされます。元に戻せる操作が必要な場合は「コメントを削除」を使用してください。"
+      }
+    },
+    "purge": {
+      "title": "動画を完全に削除しますか？",
+      "description": "動画を高評価やコメントとともに、データベースと動画サーバーから消去します。元に戻せません。元に戻せる操作が必要な場合は「動画を削除」を使用してください。投稿者に通知され、タイトル・投稿者・理由は記録に残ります。",
+      "typeTitle": "確認のため、タイトルを入力してください：{title}",
+      "confirm": "完全に削除",
+      "reason": "理由"
+    }
+  },
+  "restrictions": {
+    "types": {
+      "comment": "コメント",
+      "upload": "公開",
+      "react": "評価",
+      "suspend": "一時停止",
+      "ban": "BAN"
+    },
+    "effects": {
+      "comment": "コメントや返信ができなくなります。",
+      "upload": "動画をアップロードできなくなります（公開済みの動画はそのまま残ります）。",
+      "react": "高評価・低評価ができなくなります。",
+      "suspend": "アカウントは視聴のみになります。",
+      "ban": "ログインできなくなり、チャンネル・動画・コメントが非表示になります。"
+    },
+    "durations": {
+      "1h": "1 時間",
+      "24h": "24 時間",
+      "7d": "7 日間",
+      "30d": "30 日間",
+      "permanent": "無期限"
+    },
+    "until": "{date} まで",
+    "permanent": "無期限",
+    "reason": "理由：{reason}",
+    "notice": {
+      "comment": "{until} までコメントできません。",
+      "upload": "{until} まで動画を公開できません。",
+      "react": "{until} まで動画を評価できません。",
+      "suspend": "{until} までアカウントが一時停止されています。現在は視聴のみ可能です。",
+      "ban": "このアカウントは BAN されています。"
+    },
+    "noticePermanent": {
+      "comment": "コメントはできなくなりました。",
+      "upload": "動画は公開できなくなりました。",
+      "react": "動画を評価できなくなりました。",
+      "suspend": "アカウントが一時停止されています。視聴のみ可能です。",
+      "ban": "このアカウントは BAN されています。"
+    }
+  },
+  "visibility": {
+    "label": "公開設定",
+    "private": {
+      "label": "非公開",
+      "hint": "自分だけが見られます。いつでも公開できます。"
+    },
+    "public": {
+      "label": "公開",
+      "hint": "準備ができると全員に表示されます。"
+    },
+    "underReview": "審査中",
+    "removed": "削除済み",
+    "underReviewHint": "この動画はモデレーターが審査中のため、現在は誰にも表示されません。",
+    "removedHint": "この動画はモデレーターによって削除され、誰にも表示されません。",
+    "reason": "理由：{reason}",
+    "moderatedHint": "モデレーターが許可するまでは、公開に設定しても動画は非表示のままです。",
+    "privateOwnerHint": "この動画は非公開です。自分だけが見られます。",
+    "privateStaffHint": "非公開の動画：モデレーターなので表示されています。",
+    "staffOnly": "モデレーターなので表示されています。"
+  },
+  "report": {
+    "action": "報告",
+    "title": {
+      "video": "動画を報告",
+      "comment": "コメントを報告"
+    },
+    "description": "報告は匿名です。モデレーターだけが見ることができ、投稿者には誰が報告したかわかりません。",
+    "reason": "理由",
+    "details": "詳細",
+    "detailsHint": "何が問題で、どこにあるかを教えてください（例：2:10）。",
+    "submit": "報告を送信",
+    "sent": "報告を送信しました。安全なプラットフォームづくりへのご協力ありがとうございます。",
+    "reasons": {
+      "spam": {
+        "label": "スパムまたは詐欺",
+        "hint": "繰り返しの広告、誤解を招くリンク、金銭の要求。"
+      },
+      "harassment": {
+        "label": "嫌がらせやいじめ",
+        "hint": "他人への攻撃、脅迫、侮辱。"
+      },
+      "hate": {
+        "label": "ヘイトスピーチ",
+        "hint": "人種、宗教、性別、性的指向、出身などを理由にした攻撃…"
+      },
+      "violence": {
+        "label": "暴力",
+        "hint": "実際の暴行、暴力の美化、衝撃的なコンテンツ。"
+      },
+      "sexual": {
+        "label": "性的なコンテンツ",
+        "hint": "ヌードや露骨な性的コンテンツ。"
+      },
+      "misleading": {
+        "label": "誤解を招く情報",
+        "hint": "害を及ぼすおそれのある虚偽のコンテンツ。"
+      },
+      "copyright": {
+        "label": "著作権",
+        "hint": "他人のコンテンツを無断で使用。"
+      },
+      "other": {
+        "label": "その他の理由",
+        "hint": "詳細に説明してください。"
+      }
+    }
+  }
+}

@@ -16,6 +16,24 @@ enum VideoStatus {
   @@map("video_status")
 }
 
+// Quem a pessoa é na moderação. Publicar vídeos depende de aprovação (upload_requests) e de não estar restrito.
+enum UserRole {
+  user
+  moderator
+  admin
+
+  @@map("user_role")
+}
+
+enum UploadRequestStatus {
+  pending
+  approved
+  rejected
+  cancelled
+
+  @@map("upload_request_status")
+}
+
 model User {
   id            String   @id @default(uuid(7)) @db.Uuid
   // Sempre em minúsculas (normalizado na API), por isso o índice único já é case-insensitive.
@@ -26,34 +44,59 @@ model User {
   locale        String?  @db.VarChar(10)
   email         String   @unique
   password_hash String
+  role          UserRole @default(user)
   created_at    DateTime @default(now()) @db.Timestamptz(3)
   updated_at    DateTime @updatedAt @db.Timestamptz(3)
 
-  videos    Video[]
-  reactions Reaction[]
-  comments  Comment[]
-  following Follow[]       @relation("Follower")
-  followers Follow[]       @relation("Followed")
-  history   WatchHistory[]
-  settings  UserSettings?
+  videos               Video[]
+  reactions            Reaction[]
+  comments             Comment[]
+  following            Follow[]          @relation("Follower")
+  followers            Follow[]          @relation("Followed")
+  history              WatchHistory[]
+  settings             UserSettings?
+  upload_requests      UploadRequest[]   @relation("Requester")
+  reviewed_requests    UploadRequest[]   @relation("Reviewer")
+  moderation_done      ModerationLog[]   @relation("Actor")
+  moderation_target    ModerationLog[]   @relation("TargetUser")
+  notifications        Notification[]
+  restrictions         UserRestriction[] @relation("Restricted")
+  restrictions_applied UserRestriction[] @relation("RestrictionAuthor")
+  restrictions_revoked UserRestriction[] @relation("RestrictionRevoker")
+  reports_made         Report[]
+  cases_resolved       ReportCase[]      @relation("CaseResolver")
+  cases_against        ReportCase[]      @relation("CaseTargetUser")
+  videos_moderated     Video[]           @relation("VideoModerator")
+  comments_moderated   Comment[]         @relation("CommentModerator")
 
   @@map("users")
 }
 
 model Video {
-  id             String      @id @default(uuid(7)) @db.Uuid
-  user_id        String      @db.Uuid
-  bunny_video_id String      @unique
-  title          String      @db.VarChar(200)
-  description    String?
-  status         VideoStatus @default(pending_upload)
-  duration       Int?
-  thumbnail_url  String?
-  created_at     DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at     DateTime    @updatedAt @db.Timestamptz(3)
+  id                String                @id @default(uuid(7)) @db.Uuid
+  user_id           String                @db.Uuid
+  bunny_video_id    String                @unique
+  title             String                @db.VarChar(200)
+  description       String?
+  status            VideoStatus           @default(pending_upload)
+  duration          Int?
+  thumbnail_url     String?
+  created_at        DateTime              @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime              @updatedAt @db.Timestamptz(3)
+  // Escolha do dono: público ou privado (só ele vê).
+  visibility        VideoVisibility       @default(private)
+  // Decisão da moderação, separada da escolha do dono: liberar o vídeo devolve a visibilidade que ele tinha.
+  // Aparece para os outros só se público E ativo.
+  moderation_status VideoModerationStatus @default(active)
+  moderated_at      DateTime?             @db.Timestamptz(3)
+  moderated_by      String?               @db.Uuid
+  // Motivo pronto (traduzido para o dono) + observação opcional.
+  moderation_reason ReportReason?
+  moderation_note   String?               @db.VarChar(500)
 
   // Restrict: um usuário com vídeos não pode ser apagado sem antes tratar os vídeos no Bunny.
   user      User           @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  moderator User?          @relation("VideoModerator", fields: [moderated_by], references: [id], onDelete: SetNull)
   reactions Reaction[]
   comments  Comment[]
   history   WatchHistory[]
@@ -62,6 +105,22 @@ model Video {
   @@index([user_id, created_at])
   @@index([created_at])
   @@map("videos")
+}
+
+enum VideoVisibility {
+  public
+  private
+
+  @@map("video_visibility")
+}
+
+// active = normal; under_review = oculto enquanto a moderação investiga; removed = removido (pode ser restaurado).
+enum VideoModerationStatus {
+  active
+  under_review
+  removed
+
+  @@map("video_moderation_status")
 }
 
 enum ReactionType {
@@ -88,20 +147,27 @@ model Reaction {
 }
 
 model Comment {
-  id         String    @id @default(uuid(7)) @db.Uuid
-  video_id   String    @db.Uuid
+  id                String        @id @default(uuid(7)) @db.Uuid
+  video_id          String        @db.Uuid
   // Fica nulo quando o autor apaga a conta e o comentário é mantido como "removido".
-  user_id    String?   @db.Uuid
-  parent_id  String?   @db.Uuid
-  content    String?   @db.VarChar(2000)
-  created_at DateTime  @default(now()) @db.Timestamptz(3)
-  edited_at  DateTime? @db.Timestamptz(3)
-  deleted_at DateTime? @db.Timestamptz(3)
+  user_id           String?       @db.Uuid
+  parent_id         String?       @db.Uuid
+  content           String?       @db.VarChar(2000)
+  created_at        DateTime      @default(now()) @db.Timestamptz(3)
+  edited_at         DateTime?     @db.Timestamptz(3)
+  // Apagado pelo autor (ou pelo dono do vídeo): exclusão real, o texto some.
+  deleted_at        DateTime?     @db.Timestamptz(3)
+  // Removido pela moderação: o texto fica guardado e dá para restaurar (soft delete).
+  moderated_at      DateTime?     @db.Timestamptz(3)
+  moderated_by      String?       @db.Uuid
+  moderation_reason ReportReason?
+  moderation_note   String?       @db.VarChar(500)
 
-  video   Video     @relation(fields: [video_id], references: [id], onDelete: Cascade)
-  user    User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  parent  Comment?  @relation("CommentReplies", fields: [parent_id], references: [id], onDelete: Cascade)
-  replies Comment[] @relation("CommentReplies")
+  video     Video     @relation(fields: [video_id], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  moderator User?     @relation("CommentModerator", fields: [moderated_by], references: [id], onDelete: SetNull)
+  parent    Comment?  @relation("CommentReplies", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
 
   @@index([video_id, parent_id, created_at])
   @@index([parent_id, created_at])
@@ -155,4 +221,179 @@ model UserSettings {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("user_settings")
+}
+
+// O que uma restrição bloqueia. suspend = qualquer interação; ban = entrar na conta (e oculta o conteúdo).
+enum RestrictionType {
+  comment
+  upload
+  react
+  suspend
+  ban
+
+  @@map("restriction_type")
+}
+
+// Punições aplicadas pela moderação. Ativa = não revogada e dentro do prazo (vence sozinha).
+// Os acessos (pode comentar, publicar...) são calculados a partir daqui; nada é gravado em users.
+model UserRestriction {
+  id            String          @id @default(uuid(7)) @db.Uuid
+  user_id       String          @db.Uuid
+  type          RestrictionType
+  reason        String          @db.VarChar(500)
+  // Nulo = permanente. Banimento é sempre permanente (CHECK na migração).
+  expires_at    DateTime?       @db.Timestamptz(3)
+  created_by    String?         @db.Uuid
+  created_at    DateTime        @default(now()) @db.Timestamptz(3)
+  revoked_at    DateTime?       @db.Timestamptz(3)
+  revoked_by    String?         @db.Uuid
+  revoke_reason String?         @db.VarChar(500)
+
+  user    User  @relation("Restricted", fields: [user_id], references: [id], onDelete: Cascade)
+  author  User? @relation("RestrictionAuthor", fields: [created_by], references: [id], onDelete: SetNull)
+  revoker User? @relation("RestrictionRevoker", fields: [revoked_by], references: [id], onDelete: SetNull)
+
+  // Histórico por usuário. As não revogadas têm um índice parcial próprio (migração).
+  @@index([user_id, created_at(sort: Desc)])
+  @@map("user_restrictions")
+}
+
+// Pedido de um usuário para poder publicar vídeos, analisado por moderador/admin.
+// Um pedido aprovado é o que habilita a publicação (liberação direta pelo painel também cria um).
+model UploadRequest {
+  id            String              @id @default(uuid(7)) @db.Uuid
+  user_id       String              @db.Uuid
+  // Por que quer publicar (obrigatório).
+  message       String              @db.VarChar(1000)
+  // Link opcional (outro canal, site, rede social).
+  portfolio_url String?             @db.VarChar(500)
+  status        UploadRequestStatus @default(pending)
+  reviewer_id   String?             @db.Uuid
+  // Motivo da decisão (obrigatório na recusa; aparece para o usuário).
+  review_note   String?             @db.VarChar(500)
+  created_at    DateTime            @default(now()) @db.Timestamptz(3)
+  reviewed_at   DateTime?           @db.Timestamptz(3)
+
+  user     User  @relation("Requester", fields: [user_id], references: [id], onDelete: Cascade)
+  reviewer User? @relation("Reviewer", fields: [reviewer_id], references: [id], onDelete: SetNull)
+
+  // Só uma solicitação pendente por pessoa: índice único parcial criado na migração.
+  @@index([status, created_at])
+  @@index([user_id, created_at])
+  @@map("upload_requests")
+}
+
+enum ReportTargetType {
+  video
+  comment
+
+  @@map("report_target_type")
+}
+
+// Motivos de denúncia; também são os motivos prontos que a moderação usa ao remover conteúdo.
+enum ReportReason {
+  spam
+  harassment
+  hate
+  violence
+  sexual
+  misleading
+  copyright
+  other
+
+  @@map("report_reason")
+}
+
+// open = na fila; actioned = houve medida; dismissed = sem violação.
+enum ReportCaseStatus {
+  open
+  actioned
+  dismissed
+
+  @@map("report_case_status")
+}
+
+// Um caso por conteúdo denunciado (enquanto aberto): 30 denúncias do mesmo vídeo viram 1 item na fila.
+model ReportCase {
+  id                String           @id @default(uuid(7)) @db.Uuid
+  target_type       ReportTargetType
+  // Sem chave estrangeira: o caso continua mesmo se o conteúdo for apagado.
+  target_id         String           @db.Uuid
+  // Dono do conteúdo (para ver o histórico da pessoa).
+  target_user_id    String?          @db.Uuid
+  status            ReportCaseStatus @default(open)
+  reports_count     Int              @default(0)
+  // Maior gravidade entre os motivos recebidos (ordena a fila junto com o número de denúncias).
+  severity          Int              @default(0)
+  created_at        DateTime         @default(now()) @db.Timestamptz(3)
+  last_reported_at  DateTime         @default(now()) @db.Timestamptz(3)
+  resolved_by       String?          @db.Uuid
+  resolved_at       DateTime?        @db.Timestamptz(3)
+  // Motivo pronto da decisão (quando houve remoção) + observação.
+  resolution_reason ReportReason?
+  resolution_note   String?          @db.VarChar(500)
+
+  target_user User?    @relation("CaseTargetUser", fields: [target_user_id], references: [id], onDelete: SetNull)
+  resolver    User?    @relation("CaseResolver", fields: [resolved_by], references: [id], onDelete: SetNull)
+  reports     Report[]
+
+  // Um caso aberto por conteúdo: índice único parcial criado na migração.
+  @@index([status, severity(sort: Desc), reports_count(sort: Desc), created_at])
+  @@index([target_user_id, created_at(sort: Desc)])
+  @@map("report_cases")
+}
+
+// Cada denúncia enviada. Uma por pessoa por caso.
+model Report {
+  id          String       @id @default(uuid(7)) @db.Uuid
+  case_id     String       @db.Uuid
+  reporter_id String?      @db.Uuid
+  reason      ReportReason
+  details     String?      @db.VarChar(500)
+  created_at  DateTime     @default(now()) @db.Timestamptz(3)
+
+  case     ReportCase @relation(fields: [case_id], references: [id], onDelete: Cascade)
+  reporter User?      @relation(fields: [reporter_id], references: [id], onDelete: SetNull)
+
+  @@unique([case_id, reporter_id])
+  // Limite diário por pessoa.
+  @@index([reporter_id, created_at])
+  @@map("reports")
+}
+
+// Toda ação de moderação fica registrada (quem fez, o quê, em quem, por quê).
+model ModerationLog {
+  id                String   @id @default(uuid(7)) @db.Uuid
+  // Nulo = ação do sistema (ex.: script que define o primeiro admin) ou autor já removido.
+  actor_id          String?  @db.Uuid
+  action            String   @db.VarChar(64)
+  target_user_id    String?  @db.Uuid
+  // Sem chave estrangeira: o registro continua mesmo se o vídeo/comentário for apagado.
+  target_video_id   String?  @db.Uuid
+  target_comment_id String?  @db.Uuid
+  reason            String?  @db.VarChar(500)
+  metadata          Json?
+  created_at        DateTime @default(now()) @db.Timestamptz(3)
+
+  actor       User? @relation("Actor", fields: [actor_id], references: [id], onDelete: SetNull)
+  target_user User? @relation("TargetUser", fields: [target_user_id], references: [id], onDelete: SetNull)
+
+  @@index([created_at])
+  @@index([target_user_id, created_at])
+  @@map("moderation_logs")
+}
+
+// Notificações dentro da plataforma. O texto é montado no front (traduzido) a partir de type + data.
+model Notification {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  user_id    String    @db.Uuid
+  type       String    @db.VarChar(64)
+  data       Json      @default("{}")
+  read_at    DateTime? @db.Timestamptz(3)
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, created_at(sort: Desc)])
+  @@map("notifications")
 }
