@@ -29,6 +29,25 @@ const envSchema = z.object({
   UPLOAD_REQUEST_COOLDOWN_MINUTES: z.coerce.number().int().min(0).default(5),
   // Denúncias: quantas cada pessoa pode enviar a cada 24 horas.
   REPORTS_PER_DAY: z.coerce.number().int().min(1).default(20),
+
+  // Proxy confiável para descobrir o IP de quem acessa (X-Forwarded-For). "loopback" = só proxy na
+  // mesma máquina; número = quantos proxies na frente; "false" = nenhum (usa o IP da conexão).
+  TRUST_PROXY: z
+    .string()
+    .default('loopback')
+    .transform((value) => (/^\d+$/.test(value) ? Number(value) : value === 'true' ? true : value === 'false' ? false : value)),
+
+  // Limites de tentativas (desligar só em testes).
+  RATE_LIMIT_ENABLED: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((value) => value === 'true'),
+  RATE_LIMIT_LOGIN_WINDOW_MINUTES: z.coerce.number().int().min(1).default(15),
+  RATE_LIMIT_LOGIN_PER_ACCOUNT: z.coerce.number().int().min(1).default(5),
+  RATE_LIMIT_LOGIN_PER_IP: z.coerce.number().int().min(1).default(20),
+  RATE_LIMIT_REGISTER_PER_HOUR: z.coerce.number().int().min(1).default(5),
+  RATE_LIMIT_COMMENTS_PER_MINUTE: z.coerce.number().int().min(1).default(10),
+  RATE_LIMIT_COMMENTS_PER_DAY: z.coerce.number().int().min(1).default(200),
 });
 
 const parsed = envSchema.safeParse(process.env);

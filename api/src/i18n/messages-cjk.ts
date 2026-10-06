@@ -113,6 +113,8 @@ export const ko: Dictionary = {
   VISIBILITY_INVALID: '잘못된 공개 범위입니다',
   COMMENT_MODERATED: '관리팀이 삭제한 댓글이라 수정할 수 없습니다',
   PURGE_CONFIRM_MISMATCH: '확인을 위해 동영상 제목을 정확히 입력하세요',
+  TOO_MANY_REQUESTS: '짧은 시간에 너무 많은 요청을 했습니다. 잠시 후 다시 시도하세요',
+  TOO_MANY_LOGIN_ATTEMPTS: '로그인 시도가 너무 많습니다. 몇 분 후 다시 시도하세요',
 };
 
 export const ja: Dictionary = {
@@ -226,6 +228,8 @@ export const ja: Dictionary = {
   VISIBILITY_INVALID: '無効な公開設定です',
   COMMENT_MODERATED: 'このコメントはモデレーターによって削除されたため、編集できません',
   PURGE_CONFIRM_MISMATCH: '確認のため、動画のタイトルを正確に入力してください',
+  TOO_MANY_REQUESTS: '短時間に操作が多すぎます。しばらく待ってからもう一度お試しください',
+  TOO_MANY_LOGIN_ATTEMPTS: 'ログインの試行回数が多すぎます。数分待ってからもう一度お試しください',
 };
 
 export const zh: Dictionary = {
@@ -339,4 +343,6 @@ export const zh: Dictionary = {
   VISIBILITY_INVALID: '可见性无效',
   COMMENT_MODERATED: '这条评论已被审核团队移除，无法编辑',
   PURGE_CONFIRM_MISMATCH: '请准确输入视频标题以确认',
+  TOO_MANY_REQUESTS: '操作过于频繁，请稍后再试',
+  TOO_MANY_LOGIN_ATTEMPTS: '登录尝试次数过多，请几分钟后再试',
 };

@@ -2,6 +2,7 @@ import express, { type NextFunction, type Request, type Response } from 'express
 import { ZodError } from 'zod';
 import { Prisma } from './generated/prisma/client.js';
 import { isMessageCode, translate, type MessageCode } from './i18n/messages.js';
+import { env } from './config/env.js';
 import { authenticate } from './middlewares/auth.middleware.js';
 import { detectLocale } from './middlewares/locale.middleware.js';
 import { AppError } from './utils/errors/app-error.js';
@@ -15,6 +16,8 @@ const PRISMA_ERRORS: Record<string, { status: number; code: MessageCode }> = {
 };
 
 const app = express();
+// IP real de quem acessa vem do proxy confiável (usado nos limites de tentativas).
+app.set('trust proxy', env.TRUST_PROXY);
 
 // Antes do express.json(): os webhooks precisam do corpo cru para validar a assinatura.
 app.use('/webhooks', webhookRoutes);

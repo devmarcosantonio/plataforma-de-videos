@@ -127,6 +127,8 @@ const ptBR = {
   VISIBILITY_INVALID: 'Visibilidade inválida',
   COMMENT_MODERATED: 'Este comentário foi removido pela moderação e não pode ser editado',
   PURGE_CONFIRM_MISMATCH: 'Digite o título do vídeo exatamente como está para confirmar',
+  TOO_MANY_REQUESTS: 'Muitas ações em pouco tempo. Aguarde um pouco e tente de novo',
+  TOO_MANY_LOGIN_ATTEMPTS: 'Muitas tentativas de login. Aguarde alguns minutos e tente de novo',
 } as const;
 
 export type MessageCode = keyof typeof ptBR;
@@ -243,6 +245,8 @@ const en: Dictionary = {
   VISIBILITY_INVALID: 'Invalid visibility',
   COMMENT_MODERATED: 'This comment was removed by the moderators and cannot be edited',
   PURGE_CONFIRM_MISMATCH: 'Type the video title exactly as it is to confirm',
+  TOO_MANY_REQUESTS: 'Too many actions in a short time. Please wait a moment and try again',
+  TOO_MANY_LOGIN_ATTEMPTS: 'Too many sign-in attempts. Please wait a few minutes and try again',
 };
 
 const es: Dictionary = {
@@ -356,6 +360,8 @@ const es: Dictionary = {
   VISIBILITY_INVALID: 'Visibilidad no válida',
   COMMENT_MODERATED: 'La moderación eliminó este comentario y no se puede editar',
   PURGE_CONFIRM_MISMATCH: 'Escribe el título del video exactamente igual para confirmar',
+  TOO_MANY_REQUESTS: 'Demasiadas acciones en poco tiempo. Espera un momento e inténtalo de nuevo',
+  TOO_MANY_LOGIN_ATTEMPTS: 'Demasiados intentos de inicio de sesión. Espera unos minutos e inténtalo de nuevo',
 };
 
 const dictionaries: Record<Locale, Dictionary> = { 'pt-BR': ptBR, en, es, ko, ja, zh };

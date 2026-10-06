@@ -5,6 +5,7 @@ import * as historyController from '../controllers/history.controller.js';
 import * as reactionController from '../controllers/reaction.controller.js';
 import * as videoController from '../controllers/video.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
+import { commentsPerDay, commentsPerMinute } from '../middlewares/rate-limit.middleware.js';
 
 const router = Router();
 router.param('id', validateIdParam);
@@ -27,7 +28,8 @@ router.delete('/:id', requireAuth, videoController.destroy);
 router.put('/:id/reaction', requireAuth, reactionController.update);
 router.delete('/:id/reaction', requireAuth, reactionController.destroy);
 
-router.post('/:id/comments', requireAuth, commentController.store);
+// Comentários e respostas: limite por usuário (por minuto e por dia).
+router.post('/:id/comments', requireAuth, commentsPerMinute, commentsPerDay, commentController.store);
 
 // Progresso para o histórico. POST porque o navigator.sendBeacon (ao fechar a aba) só envia POST.
 router.get('/:id/progress', requireAuth, historyController.getProgress);
